@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/apps/utils" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/media/image/default.png" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/css/login.css" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/images/billcheck.png" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/images/check.png" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/images/check2.png" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/images/check3.png" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/images/check4.png" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/images/dig_close.png" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/js/deco-common.js" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/js/deco-user.js" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/js/jquery-migrate-1.2.1.min.js" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/js/jquery.min.js" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/js/login.js" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/js/plugins/jquery.upload.js" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/js/unslider.js" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/static/js/validate.js" charset="GBK" />
+  </component>
+</project>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html>
+{% load staticfiles %}
+	<head>
+		<meta charset="utf-8" />
+		<title>{% block title %} 首页 {% endblock %}</title>
+
+		<script  src="{% static 'bootstrap-4.3.1/js/jquery-3.4.1.slim.min.js' %}"></script>
+		<script  src={% static 'bootstrap-4.3.1/js/popper.min.js' %}""></script>
+		<script  src="{% static 'bootstrap-4.3.1/js/bootstrap.js' %}"></script>
+
+
+<!--		图标文件-->
+		<script src="https://kit.fontawesome.com/d029c24e25.js" crossorigin="anonymous"></script>
+        {% block custom_js %} {% endblock %}
+
+        <link rel="stylesheet" href={% static 'bootstrap-4.3.1/css/bootstrap.min.css' %}>
+		<link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'css/message.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}"/>
+        {% block custom_css %} {% endblock %}
+
+
+
+
+		<!--[if lt IE 9]>
+			<script src="js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+	<div class="container">
+	<nav class="row navbar navbar-expand-sm m-0 fixed-top " >
+		<!-- Brand -->
+<!--		<div class="collapse navbar-collapse" id="navbarSupportedContent">-->
+		<a class="navbar-brand"  href="#"><img src="/static/images/logo.png"/></a>
+		<!-- Links -->
+		<ul class="navbar-nav mx-auto " >
+
+											<li class="nav-item py-0"><a class="nav-link"  href="{% url 'index' %}">首页</a>  </li>
+
+											<!-- Dropdown 我要借出 -->
+											<li href="borrow_home_page.html"  class="nav-item dropdown dropdownPositionStatic py-md-">
+				<a class="nav-link " href="borrow_home_page.html" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					我要借出
+				</a>
+				<div class="dropdown-menu mega-menu ">
+
+					<div class="d-flex p-0  mx-auto justify-content-center">
+						<div class="p-0 "><a href="borrow_details.html">发布借款</a></div>
+						<div class="p-0 "><a href="borrow_interest.html">利息计算器</a></div>
+						<div class="p-0 "><a href="borrow_credit_rating.html">个人信用借出等级</a></div>
+						<div class="p-0 "><a href="lend_list_details.html">借出列表详情</a></div>
+					</div>
+				</div>
+			</li>
+
+											<!-- Dropdown 我要借入 -->
+											<li class="nav-item dropdown dropdownPositionStatic py-md-">
+												<a class="nav-link " href="#" id="borrow_in_id" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													我要借入
+												</a>
+												<div class="dropdown-menu mega-menu ">
+
+													<div class="d-flex p-0  mx-auto justify-content-center">
+														<div class="p-0 "><a href="borrow_details.html">查找借款</a></div>
+														<div class="p-0 "><a href="borrow_interest.html">利息计算器</a></div>
+														<div class="p-0 "><a href="borrow_credit_rating.html">个人信用借出等级</a></div>
+														<div class="p-0 "><a href="borrow_repayment_treatment.html">还款</a></div>
+														<div class="p-0 "><a href="lend_list_details.html">借入列表详情</a></div>
+														<div class="p-0 "><a href="lend_list.html">查找放款</a></div>
+													</div>
+												</div>
+											</li>
+
+
+											<li class="nav-item py-0 "><a class="nav-link" href="{% url 'UserAccountView' %}">我的账户</a></li>
+											<li class="nav-item py-0"><a class="nav-link" href="help_center.html">帮助</a></li>
+											<li class="nav-item py-0"><a class="nav-link"  href="news.html">社区</a></li>
+											<li class="nav-item py-0"><a class="nav-link"  href="authentication.html">本金保障</a></li>
+<!--												search bar-->
+											<li class="nav-item py-0 nav-link">
+												<div class="navbar navbar-light ml-0 pt-4 p-0">
+												<form class="form-inline  ">
+													<input class=" form-control mr-2 " type="search" style="width: 250px; height: 40px; font-size: 16px;border-radius:8px;" placeholder="Search" aria-label="Search">
+													<button class="btn  myBtn  text-dark"  style="width: 70px; height: 40px; font-size: 16px; color: white;border-color: white; " type="submit">Search</button>
+												</form>
+												</div>
+											</li>
+
+		</ul>
+
+
+                        {% if request.user.is_authenticated %}
+                            <!--								 logined interface-->
+                            <ul class="navbar-nav justify-content-end  pt-4">
+
+										<div class="row mr-3  align-items-center">
+<!--										message icon-->
+										<div >
+										<i class="fas fa-envelope-square fa-2x text-white"  ></i>
+										</div>
+<!--										message show-->
+										<div class="align-self-center">
+												<a  class="" style="font-size: 16px; color: white" href="#">消息(0)</a>
+										</div>
+<!--										<img src="#" class="img-thumbnail fas fa-envelope-square  fa-3x">-->
+									</div>
+
+										<img class="mr-2 rounded-circle" src="{{ MEDIA_URL }}{{ request.user.image.url }}" width="40" height="40" alt="avatar">
+
+										<div class="dropdown align-self-center">
+																	<a  href="javascript:void(0);" class="btn-user  dropdown-toggle media align-items-center" style="font-size: 16px" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
+																			<div class="media-body">
+																				{{ request.user.username }}
+																			</div>
+																	</a>
+
+																		<ul class="dropdown-menu dropdown-menu-right" role="menu">
+																			<a class="dropdown-item" href="{% url 'person_centerView' %}">个人中心</a>
+																			<a class="dropdown-item" href="javascript:void(0);">安全中心</a>
+																			<a class="dropdown-item" href="javascript:void(0);">头像设置</a>
+																			<a class="dropdown-item" href="javascript:void(0);">修改密码</a>
+																			<a class="dropdown-item" href="javascript:void(0);">选项名称</a>
+
+																			<!--						<li>资料设置</li>-->
+																			<!--						<li>安全中心</li>-->
+																			<!--						<li>头像设置</li>-->
+																			<!--						<li>修改密码</li>-->
+																			<!--						<li>选项名称</li>-->
+																		</ul>
+																	</div>
+
+										<!--  icon of login out -->
+										<div class="row ml-3 mr-3 align-items-center">
+
+											<div >
+
+												<a href="{% url 'logout' %}">
+													<i class="fas fa-sign-out-alt fa-2x text-dark"  ></i>
+												</a>
+
+											</div>
+										</div>
+
+									</ul>
+                            {% else %}
+                               <!--						login interface-->
+						    <ul class="navbar-nav justify-content-end ">
+                            								<li class="nav-item py-0"><a class="nav-link text-dark" href="{% url 'register' %}"  href="index.html">免费注册</a>  </li>
+								<li class="nav-item py-0"><a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt fa-2x text-dark py-4"></i></a></li>
+
+						</ul>
+                        {% endif %}
+
+	</nav>
+
+<!--			顶格用而已-->
+		<div class="row " style="height: 80px">   </div>
+
+{% block custome_content %}
+
+
+
+
+{% endblock %}
+        <div class="clear"></div>
+		<div class="footer_bg">
+			<footer>
+				<ul>
+					<li><a href="#">常见问题</a>|</li>
+					<li><a href="#">媒体报道</a>|</li>
+					<li><a href="#">联系我们 </a>|</li>
+					<li><a href="#">加入我们 </a>|</li>
+					<li><a href="#">隐私保护</a></li>
+				</ul>
+
+				<p>Copyright©2013 daikuan All Rights Reserved   建智领航公司 版权所有</p>
+			</footer>
+		</div>
+
+
+	</div>
+{#        <script src="{% static 'js/jquery-1.10.1.min.js' %}" type="text/javascript" charset="utf-8"></script>#}
+{#    	<script type="text/javascript" src="{% static 'js/Function.js' %}" ></script>#}
+    {% block custome_jQuery %}
+    {% endblock %}
+	</body>
+
+<script type="text/javascript">
+
+
+   //弹出框关闭按钮
+	$('.jsCloseDialog').on('click', function(){
+        $('#jsDialog').hide();
+        $('html').removeClass('dialog-open');
+		$(this).parents('.dialogbox').hide();
+        $('#dialogBg').hide();
+        if($(this).parent().find('form')[0]){
+            $(this).parent().find('form')[0].reset();
+        }
+	});
+
+
+
+
+
+</script>
+</html>

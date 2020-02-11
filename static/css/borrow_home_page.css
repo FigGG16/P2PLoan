@@ -1,0 +1,118 @@
+
+.dialog {
+    position: fixed;
+    color: #7c7c7c;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    display: none;
+    z-index: 9999;
+}
+
+
+.bg, .dialog .bg, .dialog1 .bg, .dialog2 .bg {
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: .5;
+    filter: Alpha(opacity=50);
+    display: none;
+}
+
+
+
+.dialogbox{
+    position: relative;
+    width: 400px;
+    min-height: 300px;
+    padding: 15px;
+    margin: 30px auto;
+    background: #fff;
+    overflow:hidden;
+    display: none;
+}
+.dialogbox h1{
+    color:#333 ;
+    height:30px;
+    line-height: 30px;
+    border-bottom:1px solid #ddd;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+.dialogbox .close{
+    position: absolute;
+    right:10px;
+    top:15px;
+    cursor: pointer;
+}
+.dialogbox .cont {
+    width:340px;
+    margin:0 auto;
+    padding:20px 0;
+}
+.dialogbox .box{
+    width:100%;
+    height:45px;
+    line-height:45px;
+    border:1px solid #ccc;
+    margin:15px 0;
+    border-radius:3px;
+    position: relative;
+}
+
+
+.cont {
+    overflow:hidden;
+}
+
+.cont img {
+    width: 100px;
+}
+
+.cont h2 {
+    height:135px;
+    line-height:40px;
+    font-size: 20px;
+}
+
+.cont img {
+    float: left;
+}
+
+ .cont p {
+    display: inline;
+    line-height: 50px;
+    font-size: 24px;
+    padding-left: 60px;
+}
+
+.cont .button {
+    margin-top: 70px !important;
+}
+
+ .cont {
+    width: 98%;
+    padding: 1%;
+    margin: 0;
+}
+
+
+.successbox .cont .fl{margin:10px;}
+.successbox .cont{background:url(../images/check2.png) no-repeat 0 center;display: table;width:auto;height: 199px;padding:0;}
+.failbox .cont{background:url(../images/check4.png) no-repeat 0 center!important;}
+.failbox h2{color:#f00;}
+.successbox .cont h2{display: table-cell;font-size: 18px;margin-top:25px;padding-left: 110px;vertical-align: middle;line-height:25px;}
+.noactivebox .green,.dialogbox .green,.green{color:#717171 !important;}
+.dialogbox .box input {width:255px;text-indent: 10px;height:45px;border:none;position: absolute;right:0;top:0;}
+.dialogbox .box span{color:#7c7c7c;border-right:1px solid #ccc;width:80px;height:20px;line-height:20px;margin-top:12px;text-align:center;display: block;}
+.dialogbox .button{width:100%;height:45px;line-height:45px;background:#5dbf45;color:#fff;margin:0;border:none; cursor: pointer;position: relative;}
+.dialogbox .button input{background: none;border:none;width:100%;color:#fff;cursor: pointer;line-height: 45px;}
+.dialogbox .button:hover{background:#4FB137;}
+
+

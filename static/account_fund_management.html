@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>我要借入</title>
+		<link rel="stylesheet" type="text/css" href="css/base.css"/>
+		<link rel="stylesheet" type="text/css" href="css/index.css"/>
+		<link rel="stylesheet" type="text/css" href="css/message.css"/>
+		
+		<!--[if lt IE 9]>
+			<script src="js/html5shiv.js"></script>
+		<![endif]-->
+		
+	</head>
+	<body>
+		<div class="header_bg">
+			<header>
+				<a class="logo" href="#">
+					<img src="images/logo.png"/>
+				</a>
+				<ul id="nav">
+					<li><a href="index.html">首页</a><span class="ul-img"></span></li>
+					<li><a href="borrow_home_page.html">我要借出</a><span></span></li>
+					<li><a href="account_fund_management.html">我要借入</a><span></span></li>
+					<li><a href="personal_center.html">我的账户</a><span></span></li>
+					<li><a href="help_center.html">帮助</a><span></span></li>
+					<li><a href="news.html">社区</a><span></span></li>
+					<li><a href="authentication.html">本金保障</a><span></span></li>
+				</ul>
+				
+				<div id="unentry_status">
+				<a href="entry.html" id="header_entry">登录</a>
+				<a href="register.html" id="header_register">免费注册</a>
+				</div>
+				
+				<ul id="person_message">
+					<li><a href="personal_center.html"><span></span></a></li>
+					<li><a href="personal_center.html">陈政</a></li>
+					<li><a href="message.html"><span></span></a></li>
+					<li><a href="#"><span></span></a></li>
+					<li><a id="leave" href="#">退出</a></li>
+					
+					<span id="person_message_num">22</span>
+					
+					<span id="message_setting1"></span>
+					<ul id="message_setting2">
+						<li>资料设置</li>
+						<li>安全中心</li>
+						<li>头像设置</li>
+						<li>修改密码</li>
+						<li>选项名称</li>
+					</ul>
+					
+				</ul>
+				
+				
+			</header>
+			
+			<div class="lend_out_bg">
+					<div class="lend_out">
+						<a href="borrow_details.html">发布借款</a>
+						<a href="borrow_interest.html">利息计算器</a>
+						<a href="borrow_credit_rating.html">个人信用借出等级</a>
+						<a href="lend_list_details.html">借出列表详情</a>
+					</div>
+				</div>
+			
+			<div class="borrow_in_bg">
+					<div class="borrow_in">
+						<a href="borrow_details.html">查找借款</a>
+						<a href="borrow_interest.html">利息计算器</a>
+						<a href="borrow_credit_rating.html">个人信用借入等级</a>
+						<a href="borrow_repayment_treatment.html">还款</a>
+						<a href="lend_list_details.html">借入列表详情</a>
+						<a href="lend_list.html">查找放款</a>
+					</div>
+				</div>
+			
+		</div>
+		
+		<div class="lend_follow_main">
+			<div class="lend_follow_main_left">
+				
+				<h5><span class="lend_follow_main_left_icon1"></span>我是借入者</h5>
+				<p style="background-color: #FFFFFF;">我的账户首页<span style='color: #555555; float: right;'>&gt;</span></p>
+				<p>我的借款列表</p>
+				<p>上传资料</p>
+				
+				<h5><span class="lend_follow_main_left_icon2"></span>借出工具箱</h5>
+				<p>逾期分析</p>
+				<p>自动投标记录查询</p>
+				
+				<h5><span class="lend_follow_main_left_icon3"></span>基本设置</h5>
+				<p>安全中心</p>
+				<p>编辑个人资料</p>
+				<p>头像上传</p>
+				
+				<h5><span class="lend_follow_main_left_icon4"></span>资金管理</h5>
+				<p>账户充值</p>
+				<p>账户提现</p>
+				<p>账户资金变动记录</p>
+				
+				<h5><span class="lend_follow_main_left_icon5"></span>市场活动</h5>
+				<p>推荐奖励</p>
+			</div>
+			
+			<div class="lend_follow_main_right">
+				<div class="lend_follow_main_title">
+					<div class="lend_follow_main_title_color">1</div>
+					<h1>我的账户首页</h1>
+				</div>
+				
+				<div class="Right_Main">
+					<!--首页-->
+					<div id="RightPage" class="account_fund_management_main" data-page="0">
+						<div class="account_fund_management_main_left">
+							<img src="images/personal_center_left_header_pic.jpg"/>
+						</div>
+						
+						<div class="account_fund_management_main_right">
+							<h5>XXXX，欢迎来到本站！</h5>
+							<p class="account_fund_management_main_right_p1">借出信用分：<span class="account_fund_management_main_right_sp1">12分</span></p><p class="account_fund_management_main_right_p2">可用余额：<span class="account_fund_management_main_right_sp1">&yen;500,000</span></p>
+							<hr />
+							
+							<table class="account_fund_management_main_right_table" border="" cellspacing="" cellpadding="">
+								<tr>
+									<td colspan="2">账户统计</td>
+								</tr>
+								
+								<tr>
+									<th><p class="account_fund_management_main_right_p3">资产总额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+									<th><p class="account_fund_management_main_right_p3">可用金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+								</tr>
+								
+								<tr>
+									<th><p class="account_fund_management_main_right_p3">投标中金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+									<th><p class="account_fund_management_main_right_p3">提现中金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+								</tr>
+								
+								<tr>
+									<th><p class="account_fund_management_main_right_p3">待收本金：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+									<th><p class="account_fund_management_main_right_p3">待收利息：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+								</tr>
+								
+							</table>
+							
+							<p class="account_fund_management_main_right_p4">交易数据详见：<a href="#">[借出统计]</a></p>
+							<input type="button" name="account_fund_management_main_right_btn1" id="account_fund_management_main_right_btn1" value="充值" />
+							<input type="button" name="account_fund_management_main_right_btn2" id="account_fund_management_main_right_btn2" value="提现" />
+							
+							<hr />
+							
+							<table class="account_fund_management_main_right_table1" border="" cellspacing="" cellpadding="">
+								<tr>
+									<td>列表统计</td>
+								</tr>
+								
+								<tr>
+									<th><p class="account_fund_management_main_right_p3">投标中：</p><span class="account_fund_management_main_right_sp1">2</span></th>
+									<th><p class="account_fund_management_main_right_p3">收款中：</p><span class="account_fund_management_main_right_sp1">2</span></th>
+								</tr>
+								
+								<tr>
+									<th><p class="account_fund_management_main_right_p3">已收回：</p><span class="account_fund_management_main_right_sp1">2</span></th>
+									<th><p class="account_fund_management_main_right_p3">逾期90+：</p><span class="account_fund_management_main_right_sp1">2</span></th>
+								</tr>
+								
+							</table>
+						</div>
+					</div>
+					
+					<!--我的借款列表-->
+					<div id="RightPage" class="borrow_list_main" data-page="1">
+						<div class="lend_follow_main_right_header">
+							<p class="lend_follow_main_right_header_focus">我所关注的借款</p>
+							<p>已发布的列表</p>
+							<p>已结束的列表</p>
+						</div>
+					
+						<!--page1-->
+						<div class="borrow_list2_table1">
+							<table id="lend_follow_main_right_table" border="" cellspacing="" cellpadding="">
+								<tr>
+									<td rowspan="2">优质商家信用借贷</td>
+									<th>借款金额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>年利率：<span class="lend_follow_main_right_table_span2">20%</span></th>
+									<th>应付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>未还本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th><input type="button" name="borrow_list_btn" id="borrow_list_btn" value="还款" /></th>
+								</tr>
+								
+								<tr>
+									<th>余额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>借款期限：12个月</th>
+									<th>已付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>下次还款日期：<span class="lend_follow_main_right_table_span1">2013-09-02</span></th>
+									<th><span class="lend_follow_main_right_table_span1">查看电子协议</span></th>
+								</tr>
+							</table>
+							
+							<table id="lend_follow_main_right_table" border="" cellspacing="" cellpadding="">
+								<tr>
+									<td rowspan="2">优质商家信用借贷</td>
+									<th>借款金额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>年利率：<span class="lend_follow_main_right_table_span2">20%</span></th>
+									<th>应付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>未还本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th><input type="button" name="borrow_list_btn" id="borrow_list_btn" value="还款" /></th>
+								</tr>
+								
+								<tr>
+									<th>余额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>借款期限：12个月</th>
+									<th>已付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>下次还款日期：<span class="lend_follow_main_right_table_span1">2013-09-02</span></th>
+									<th><span class="lend_follow_main_right_table_span1">查看电子协议</span></th>
+								</tr>
+							</table>
+							
+							<table id="lend_follow_main_right_table" border="" cellspacing="" cellpadding="">
+								<tr>
+									<td rowspan="2">优质商家信用借贷</td>
+									<th>借款金额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>年利率：<span class="lend_follow_main_right_table_span2">20%</span></th>
+									<th>应付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>未还本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th><input type="button" name="borrow_list_btn" id="borrow_list_btn" value="还款" /></th>
+								</tr>
+								
+								<tr>
+									<th>余额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>借款期限：12个月</th>
+									<th>已付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>下次还款日期：<span class="lend_follow_main_right_table_span1">2013-09-02</span></th>
+									<th><span class="lend_follow_main_right_table_span1">查看电子协议</span></th>
+								</tr>
+							</table>
+							
+							<table id="lend_follow_main_right_table" border="" cellspacing="" cellpadding="">
+								<tr>
+									<td rowspan="2">优质商家信用借贷</td>
+									<th>借款金额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>年利率：<span class="lend_follow_main_right_table_span2">20%</span></th>
+									<th>应付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>未还本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th><input type="button" name="borrow_list_btn" id="borrow_list_btn" value="还款" /></th>
+								</tr>
+								
+								<tr>
+									<th>余额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>借款期限：12个月</th>
+									<th>已付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>下次还款日期：<span class="lend_follow_main_right_table_span1">2013-09-02</span></th>
+									<th><span class="lend_follow_main_right_table_span1">查看电子协议</span></th>
+								</tr>
+							</table>
+							
+							<table id="lend_follow_main_right_table" border="" cellspacing="" cellpadding="">
+								<tr>
+									<td rowspan="2">优质商家信用借贷</td>
+									<th>借款金额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>年利率：<span class="lend_follow_main_right_table_span2">20%</span></th>
+									<th>应付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>未还本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th><input type="button" name="borrow_list_btn" id="borrow_list_btn" value="还款" /></th>
+								</tr>
+								
+								<tr>
+									<th>余额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>借款期限：12个月</th>
+									<th>已付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>下次还款日期：<span class="lend_follow_main_right_table_span1">2013-09-02</span></th>
+									<th><span class="lend_follow_main_right_table_span1">查看电子协议</span></th>
+								</tr>
+							</table>
+							
+							<table id="lend_follow_main_right_table" border="" cellspacing="" cellpadding="">
+								<tr>
+									<td rowspan="2">优质商家信用借贷</td>
+									<th>借款金额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>年利率：<span class="lend_follow_main_right_table_span2">20%</span></th>
+									<th>应付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>未还本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th><input type="button" name="borrow_list_btn" id="borrow_list_btn" value="还款" /></th>
+								</tr>
+								
+								<tr>
+									<th>余额：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>借款期限：12个月</th>
+									<th>已付本息：<span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+									<th>下次还款日期：<span class="lend_follow_main_right_table_span1">2013-09-02</span></th>
+									<th><span class="lend_follow_main_right_table_span1">查看电子协议</span></th>
+								</tr>
+							</table>
+						</div>
+						
+						<!--page2-->
+						<table id="lend_follow_main_right_table"  class="borrow_list2_table2" cellspacing="" cellpadding="">
+							                                                                           
+							<tr>
+								<th>标题</th>
+								<th>担保</th>
+								<th>金额</th>
+								<th>年利率</th>
+								<th>期限</th>
+								<th>进度/投标数</th>
+								<th>创建时间/状态</th>
+								<th>动作</th>
+							</tr>
+							
+							<tr>
+								<td>优质商家信用借贷</td>
+								<th></th>
+								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
+								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
+								<th>
+									进度：<div class="lend_follow_main_right_table_schedule_bg">
+										<div class="lend_follow_main_right_table_schedule"></div>
+									</div><br />
+									36.00%已完成<br />
+									103笔投标
+								</th>
+								<th>2013/01/01<br />
+								14:30:31<br />
+								正在进行中
+								</th>
+								<th >
+									<a href="#">查看</a><br />
+									<a href="#">撤回</a>
+								</th>
+							</tr>
+							
+							<tr>
+								<td>优质商家信用借贷</td>
+								<th></th>
+								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
+								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
+								<th>
+									进度：<div class="lend_follow_main_right_table_schedule_bg">
+										<div class="lend_follow_main_right_table_schedule"></div>
+									</div><br />
+									36.00%已完成<br />
+									103笔投标
+								</th>
+								<th>2013/01/01<br />
+								14:30:31<br />
+								正在进行中
+								</th>
+								<th >
+									<a href="#">查看</a><br />
+									<a href="#">撤回</a>
+								</th>
+							</tr>
+							
+							<tr>
+								<td>优质商家信用借贷</td>
+								<th></th>
+								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
+								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
+								<th>
+									进度：<div class="lend_follow_main_right_table_schedule_bg">
+										<div class="lend_follow_main_right_table_schedule"></div>
+									</div><br />
+									36.00%已完成<br />
+									103笔投标
+								</th>
+								<th>2013/01/01<br />
+								14:30:31<br />
+								正在进行中
+								</th>
+								<th >
+									<a href="#">查看</a><br />
+									<a href="#">撤回</a>
+								</th>
+							</tr>
+							
+							<tr>
+								<td>优质商家信用借贷</td>
+								<th></th>
+								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
+								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
+								<th>
+									进度：<div class="lend_follow_main_right_table_schedule_bg">
+										<div class="lend_follow_main_right_table_schedule"></div>
+									</div><br />
+									36.00%已完成<br />
+									103笔投标
+								</th>
+								<th>2013/01/01<br />
+								14:30:31<br />
+								正在进行中
+								</th>
+								<th >
+									<a href="#">查看</a><br />
+									<a href="#">撤回</a>
+								</th>
+							</tr>
+							
+							<tr>
+								<td>优质商家信用借贷</td>
+								<th></th>
+								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
+								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
+								<th>
+									进度：<div class="lend_follow_main_right_table_schedule_bg">
+										<div class="lend_follow_main_right_table_schedule"></div>
+									</div><br />
+									36.00%已完成<br />
+									103笔投标
+								</th>
+								<th>2013/01/01<br />
+								14:30:31<br />
+								正在进行中
+								</th>
+								<th >
+									<a href="#">查看</a><br />
+									<a href="#">撤回</a>
+								</th>
+							</tr>
+						
+						</table>
+						
+						<!--page3-->
+						<table id="lend_follow_main_right_table"  class="borrow_list2_table3" cellspacing="" cellpadding="">
+							                                                                           
+							<tr>
+								<th>标题</th>
+								<th>担保</th>
+								<th>金额</th>
+								<th>年利率</th>
+								<th>期限</th>
+								<th>进度/投标数</th>
+								<th>创建时间/状态</th>
+								<th>动作</th>
+							</tr>
+							
+							
+							<tr>
+								<td>优质商家信用借贷</td>
+								<th></th>
+								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
+								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
+								<th>
+									进度：<div class="lend_follow_main_right_table_schedule_bg">
+										<div class="lend_follow_main_right_table_schedule1"></div>
+									</div><br />
+									36.00%已完成<br />
+									103笔投标
+								</th>
+								<th>2013/01/01<br />
+								14:30:31<br />
+								已还完
+								</th>
+								<th >
+									<a href="#">查看</a><br />
+									<a href="#">撤回</a>
+								</th>
+							</tr>
+							
+							<tr>
+								<td>优质商家信用借贷</td>
+								<th></th>
+								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
+								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
+								<th>
+									进度：<div class="lend_follow_main_right_table_schedule_bg">
+										<div class="lend_follow_main_right_table_schedule1"></div>
+									</div><br />
+									36.00%已完成<br />
+									103笔投标
+								</th>
+								<th>2013/01/01<br />
+								14:30:31<br />
+								已还完
+								</th>
+								<th >
+									<a href="#">查看</a><br />
+									<a href="#">撤回</a>
+								</th>
+							</tr>
+							
+							<tr>
+								<td>优质商家信用借贷</td>
+								<th></th>
+								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
+								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
+								<th>
+									进度：<div class="lend_follow_main_right_table_schedule_bg">
+										<div class="lend_follow_main_right_table_schedule1"></div>
+									</div><br />
+									36.00%已完成<br />
+									103笔投标
+								</th>
+								<th>2013/01/01<br />
+								14:30:31<br />
+								已还完
+								</th>
+								<th >
+									<a href="#">查看</a><br />
+									<a href="#">撤回</a>
+								</th>
+							</tr>
+							
+							<tr>
+								<td>优质商家信用借贷</td>
+								<th></th>
+								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
+								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
+								<th>
+									进度：<div class="lend_follow_main_right_table_schedule_bg">
+										<div class="lend_follow_main_right_table_schedule1"></div>
+									</div><br />
+									36.00%已完成<br />
+									103笔投标
+								</th>
+								<th>2013/01/01<br />
+								14:30:31<br />
+								已还完
+								</th>
+								<th >
+									<a href="#">查看</a><br />
+									<a href="#">撤回</a>
+								</th>
+							</tr>
+							
+							<tr>
+								<td>优质商家信用借贷</td>
+								<th></th>
+								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
+								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
+								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
+								<th>
+									进度：<div class="lend_follow_main_right_table_schedule_bg">
+										<div class="lend_follow_main_right_table_schedule1"></div>
+									</div><br />
+									100%已完成<br />
+									103笔投标
+								</th>
+								<th>2013/01/01<br />
+								14:30:31<br />
+								已还完
+								</th>
+								<th >
+									<a href="#">查看</a><br />
+									<a href="#">撤回</a>
+								</th>
+							</tr>
+						
+						</table>
+					
+						<div class="message_main_page lend_follow_main_right_page">
+							<ul>
+								<li class="message_page">1</li>
+								<li>2</li>
+								<li>3</li>
+								<li>4</li>
+								<li>下一页<span></span></li>
+								
+							</ul>
+						</div>
+					</div>
+					
+					<!--逾期统计-->
+					<div id="RightPage" class="overdue_analysis_main" data-page="3">
+						<table class="overdue_analysis_table" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td colspan="4">不同信用等级的逾期统计</td>
+							</tr>
+							
+							<tr>
+								<th>信用等级</th>
+								<th>逾期>30天</th>
+								<th>逾期>90天</th>
+								<th>借出金额</th>
+							</tr>
+							
+							<tr>
+								<th>D</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+							</tr>
+							
+							<tr>
+								<th>E</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+							</tr>
+							
+							<tr>
+								<th>HR</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+							</tr>
+							
+						</table>
+						
+						<table class="overdue_analysis_table" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td colspan="4">多处借款的逾期统计</td>
+							</tr>
+							
+							<tr>
+								<th>多处借款</th>
+								<th>逾期>30天</th>
+								<th>逾期>90天</th>
+								<th>借出金额</th>
+							</tr>
+							
+							<tr>
+								<th>D</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+							</tr>
+							
+							<tr>
+								<th>E</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+							</tr>
+							
+							<tr>
+								<th>HR</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+								<th>&yen;83.21</th>
+							</tr>
+							
+						</table>
+						
+						<table class="overdue_analysis_table2" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td>借出列表的逾期</td>
+							</tr>
+							
+							<tr>
+								<th>逾期超过90天，将会计入坏账计提</th>
+							</tr>
+							
+						</table>
+					</div>
+					
+					<!--账户充值-->
+					<div id="RightPage" class="account_recharge_main" data-page="8">
+						
+						<div class="lend_follow_main_right_header account_recharge_main_header">
+							<p class="lend_follow_main_right_header_focus">即时到账充值</p>
+							<p>非即时到账充值</p>
+						</div>
+						
+						<!--page1-->
+						<div class="account_recharge_main1">
+							
+							<p class="account_recharge_p1"><span class="account_recharge_p1_icon"></span>1：充值资金可用于进行多项认证、投标、还款等。<br />
+							2：所有资金将由第三方平台 支付宝、财富通、银行等托管，借贷网本身不存放用户的投标保证金。<br />
+							3：支持国内大部分银行的网上银行，充值成功后资金会立刻划拨到您的个人帐户。</p>
+							
+							<p class="account_recharge_p2">请选择下面您最便捷的方式进行帐户充值</p><span class="account_recharge_p2_sp">（充值金额小于10元免收手续费）</span><br />
+							
+							<p class="account_recharge_p3">填写充值金额：</p><input type="text" name="" id="account_recharge_p3_text" value="6" /><span>元</span><span class="account_recharge_p3_sp2">实际充值金额：6元</span><br />
+							
+							<p class="account_recharge_p3">选择支付平台：</p><input type="radio" name="account_recharge_p3_radio" id="account_recharge_p3_radio1" value="" checked="checked" /><div class="account_recharge_p3_pic"><img src="images/account_recharge_p3_pic1.png"/>转账费用：1%</div><input type="radio" name="account_recharge_p3_radio" id="account_recharge_p3_radio2" value="" /><div class="account_recharge_p3_pic"><img src="images/account_recharge_p3_pic2.png"/>转账费用：1%</div><br />
+							<input type="radio" name="account_recharge_p3_radio" id="account_recharge_p3_radio3" value="" /><div class="account_recharge_p3_pic"><img src="images/account_recharge_p3_pic3.png"/>转账费用：1%</div><input type="radio" name="account_recharge_p3_radio" id="account_recharge_p3_radio4" value="" /><div class="account_recharge_p3_pic"><img src="images/account_recharge_p3_pic4.png"/>转账费用：1%</div><br />
+							
+							<input type="button" name="account_recharge_btn" id="account_recharge_btn" value="下一步" />
+							
+	   					</div>
+	   					
+	   					<!--page2-->
+	   					<div class="account_recharge_main2">
+	   						<p class="account_recharge_main2_p1"><span class="account_recharge_p1_icon"></span>若您的充值金额<span style="color: #e31600;">大于1000元</span>，未来节约汇款手续费，您可以选择支付宝非即时到账充值（转账手续费：封顶10元）<br />
+							若您的充值金额小于1000元，会按照即时充值流程处理，收取1%的手续费（包括VIP用户）</p>
+							
+							<p class="account_recharge_main2_p2">您先到支付宝页面<a href="#">http://me.alipay.com/jiedai</a>将资金成功充值到<span>cz@jiedai.com</span>账号，<br />
+							然后回到此页面进行登记。<a href="#">非即时充值使用流程帮助</a></p>
+							
+							<p class="account_recharge_p3">选择支付平台：</p><input type="radio" name="account_recharge_main2_radio" id="account_recharge_main2_radio" value="" checked="checked"/><div class="account_recharge_p3_pic"><img src="images/account_recharge_p3_pic2.png"/>转账费用：1%,封顶10元</div><br />
+							
+							<p class="account_recharge_p3">填写充值金额：</p><input type="text" name="" id="account_recharge_p3_text" class="account_recharge_main2_text1" value="6" /><span>元</span><span class="account_recharge_p3_sp2">实际充值金额：6元</span><br />
+							
+							<span class="account_recharge_main2_sp1">单笔充值金额请输入<span style="color: #e31600;">不小于1000元</span>的数字（可带2位小数）</span><br />
+							
+							<p class="account_recharge_p3">填写充值金额：</p><input type="text" name="" id="account_recharge_p3_text" class="account_recharge_main2_text2" value="6" /><br />
+							
+							<span class="account_recharge_main2_sp2">请在支付宝非即时充值成功后填写</span><br />
+							
+							<input type="button" name="account_recharge_btn" id="account_recharge_btn" class="account_recharge_btn2" value="下一步" />
+							
+	   					</div>
+	   					
+	   					<hr class="account_recharge_dashed" />
+							
+							<h6>借贷网提醒：</h6>
+							<p class="account_recharge_p4">1：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容。<br />
+							2：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容。<br />
+							3：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容。<br />
+							4：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容充值资金可用金可用
+		   于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容充值资金可用。</p>
+		   
+		   					<p class="account_recharge_p5">更多资金充值常见问题，请至<a href="#">帮助中心</a>查看</p>
+	   					
+					</div>
+					
+					<!--账户提现-->
+					<div id="RightPage" class="account_withdrawals_main" data-page="9">
+						<p class="account_withdrawals_main_p1">提现是指把借贷网账户中的余额提取到银行卡中。<br />
+						提取收费标准：账户余额大于3元，即可取出；转账失败将退还手续费（外部接口返还）；</p>
+						<p class="account_withdrawals_main_p2">1-30000元，3元/笔；30001-45000，6元/比。</p>
+					
+						<hr class="account_withdrawals_main_dached" />
+					
+						<p class="account_recharge_p3">您的借贷网账户：</p><p class="account_withdrawals_main_p3">王昊<span class="account_withdrawals_main_sp1">wanghao@qq.com</span></p><br />
+						
+						<p class="account_recharge_p3">提现银行账户：</p>
+					
+						<div class="account_withdrawals_main_form">
+							<div class="account_withdrawals_main_form1">
+								<div class="account_withdrawals_main_form_p1">银行名称</div>
+								<div class="account_withdrawals_main_form_p1">银行卡尾号</div>
+								<div class="account_withdrawals_main_form_p1">到账日期</div>
+								<div class="account_withdrawals_main_form_p1">操作</div>
+							</div>
+							<div class="account_withdrawals_main_form2">
+								<div class="account_withdrawals_main_form_p2">招商银行</div>
+								<div class="account_withdrawals_main_form_p2">4733</div>
+								<div class="account_withdrawals_main_form_p2">预计1-3个工作日到账</div>
+								<div class="account_withdrawals_main_form_p2"><a class="account_withdrawals_main_form_a1">编辑</a></div>
+							</div>
+						</div><br />
+					
+						<a class="account_withdrawals_main_form_a2">添加银行卡</a><br />
+					
+						<p class="account_recharge_p3">提现金额：</p><input type="text" name="account_withdrawals_main_text" id="account_withdrawals_main_text" value="6" /><span>元</span><br />
+					
+						<span class="account_withdrawals_main_sp2"><span style="color: #e31600;">可取金额：</span><span style="color: #e31600;">&yen;50000</span>（待处理的提现申请金额为<span style="color: #e31600;">&yen;5000</span> ;由于您有非提现标，您不能取现的金额为<span style="color: #e31600;">&yen;5000</span>）</span>
+					
+						<input type="button" name="account_recharge_btn" id="account_recharge_btn" class="account_withdrawals_main_btn" value="提  交" />
+					
+						<hr class="account_recharge_dashed" />
+						
+						<h6>借贷网提醒：</h6>
+						<p class="account_recharge_p4">1：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容。<br />
+						2：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容。<br />
+						3：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容。<br />
+						4：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容充值资金可用金可用
+	   于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容充值资金可用。</p>
+	   
+	   					<p class="account_recharge_p5">更多资金充值常见问题，请至<a href="#">帮助中心</a>查看</p>
+				
+				
+						<div class="BlackScreen"></div>
+					
+						<!--编辑-->
+						<div class="account_withdrawals_main_popup1">
+							<h5>编辑新银行卡<span>&times;</span></h5>
+							
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>银行账户类型：</p><span class="account_withdrawals_main_popup1_sp2">借记卡</span><br />
+							
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>开户人名称：</p><span class="account_withdrawals_main_popup1_sp2">曾飞</span><br />
+							
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>选择银行：</p>
+							<div class="account_withdrawals_main_content_bg1">
+								请选择<span class="account_withdrawals_main_content_btn1">
+									<span></span>
+								</span>
+							</div><br />
+							
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>开户银行所在城市：</p>
+							<div class="account_withdrawals_main_content_bg2">
+								北京<span class="account_withdrawals_main_content_btn2">
+									<span></span>
+								</span>
+							</div>
+							
+							<div class="account_withdrawals_main_content_bg2">
+								北京市<span class="account_withdrawals_main_content_btn2">
+									<span></span>
+								</span>
+							</div>
+							<br />
+							
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>开户银行支行名称：</p>
+							<input type="text" name="account_withdrawals_main_popup1_text1" id="account_withdrawals_main_popup1_text1" value="" /><br />
+							
+							<span class="account_withdrawals_main_popup1_sp3">没有我需要的支行，请自行填写</span><br />
+							
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>银行卡号：</p><span class="account_withdrawals_main_popup1_sp2">************8821</span><br />
+							
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>请输入上面银行卡号：</p>
+							<input type="text" name="account_withdrawals_main_popup1_text1" id="account_withdrawals_main_popup1_text2" value="" placeholder="只允许输入数字"/><br />
+							
+							<span class="account_withdrawals_main_popup1_sp3">为了保证您的资金安全，请输入之前的银行卡号确认</span><br />
+							
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>新的银行卡号：</p>
+							<input type="text" name="account_withdrawals_main_popup1_text1" id="account_withdrawals_main_popup1_text2" value="" placeholder="只允许输入数字"/><br />
+							
+							<span class="account_withdrawals_main_popup1_sp3">输入您希望改成的新的银行卡号</span><br />
+							
+							<span class="account_withdrawals_main_popup1_sp4">此银行卡的开户名必须为“<span style="color: #df0000;">曾飞</span>”否则提现会失败</span><br />
+							
+							<input type="button" name="account_withdrawals_main_popup1_btn1" id="account_withdrawals_main_popup1_btn1" value="确定" />
+							<input type="button" name="account_withdrawals_main_popup1_btn2" id="account_withdrawals_main_popup1_btn2" value="取消" />
+							
+							
+						</div>
+						
+						<!--添加-->
+						<div class="account_withdrawals_main_popup2">
+							<h5>添加新银行卡<span>&times;</span></h5>
+							
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1">*</span>银行账户类型：</p><span class="account_withdrawals_main_popup2_sp2">借记卡</span><br />
+							
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1">*</span>开户人名称：</p><span class="account_withdrawals_main_popup2_sp2">曾飞</span><br />
+							
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1">*</span>选择银行：</p>
+							<div class="account_withdrawals_main_content2_bg1">
+								请选择<span class="account_withdrawals_main_content2_btn1">
+									<span></span>
+								</span>
+							</div><br />
+							
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1">*</span>开户银行所在城市：</p>
+							<div class="account_withdrawals_main_content2_bg1">
+								请选择<span class="account_withdrawals_main_content2_btn1">
+									<span></span>
+								</span>
+							</div><br />
+							
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1"></span></p>
+							<div class="account_withdrawals_main_content2_bg1">
+								请选择<span class="account_withdrawals_main_content2_btn1">
+									<span></span>
+								</span>
+							</div><br />
+							
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1">*</span>开户银行支行名称：</p>
+							<div class="account_withdrawals_main_content2_bg1">
+								请选择<span class="account_withdrawals_main_content2_btn1">
+									<span></span>
+								</span>
+							</div><br />
+							
+							<span class="account_withdrawals_main_popup1_sp3">没有我需要的支行，请自行填写</span><br />
+							
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>银行卡号：</p>
+							<input type="text" name="account_withdrawals_main_popup1_text1" id="account_withdrawals_main_popup1_text2" value="6" placeholder="只允许输入数字"/><br />
+							
+							<span class="account_withdrawals_main_popup1_sp4">此银行卡的开户名必须为“<span style="color: #df0000;">曾飞</span>”否则提现会失败</span><br />
+							
+							<input type="button" name="account_withdrawals_main_popup1_btn1" id="account_withdrawals_main_popup1_btn1" value="确定" />
+							<input type="button" name="account_withdrawals_main_popup1_btn2" id="account_withdrawals_main_popup1_btn2" value="取消" />
+							
+						</div>
+					</div>
+					
+					<!--账户资金变动记录-->
+					<div id="RightPage" class="changes_in_account_funds_main" data-page="10">
+					
+					<div class="changes_in_account_funds_main1">
+						<p class="changes_in_account_funds_main1_p1">资金类型：</p>
+						
+						<div class="changes_in_account_funds_main1_content_bg1">
+						借出者投标成功<span class="changes_in_account_funds_main1_content_btn1">
+							<span></span>
+						</span>
+						</div>
+					
+						<p class="changes_in_account_funds_main1_p2">时间：</p>
+							
+						<div class="changes_in_account_funds_main1_content_bg1">
+							一周以内<span class="changes_in_account_funds_main1_content_btn1">
+								<span></span>
+							</span>
+						</div>
+						
+						<input type="button" name="" id="changes_in_account_funds_main_btn" value="确定" />
+					
+					</div>
+					
+					<table class="changes_in_account_funds_main2" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td colspan="2">资金统计</td>
+						</tr>
+						
+						<tr>
+							<th>账户余额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
+							<th>可用余额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
+						</tr>
+						
+						<tr>
+							<th>冻结金额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span><span class="changes_in_account_funds_main_sp2">[正在竞标的借款]</span></th>
+							<th>待收金额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span><span class="changes_in_account_funds_main_sp2">[待收的借款]</span></th>
+						</tr>
+						
+						<tr>
+							<th>净赚利息：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
+							<th>待还金额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
+						</tr>
+						
+					</table>
+					
+					<table class="changes_in_account_funds_main3" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td colspan="6">资金流水记录</td>
+						</tr>
+						
+						<tr>
+							<th>日期</th>
+							<th>类型</th>
+							<th>支出</th>
+							<th>存入</th>
+							<th>余额</th>
+							<th>说明</th>
+						</tr>
+						
+						<tr>
+							<th>2013-08-10<br />22:00</th>
+							<th>充值手续费</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>说明文字说明文字说明文字说<br />明文字说明文字说明文字说明</th>
+						</tr>
+						
+						<tr>
+							<th>2013-08-10<br />22:00</th>
+							<th>充值手续费</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>说明文字说明文字说明文字说<br />明文字说明文字说明文字说明</th>
+						</tr>
+						
+						<tr>
+							<th>2013-08-10<br />22:00</th>
+							<th>充值手续费</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>说明文字说明文字说明文字说<br />明文字说明文字说明文字说明</th>
+						</tr>
+						
+					</table>
+					
+				</div>
+				
+				</div>	
+			</div>
+		</div>
+		
+		<div class="clear"></div>
+		<div class="footer_bg2">
+			<footer>
+				<ul>      
+					<li><a href="#">常见问题</a>|</li>
+					<li><a href="#">媒体报道</a>|</li>
+					<li><a href="#">联系我们 </a>|</li>
+					<li><a href="#">加入我们 </a>|</li>
+					<li><a href="#">隐私保护</a></li>
+				</ul>
+				
+				<p>Copyright©2013 daikuan All Rights Reserved   建智领航公司 版权所有</p>
+			</footer>
+		</div>
+		
+		<script src="js/jquery-1.10.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" src="js/Function.js" ></script>
+		<script>
+			$(function(){
+				var c_start=document.cookie.indexOf('username' + "=");
+				if(c_start == -1){
+					$("#unentry_status").show();
+					$("#person_message").hide();
+				}else{
+					$("#unentry_status").hide();
+					$("#person_message").show();
+				}
+					
+			})
+		</script>
+	</body>
+</html>

@@ -1,0 +1,2379 @@
+
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block custom_js %}
+
+
+
+    		<script  src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+    		<script  src="{% static 'js/jquery.cities.js' %}"></script>
+           <script src="{% static 'js/jquery-migrate-1.2.1.min.js' %}" type="text/javascript"></script>
+
+
+{% endblock %}
+
+
+{% block custom_css %}
+
+		<link rel="stylesheet" type="text/css" href="{% static 'css/borrow_home_page.css' %}"/>
+{% endblock %}
+
+{% block custome_content %}
+
+ <div class="dialog" id="jsDialog">
+    <div class="successbox dialogbox" id="jsSuccessTips">
+        <h1 class="mt-1 mb-3 ">成功提交</h1>
+        <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"/></div>
+        <div class="cont">
+            <h2>您的需求提交成功！</h2>
+            <p></p>
+        </div>
+    </div>
+</div>
+
+		<div class="lend_follow_main ">
+			<div class="lend_follow_main_left flex-column nav nav-pills align-content-center justify-content-center" role="tablist" aria-orientation="vertical" id="v-pills-tab" >
+
+				<h5><span class="lend_follow_main_left_icon1"></span>我是借出者</h5>
+
+                  <a class="nav-link active mt-1 text-center" id="v-pills-home-tab" data-toggle="pill" href="#lend-home-page" role="tab" aria-controls="v-pills-home" aria-selected="true">我的账户首页</a>
+                  <a class="nav-link mt-1 text-center" id="v-pills-profile-tab" data-toggle="pill" href="#momey-query-main" role="tab" aria-controls="v-pills-profile" aria-selected="false">我的借出列表</a>
+                  <a class="nav-link mt-1 text-center" id="v-pills-messages-tab" data-toggle="pill" href="#tender-historical-records-main" role="tab" aria-controls="v-pills-messages" aria-selected="false">投标历史记录</a>
+                  <a class="nav-link mt-1 text-center" id="v-pills-settings-tab" data-toggle="pill" href="#current-loan-term" role="tab" aria-controls="v-pills-settings" aria-selected="false">出借人 - 正在竞标中的</a>
+                  <a class="nav-link mt-1  text-center" id="v-pills-profile-tab" data-toggle="pill" href="#black-member-list" role="tab" aria-controls="v-pills-profile" aria-selected="false">我的黑名单</a>
+                  <a class="nav-link mt-1  text-center" id="v-pills-messages-tab" data-toggle="pill" href="#lend-statistics-main" role="tab" aria-controls="v-pills-messages" aria-selected="false">借出统计</a>
+                  <a class="nav-link mt-1 mb-1 text-center" id="v-pills-settings-tab" data-toggle="pill" href="#profit-account-main" role="tab" aria-controls="v-pills-settings" aria-selected="false">收益还款统计</a>
+
+
+				<h5><span class="lend_follow_main_left_icon2"></span>借出工具箱</h5>
+                 <a class="nav-link mt-1  text-center" id="v-pills-home-tab" data-toggle="pill" href="#overdue-analysis-main" role="tab" aria-controls="v-pills-home" aria-selected="true">逾期分析</a>
+                 <a class="nav-link mt-1 mb-1 text-center" id="v-pills-profile-tab" data-toggle="pill" href="#" role="tab" aria-controls="v-pills-profile" aria-selected="false">自动投标记录查询</a>
+
+
+				<h5><span class="lend_follow_main_left_icon3"></span>基本设置</h5>
+
+                  <a class="nav-link mt-1  text-center" id="v-pills-profile-tab" data-toggle="pill" href="#" role="tab" aria-controls="v-pills-profile" aria-selected="false">安全中心</a>
+                  <a class="nav-link mt-1  text-center" id="v-pills-messages-tab" data-toggle="pill" href="#edit-user-profile" role="tab" aria-controls="v-pills-messages" aria-selected="false">编辑个人资料</a>
+                  <a class="nav-link mt-1 mb-1 text-center" id="v-pills-settings-tab" data-toggle="pill" href="#user_credit_rating" role="tab" aria-controls="v-pills-settings" aria-selected="false">个人信用等级</a>
+
+
+				<h5><span class="lend_follow_main_left_icon4"></span>资金管理</h5>
+                  <a class="nav-link mt-1  text-center" id="v-pills-profile-tab" data-toggle="pill" href="#account-recharge-main" role="tab" aria-controls="v-pills-profile" aria-selected="false">账户充值</a>
+                  <a class="nav-link mt-1  text-center" id="v-pills-messages-tab" data-toggle="pill" href="#account-withdrawals-main" role="tab" aria-controls="v-pills-messages" aria-selected="false">账户提现</a>
+                  <a class="nav-link mt-1 mb-1 text-center" id="v-pills-settings-tab" data-toggle="pill" href="#changes-in-account-funds-main" role="tab" aria-controls="v-pills-settings" aria-selected="false">账户资金变动记录</a>
+
+
+
+				<h5><span class="lend_follow_main_left_icon5"></span>市场活动</h5>
+				<a class="nav-link mt-1 mb-1 text-center" id="v-pills-settings-tab" data-toggle="pill" href="#" role="tab" aria-controls="v-pills-settings" aria-selected="false">账户资金变动记录</a>
+
+			</div>
+
+			<div class="lend_follow_main_right">
+			<div class="lend_follow_main_title">
+				<div class="lend_follow_main_title_color">1</div>
+				<h1>我的账户首页</h1>
+			</div>
+
+
+			<div class="Right_Main">
+                <div class="tab-content" id="v-pills-tabContent">
+				<!--借出首页-->
+                <div class="tab-pane fade show active lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
+				<div id="RightPage" class="lend_home_page" data-page="0">
+					<div class="account_fund_management_main_right2">
+
+						<div class="account_fund_management_main_right2_1">
+								<h6>最新公告<span>更多</span></h6>
+								<a href="#" class="account_fund_management_main_right2_a">如何发布借款列表？</a>
+								<a href="#" class="account_fund_management_main_right2_a">怎样才能尽快满标？</a>
+								<a href="#" class="account_fund_management_main_right2_a">发标后还需要做什么事情？</a>
+								<a href="#" class="account_fund_management_main_right2_a">审核需要什么资料？</a>
+								<a href="#" class="account_fund_management_main_right2_a">审核需要多少时间？</a>
+						</div>
+
+						<div class="account_fund_management_main_right2_2">
+								<h6>帮助中心<span>更多</span></h6>
+								<a href="#" class="account_fund_management_main_right2_a">如何发布借款列表？</a>
+								<a href="#" class="account_fund_management_main_right2_a">怎样才能尽快满标？</a>
+								<a href="#" class="account_fund_management_main_right2_a">发标后还需要做什么事情？</a>
+								<a href="#" class="account_fund_management_main_right2_a">审核需要什么资料？</a>
+								<a href="#" class="account_fund_management_main_right2_a">审核需要多少时间？</a>
+						</div>
+
+					</div>
+
+					<div class="account_fund_management_main">
+						<div class="account_fund_management_main_left">
+							<img class="rounded-circle" src="{{ MEDIA_URL }}{{ request.user.image.url }}"/>
+						</div>
+
+						<div class="account_fund_management_main_right">
+							<h5>XXXX，欢迎来到本站！</h5>
+							<p class="account_fund_management_main_right_p1">借出信用分：<span class="account_fund_management_main_right_sp1">12分</span></p><p class="account_fund_management_main_right_p2">可用余额：<span class="account_fund_management_main_right_sp1">&yen;500,000</span></p>
+							<hr />
+
+							<table class="account_fund_management_main_right_table" border="" cellspacing="" cellpadding="">
+								<tr>
+									<td colspan="2">账户统计</td>
+								</tr>
+
+								<tr>
+									<th><p class="borrow_home_page_p1">资产总额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+									<th><p class="borrow_home_page_p1">可用金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+								</tr>
+
+								<tr>
+									<th><p class="borrow_home_page_p1">投标中金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+									<th><p class="borrow_home_page_p1">提现中金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+								</tr>
+
+								<tr>
+									<th><p class="borrow_home_page_p1">待收本金：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+									<th><p class="borrow_home_page_p1">待收利息：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
+								</tr>
+
+							</table>
+
+							<p class="account_fund_management_main_right_p4">交易数据详见：<a href="#">[借出统计]</a></p>
+
+
+							<div class="mt-2 " >
+								<div class="d-flex">
+									<div class="p-0 mr-2 ml-5 flex-fill "> <button type="submit" class="btn btn-sm btn-primary btn-block">充值</button></div>
+									<div class="p-0 ml-2 mr-5 flex-fill"><button type="submit" class="btn btn-sm btn-success btn-block">提现</button></div>
+								</div>
+							</div>
+
+<!--							<input type="button" name="account_fund_management_main_right_btn1" id="account_fund_management_main_right_btn1" value="充值" />-->
+<!--							<input type="button" name="account_fund_management_main_right_btn2" id="account_fund_management_main_right_btn2" value="提现" />-->
+
+						</div>
+
+					</div>
+
+						<img class="borrow_home_page_img1" src="{% static 'images/borrow_home_page_img1.jpg' %}"/>
+
+						<table class="borrow_home_page_table" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td colspan="6">我的信用评测</td>
+							</tr>
+
+							<tr>
+								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img1"></div>户口认证</th>
+								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img2"></div>户口认证</th>
+								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img3"></div>户口认证</th>
+								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img4"></div>户口认证</th>
+								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img5"></div>户口认证</th>
+								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img6"></div>户口认证</th>
+							</tr>
+
+						</table>
+				</div>
+                </div>
+
+				<!--我的借出列表-->
+                <div class="tab-pane fade momey_query_main" id="momey-query-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+				<div id="RightPage" class="momey_query_main" data-page="1">
+
+					<div class="lend_follow_main_right_header">
+						<p class="lend_follow_main_right_header_focus">待收款项查询</p>
+						<p>正在收款中款项</p>
+						<p>已还清款项查询</p>
+					</div>
+
+					<!--page1-->
+					<div class="momey_query_main_page1">
+						<div class="momey_query_main_page1_1">
+							从<input type="text" name="" id="momey_query_main_page1_1_text1" value="2016-08-01" /><span class="momey_query_main_page1_1_sp1"></span>
+							到<input type="text" name="" id="momey_query_main_page1_1_text2" value="2016-08-01" /><span class="momey_query_main_page1_1_sp2"></span>
+							<input type="button" name="momey_query_main_page1_1_btn" id="momey_query_main_page1_1_btn" value="查询" />
+							<p class="momey_query_main_page1_1_p1">总金额：<span class="momey_query_main_page1_1_sp3">0</span>元</p>
+						</div>
+
+
+						<table class="momey_query_main_page1_table" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td colspan="5">借出列表</td>
+							</tr>
+
+							<tr>
+								<th>标题</th>
+								<th>投标金额</th>
+								<th>有效金额</th>
+								<th>年利率</th>
+								<th>投标时间</th>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page1_table_p1">我要借款</p></th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>22%</th>
+								<th>2016-08-01</th>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page1_table_p1">我要借款</p></th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>22%</th>
+								<th>2016-08-01</th>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page1_table_p1">我要借款</p></th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>22%</th>
+								<th>2016-08-01</th>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page1_table_p1">我要借款</p></th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>22%</th>
+								<th>2016-08-01</th>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page1_table_p1">我要借款</p></th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>22%</th>
+								<th>2016-08-01</th>
+							</tr>
+
+						</table>
+
+					</div>
+
+					<!--page2-->
+					<div class="momey_query_main_page2">
+						<table class="momey_query_main_page2_table1" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td colspan="3"><span class="momey_query_main_page2_table1_menu1" data-status = "menuhide"></span>2016年底冲量做活动<span class="momey_query_main_page2_table1_sp2">查看电子协议</span></td>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">借入者：</p><span class="momey_query_main_page2_table1_sp3">828482</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">年利率：</p><span class="momey_query_main_page2_table1_sp3">22%</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">借出金额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">应收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">已收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">余额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+						</table>
+
+						<table id="momey_query_main_page2_table1_1" class="momey_query_main_page2_table1_11" border="" cellspacing="" cellpadding="">
+							<tr>
+								<th>还款日</th>
+								<th>已收本息</th>
+								<th>未收本息</th>
+								<th>未收本金</th>
+								<th>未收利息</th>
+								<th>逾期利息/天数</th>
+								<th>状态</th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+						</table>
+
+						<table class="momey_query_main_page2_table2" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td colspan="3"><span class="momey_query_main_page2_table1_menu2" data-status = "menuhide"></span>2016年底冲量做活动<span class="momey_query_main_page2_table1_sp2">查看电子协议</span></td>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">借入者：</p><span class="momey_query_main_page2_table1_sp3">828482</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">年利率：</p><span class="momey_query_main_page2_table1_sp3">22%</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">借出金额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">应收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">已收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">余额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+						</table>
+
+						<table id="momey_query_main_page2_table1_1" class="momey_query_main_page2_table1_12" border="" cellspacing="" cellpadding="">
+							<tr>
+								<th>还款日</th>
+								<th>已收本息</th>
+								<th>未收本息</th>
+								<th>未收本金</th>
+								<th>未收利息</th>
+								<th>逾期利息/天数</th>
+								<th>状态</th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+						</table>
+
+						<table class="momey_query_main_page2_table3" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td colspan="3"><span class="momey_query_main_page2_table1_menu3" data-status = "menuhide"></span>2016年底冲量做活动<span class="momey_query_main_page2_table1_sp2">查看电子协议</span></td>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">借入者：</p><span class="momey_query_main_page2_table1_sp3">828482</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">年利率：</p><span class="momey_query_main_page2_table1_sp3">22%</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">借出金额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">应收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">已收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">余额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+						</table>
+
+						<table id="momey_query_main_page2_table1_1" class="momey_query_main_page2_table1_13" border="" cellspacing="" cellpadding="">
+							<tr>
+								<th>还款日</th>
+								<th>已收本息</th>
+								<th>未收本息</th>
+								<th>未收本金</th>
+								<th>未收利息</th>
+								<th>逾期利息/天数</th>
+								<th>状态</th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+						</table>
+
+					</div>
+
+					<!--page3-->
+					<div class="momey_query_main_page3">
+						<table class="momey_query_main_page2_table1" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td colspan="3"><span class="momey_query_main_page2_table1_menu1" data-status = "menuhide"></span>2016年底冲量做活动<span class="momey_query_main_page2_table1_sp2">查看电子协议</span></td>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">借入者：</p><span class="momey_query_main_page2_table1_sp3">828482</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">年利率：</p><span class="momey_query_main_page2_table1_sp3">22%</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">借出金额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">应收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">已收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">余额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+						</table>
+
+						<table id="momey_query_main_page2_table1_1" class="momey_query_main_page2_table1_11" border="" cellspacing="" cellpadding="">
+							<tr>
+								<th>还款日</th>
+								<th>已收本息</th>
+								<th>未收本息</th>
+								<th>未收本金</th>
+								<th>未收利息</th>
+								<th>逾期利息/天数</th>
+								<th>状态</th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+						</table>
+
+						<table class="momey_query_main_page2_table2" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td colspan="3"><span class="momey_query_main_page2_table1_menu2" data-status = "menuhide"></span>2016年底冲量做活动<span class="momey_query_main_page2_table1_sp2">查看电子协议</span></td>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">借入者：</p><span class="momey_query_main_page2_table1_sp3">828482</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">年利率：</p><span class="momey_query_main_page2_table1_sp3">22%</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">借出金额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">应收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">已收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">余额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+						</table>
+
+						<table id="momey_query_main_page2_table1_1" class="momey_query_main_page2_table1_12" border="" cellspacing="" cellpadding="">
+							<tr>
+								<th>还款日</th>
+								<th>已收本息</th>
+								<th>未收本息</th>
+								<th>未收本金</th>
+								<th>未收利息</th>
+								<th>逾期利息/天数</th>
+								<th>状态</th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+						</table>
+
+						<table class="momey_query_main_page2_table3" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td colspan="3"><span class="momey_query_main_page2_table1_menu3" data-status = "menuhide"></span>2016年底冲量做活动<span class="momey_query_main_page2_table1_sp2">查看电子协议</span></td>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">借入者：</p><span class="momey_query_main_page2_table1_sp3">828482</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">年利率：</p><span class="momey_query_main_page2_table1_sp3">22%</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">借出金额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+
+							<tr>
+								<th><p class="momey_query_main_page2_table1_p1">应收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">已收本息：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+								<th><p class="momey_query_main_page2_table1_p1">余额：</p><span class="momey_query_main_page2_table1_sp3">&yen;8993.21</span></th>
+							</tr>
+						</table>
+
+						<table id="momey_query_main_page2_table1_1" class="momey_query_main_page2_table1_13" border="" cellspacing="" cellpadding="">
+							<tr>
+								<th>还款日</th>
+								<th>已收本息</th>
+								<th>未收本息</th>
+								<th>未收本金</th>
+								<th>未收利息</th>
+								<th>逾期利息/天数</th>
+								<th>状态</th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+
+							<tr>
+								<th>2016-08-11</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;8993.21</th>
+								<th>&yen;89/-30</th>
+								<th><span class="momey_query_main_page2_table1_1_sp1">待还</span></th>
+							</tr>
+						</table>
+
+					</div>
+
+				</div>
+                </div>
+				<!--投标历史记录-->
+                 <div class="tab-pane fade tender_historical_records_main" id="tender-historical-records-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+					<div class="lend_follow_main_right_header">
+						<p class="lend_follow_main_right_header_focus">投标历史记录</p>
+
+						<span class="tender_historical_records_header_sp1"><span class="tender_historical_records_header_sp2"></span>失败</span>
+						<span class="tender_historical_records_header_sp3"><span class="tender_historical_records_header_sp4"></span>成功</span>
+					</div>
+
+					<table class="tender_historical_records_main_table" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td>标题</td>
+							<td>年利率</td>
+							<td>有效金额</td>
+							<td>状态</td>
+							<td>投标时间</td>
+						</tr>
+
+						<tr>
+							<th><span class="tender_historical_records_main_table_sp1">我要借钱</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">20%</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">&yen;500,000</span></th>
+							<th><span class="tender_historical_records_main_table_sp3"></span></th>
+							<th>2016/12/20 14:30:31</th>
+						</tr>
+
+						<tr>
+							<th><span class="tender_historical_records_main_table_sp1">我要借钱</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">20%</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">&yen;500,000</span></th>
+							<th><span class="tender_historical_records_main_table_sp3"></span></th>
+							<th>2016/12/20 14:30:31</th>
+						</tr>
+
+						<tr>
+							<th><span class="tender_historical_records_main_table_sp1">我要借钱</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">20%</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">&yen;500,000</span></th>
+							<th><span class="tender_historical_records_main_table_sp3"></span></th>
+							<th>2016/12/20 14:30:31</th>
+						</tr>
+
+						<tr>
+							<th><span class="tender_historical_records_main_table_sp1">我要借钱</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">20%</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">&yen;500,000</span></th>
+							<th><span class="tender_historical_records_main_table_sp3"></span></th>
+							<th>2016/12/20 14:30:31</th>
+						</tr>
+
+						<tr>
+							<th><span class="tender_historical_records_main_table_sp1">我要借钱</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">20%</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">&yen;500,000</span></th>
+							<th><span class="tender_historical_records_main_table_sp3"></span></th>
+							<th>2016/12/20 14:30:31</th>
+						</tr>
+
+						<tr>
+							<th><span class="tender_historical_records_main_table_sp1">我要借钱</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">20%</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">&yen;500,000</span></th>
+							<th><span class="tender_historical_records_main_table_sp3"></span></th>
+							<th>2016/12/20 14:30:31</th>
+						</tr>
+
+						<tr>
+							<th><span class="tender_historical_records_main_table_sp1">我要借钱</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">20%</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">&yen;500,000</span></th>
+							<th><span class="tender_historical_records_main_table_sp3"></span></th>
+							<th>2016/12/20 14:30:31</th>
+						</tr>
+
+						<tr>
+							<th><span class="tender_historical_records_main_table_sp1">我要借钱</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">20%</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">&yen;500,000</span></th>
+							<th><span class="tender_historical_records_main_table_sp3"></span></th>
+							<th>2016/12/20 14:30:31</th>
+						</tr>
+
+						<tr>
+							<th><span class="tender_historical_records_main_table_sp1">我要借钱</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">20%</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">&yen;500,000</span></th>
+							<th><span class="tender_historical_records_main_table_sp3"></span></th>
+							<th>2016/12/20 14:30:31</th>
+						</tr>
+					</table>
+
+					<div class="message_main_page lend_follow_main_right_page">
+						<ul>
+							<li class="message_page">1</li>
+							<li>2</li>
+							<li>3</li>
+							<li>4</li>
+							<li>下一页<span></span></li>
+
+						</ul>
+					</div>
+
+				</div>
+
+				<!--正在竞标的借款-->
+                 <div class="tab-pane fade blacklist_main" id="current-loan-term" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+					<div class="lend_follow_main_right_header">
+						<p class="lend_follow_main_right_header_focus">正在竞标的借款</p>
+
+						<span class="blacklist_main_header_sp1"><span class="blacklist_main_header_sp2"></span>失败</span>
+						<span class="blacklist_main_header_sp3"><span class="blacklist_main_header_sp4"></span>进行中</span>
+						<span class="blacklist_main_header_sp5"><span class="blacklist_main_header_sp6"></span>审核中</span>
+					</div>
+
+
+					<table class="blacklist_main_table competitive_tender_table" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td>借入者</td>
+							<td>年利率</td>
+							<td>有效/投标金额</td>
+							<td>列表进度</td>
+							<td>状态</td>
+							<td>投标时间</td>
+							<td>最晚结束时间</td>
+						</tr>
+
+						<tr>
+							<th><span class="blacklist_main_table_sp1 competitive_tender_sp1">88832832</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">20%</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">&yen;500,000/&yen;500</span></th>
+							<th style="color: #8d8d8d;">
+								<div class="blacklist_main_table_schedule_bg">
+									<div class="blacklist_main_table_schedule"></div>
+								</div><br />
+								100%已完成
+							</th>
+							<th><span class="blacklist_main_table_sp3 competitive_tender_sp1"></span></th>
+							<th><span class="blacklist_main_table_sp4">2013/12/20<br />
+							14:30:31</span>
+							</th>
+							<th>2013/12/20<br />
+							14:30:31
+							</th>
+						</tr>
+
+						<tr>
+							<th><span class="blacklist_main_table_sp1 competitive_tender_sp1">88832832</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">20%</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">&yen;500,000/&yen;500</span></th>
+							<th style="color: #8d8d8d;">
+								<div class="blacklist_main_table_schedule_bg">
+									<div class="blacklist_main_table_schedule"></div>
+								</div><br />
+								100%已完成
+							</th>
+							<th><span class="blacklist_main_table_sp3 competitive_tender_sp1"></span></th>
+							<th><span class="blacklist_main_table_sp4">2013/12/20<br />
+							14:30:31</span>
+							</th>
+							<th>2013/12/20<br />
+							14:30:31
+							</th>
+						</tr>
+
+						<tr>
+							<th><span class="blacklist_main_table_sp1 competitive_tender_sp1">88832832</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">20%</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">&yen;500,000/&yen;500</span></th>
+							<th style="color: #8d8d8d;">
+								<div class="blacklist_main_table_schedule_bg">
+									<div class="blacklist_main_table_schedule"></div>
+								</div><br />
+								100%已完成
+							</th>
+							<th><span class="blacklist_main_table_sp3 competitive_tender_sp1"></span></th>
+							<th><span class="blacklist_main_table_sp4">2013/12/20<br />
+							14:30:31</span>
+							</th>
+							<th>2013/12/20<br />
+							14:30:31
+							</th>
+						</tr>
+
+						<tr>
+							<th><span class="blacklist_main_table_sp1 competitive_tender_sp1">88832832</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">20%</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">&yen;500,000/&yen;500</span></th>
+							<th style="color: #8d8d8d;">
+								<div class="blacklist_main_table_schedule_bg">
+									<div class="blacklist_main_table_schedule"></div>
+								</div><br />
+								100%已完成
+							</th>
+							<th><span class="blacklist_main_table_sp3 competitive_tender_sp1"></span></th>
+							<th><span class="blacklist_main_table_sp4">2013/12/20<br />
+							14:30:31</span>
+							</th>
+							<th>2013/12/20<br />
+							14:30:31
+							</th>
+						</tr>
+
+						<tr>
+							<th><span class="blacklist_main_table_sp1 competitive_tender_sp1">88832832</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">20%</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">&yen;500,000/&yen;500</span></th>
+							<th style="color: #8d8d8d;">
+								<div class="blacklist_main_table_schedule_bg">
+									<div class="blacklist_main_table_schedule"></div>
+								</div><br />
+								100%已完成
+							</th>
+							<th><span class="blacklist_main_table_sp3 competitive_tender_sp1"></span></th>
+							<th><span class="blacklist_main_table_sp4">2013/12/20<br />
+							14:30:31</span>
+							</th>
+							<th>2013/12/20<br />
+							14:30:31
+							</th>
+						</tr>
+
+						<tr>
+							<th><span class="blacklist_main_table_sp1 competitive_tender_sp1">88832832</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">20%</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">&yen;500,000/&yen;500</span></th>
+							<th style="color: #8d8d8d;">
+								<div class="blacklist_main_table_schedule_bg">
+									<div class="blacklist_main_table_schedule"></div>
+								</div><br />
+								100%已完成
+							</th>
+							<th><span class="blacklist_main_table_sp3 competitive_tender_sp1"></span></th>
+							<th><span class="blacklist_main_table_sp4">2013/12/20<br />
+							14:30:31</span>
+							</th>
+							<th>2013/12/20<br />
+							14:30:31
+							</th>
+						</tr>
+
+						<tr>
+							<th><span class="blacklist_main_table_sp1 competitive_tender_sp1">88832832</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">20%</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">&yen;500,000/&yen;500</span></th>
+							<th style="color: #8d8d8d;">
+								<div class="blacklist_main_table_schedule_bg">
+									<div class="blacklist_main_table_schedule"></div>
+								</div><br />
+								100%已完成
+							</th>
+							<th><span class="blacklist_main_table_sp3 competitive_tender_sp1"></span></th>
+							<th><span class="blacklist_main_table_sp4">2013/12/20<br />
+							14:30:31</span>
+							</th>
+							<th>2013/12/20<br />
+							14:30:31
+							</th>
+						</tr>
+
+					</table>
+
+					<div class="message_main_page lend_follow_main_right_page">
+					<ul>
+						<li class="message_page">1</li>
+						<li>2</li>
+						<li>3</li>
+						<li>4</li>
+						<li>下一页<span></span></li>
+
+					</ul>
+				</div>
+
+				</div>
+
+				<!--我的黑名单-->
+                <div class="tab-pane fade blacklist_main" id="black-member-list" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+
+						<div class="blacklist_tips">
+							<p class="blacklist_tips_p1">提示：</p>
+							<p class="blacklist_tips_p2">提示文字内容提示文字内容提示文字内容提示文字内容提示文字内容提示文字内容提示文字内容提示文字内容提示文字内容提示文字内容提示文字内容提示文字内容提示文字内容提示文字内容提</p>
+						</div>
+
+						<div class="lend_follow_main_right_header">
+							<p class="lend_follow_main_right_header_focus">我的黑名单</p>
+
+							<span class="blacklist_main_header_sp1"><span class="blacklist_main_header_sp2"></span>失败</span>
+							<span class="blacklist_main_header_sp3"><span class="blacklist_main_header_sp4"></span>进行中</span>
+							<span class="blacklist_main_header_sp5"><span class="blacklist_main_header_sp6"></span>审核中</span>
+						</div>
+
+
+						<table class="blacklist_main_table" border="" cellspacing="" cellpadding="">
+							<tr>
+								<td>用户名</td>
+								<td>逾期本金/已还金额/投标金额</td>
+								<td>提供催收线索</td>
+								<td>逾期天数（曾逾期最大天数）</td>
+								<td>催收成功可能性</td>
+								<td>曝光资料</td>
+							</tr>
+
+							<tr>
+								<th><span class="blacklist_main_table_sp1">88832832</span></th>
+								<th><span class="blacklist_main_table_sp2">&yen;500,000/&yen;500/&yen;500,000</span></th>
+								<th>线索</th>
+								<th><span class="blacklist_main_table_sp2">30(180)</span></th>
+								<th><span class="blacklist_main_table_sp2">20%</span></th>
+								<th><span class="blacklist_main_table_sp2">资料</span></th>
+
+							</tr>
+
+							<tr>
+								<th><span class="blacklist_main_table_sp1">88832832</span></th>
+								<th><span class="blacklist_main_table_sp2">&yen;500,000/&yen;500/&yen;500,000</span></th>
+								<th>线索</th>
+								<th><span class="blacklist_main_table_sp2">30(180)</span></th>
+								<th><span class="blacklist_main_table_sp2">20%</span></th>
+								<th><span class="blacklist_main_table_sp2">资料</span></th>
+
+							</tr>
+
+							<tr>
+								<th><span class="blacklist_main_table_sp1">88832832</span></th>
+								<th><span class="blacklist_main_table_sp2">&yen;500,000/&yen;500/&yen;500,000</span></th>
+								<th>线索</th>
+								<th><span class="blacklist_main_table_sp2">30(180)</span></th>
+								<th><span class="blacklist_main_table_sp2">20%</span></th>
+								<th><span class="blacklist_main_table_sp2">资料</span></th>
+
+							</tr>
+
+							<tr>
+								<th><span class="blacklist_main_table_sp1">88832832</span></th>
+								<th><span class="blacklist_main_table_sp2">&yen;500,000/&yen;500/&yen;500,000</span></th>
+								<th>线索</th>
+								<th><span class="blacklist_main_table_sp2">30(180)</span></th>
+								<th><span class="blacklist_main_table_sp2">20%</span></th>
+								<th><span class="blacklist_main_table_sp2">资料</span></th>
+
+							</tr>
+
+							<tr>
+								<th><span class="blacklist_main_table_sp1">88832832</span></th>
+								<th><span class="blacklist_main_table_sp2">&yen;500,000/&yen;500/&yen;500,000</span></th>
+								<th>线索</th>
+								<th><span class="blacklist_main_table_sp2">30(180)</span></th>
+								<th><span class="blacklist_main_table_sp2">20%</span></th>
+								<th><span class="blacklist_main_table_sp2">资料</span></th>
+
+							</tr>
+
+							<tr>
+								<th><span class="blacklist_main_table_sp1">88832832</span></th>
+								<th><span class="blacklist_main_table_sp2">&yen;500,000/&yen;500/&yen;500,000</span></th>
+								<th>线索</th>
+								<th><span class="blacklist_main_table_sp2">30(180)</span></th>
+								<th><span class="blacklist_main_table_sp2">20%</span></th>
+								<th><span class="blacklist_main_table_sp2">资料</span></th>
+
+							</tr>
+
+							<tr>
+								<th><span class="blacklist_main_table_sp1">88832832</span></th>
+								<th><span class="blacklist_main_table_sp2">&yen;500,000/&yen;500/&yen;500,000</span></th>
+								<th>线索</th>
+								<th><span class="blacklist_main_table_sp2">30(180)</span></th>
+								<th><span class="blacklist_main_table_sp2">20%</span></th>
+								<th><span class="blacklist_main_table_sp2">资料</span></th>
+
+							</tr>
+
+							<tr>
+								<th><span class="blacklist_main_table_sp1">88832832</span></th>
+								<th><span class="blacklist_main_table_sp2">&yen;500,000/&yen;500/&yen;500,000</span></th>
+								<th>线索</th>
+								<th><span class="blacklist_main_table_sp2">30(180)</span></th>
+								<th><span class="blacklist_main_table_sp2">20%</span></th>
+								<th><span class="blacklist_main_table_sp2">资料</span></th>
+
+							</tr>
+
+						</table>
+
+						<div class="message_main_page lend_follow_main_right_page">
+						<ul>
+							<li class="message_page">1</li>
+							<li>2</li>
+							<li>3</li>
+							<li>4</li>
+							<li>下一页<span></span></li>
+
+						</ul>
+					</div>
+
+				</div>
+
+				<!--借出统计-->
+                <div class="tab-pane fade blend_statistics_main" id="lend-statistics-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+					<table class="lend_statistics_table" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td colspan="2">借出数据分析</td>
+						</tr>
+
+						<tr>
+							<th>加权平均收益率<span>18%</span></th>
+							<th>平均每笔借出金额<span>&yen;83.21</span></th>
+						</tr>
+
+						<tr>
+							<th colspan="2">平均投标期限<span>5个月</span></th>
+						</tr>
+
+					</table>
+
+
+					<table class="lend_statistics_table1" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td colspan="2">借出交易统计</td>
+						</tr>
+
+						<tr>
+							<th><p class="lend_statistics_table1_p">总借出额</p><span class="lend_statistics_table1_sp">&yen;88.00</span></th>
+							<th><p class="lend_statistics_table1_p">总借出笔数</p><span class="lend_statistics_table1_sp">12</span></th>
+						</tr>
+
+						<tr>
+							<th><p class="lend_statistics_table1_p">已回收本息总额</p><span class="lend_statistics_table1_sp">&yen;88.00</span></th>
+							<th><p class="lend_statistics_table1_p">已回收笔数</p><span class="lend_statistics_table1_sp">12</span></th>
+						</tr>
+
+						<tr>
+							<th><p class="lend_statistics_table1_p">待回收本息总额</p><span class="lend_statistics_table1_sp">&yen;88.00</span></th>
+							<th><p class="lend_statistics_table1_p">待回收笔数</p><span class="lend_statistics_table1_sp">12</span></th>
+						</tr>
+
+						<tr>
+							<th><p class="lend_statistics_table1_p">已收利息总额</p><span class="lend_statistics_table1_sp">&yen;88.00</span></th>
+							<th><p class="lend_statistics_table1_p">坏账计提笔数</p><span class="lend_statistics_table1_sp">12</span></th>
+						</tr>
+
+						<tr>
+							<th><p class="lend_statistics_table1_p">待收利息总额</p><span class="lend_statistics_table1_sp">&yen;88.00</span></th>
+							<th><p class="lend_statistics_table1_p">正常收款期数</p><span class="lend_statistics_table1_sp">12</span></th>
+						</tr>
+
+						<tr>
+							<th><p class="lend_statistics_table1_p">已收罚息总额</p><span class="lend_statistics_table1_sp">&yen;88.00</span></th>
+							<th><p class="lend_statistics_table1_p">已收回逾期期数</p><span class="lend_statistics_table1_sp">12</span></th>
+						</tr>
+
+						<tr>
+							<th><p class="lend_statistics_table1_p">坏账计提</p><span class="lend_statistics_table1_sp">&yen;88.00</span></th>
+							<th><p class="lend_statistics_table1_p">代收款期数</p><span class="lend_statistics_table1_sp">12</span></th>
+						</tr>
+
+						<tr>
+							<th><p class="lend_statistics_table1_p">坏账计提利息</p><span class="lend_statistics_table1_sp">&yen;88.00</span></th>
+							<th><p class="lend_statistics_table1_p"></p><span class="lend_statistics_table1_sp"></span></th>
+						</tr>
+
+					</table>
+				</div>
+
+				<!--收益还款统计-->
+                 <div class="tab-pane fade profit_account_main" id="profit-account-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+
+					<div class="profit_account_main1">
+
+						<div class="profit_account_main1_content_bg1">
+						2016年8月1日<span class="profit_account_main1_content_btn1">
+							<span></span>
+						</span>
+						</div>
+
+						<p class="profit_account_main1_p1">至</p>
+
+						<div class="profit_account_main1_content_bg2">
+							2016年8月1日<span class="profit_account_main1_content_btn2">
+								<span></span>
+							</span>
+						</div>
+
+						<input type="button" name="" id="profit_account_main_btn" value="确定" />
+
+					</div>
+
+					<table class="profit_account_main2" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td colspan="5">收益统计/逾期统计</td>
+						</tr>
+
+						<tr>
+							<th>信用等级</th>
+							<th>回报率</th>
+							<th>正常还款</th>
+							<th>逾期31-60天</th>
+							<th>逾期61-90天</th>
+						</tr>
+
+						<tr>
+							<th><strong>B级以上</strong></th>
+							<th>22%</th>
+							<th>22%</th>
+							<th>22%</th>
+							<th>22%</th>
+						</tr>
+
+						<tr>
+							<th><strong>C</strong></th>
+							<th>22%</th>
+							<th>22%</th>
+							<th>22%</th>
+							<th>22%</th>
+						</tr>
+
+						<tr>
+							<th><strong>D</strong></th>
+							<th>22%</th>
+							<th>22%</th>
+							<th>22%</th>
+							<th>22%</th>
+						</tr>
+
+						<tr>
+							<th><strong>E级以下</strong></th>
+							<th>22%</th>
+							<th>22%</th>
+							<th>22%</th>
+							<th>22%</th>
+						</tr>
+
+					</table>
+
+					<div class="profit_account_main3">
+						<p>注：<br />
+						1：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容。<br />
+						2：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容。<br />
+						3：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容。</p>
+					</div>
+
+				</div>
+
+				<!--逾期分析-->
+                 <div class="tab-pane fade overdue_analysis_main" id="overdue-analysis-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+
+					<table class="overdue_analysis_table" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td colspan="4">不同信用等级的逾期统计</td>
+						</tr>
+
+						<tr>
+							<th>信用等级</th>
+							<th>逾期>30天</th>
+							<th>逾期>90天</th>
+							<th>借出金额</th>
+						</tr>
+
+						<tr>
+							<th>D</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+						</tr>
+
+						<tr>
+							<th>E</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+						</tr>
+
+						<tr>
+							<th>HR</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+						</tr>
+
+					</table>
+
+					<table class="overdue_analysis_table" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td colspan="4">多处借款的逾期统计</td>
+						</tr>
+
+						<tr>
+							<th>多处借款</th>
+							<th>逾期>30天</th>
+							<th>逾期>90天</th>
+							<th>借出金额</th>
+						</tr>
+
+						<tr>
+							<th>D</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+						</tr>
+
+						<tr>
+							<th>E</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+						</tr>
+
+						<tr>
+							<th>HR</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+						</tr>
+
+					</table>
+
+					<table class="overdue_analysis_table2" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td>借出列表的逾期</td>
+						</tr>
+
+						<tr>
+							<th>逾期超过90天，将会计入坏账计提</th>
+						</tr>
+
+					</table>
+				</div>
+
+                 <!--编辑个人资料-->
+                 <div class="tab-pane fade overdue_analysis_main" id="edit-user-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+
+				<div class="container bootstrap snippet mt-4">
+
+                    <div class="row">
+                        <div class="col-sm-3"><!--left col-->
+
+                                   <iframe id='frameFile' name='frameFile' style='display: none;'></iframe>
+                                    <form class="clearfix" id="jsAvatarForm" enctype="multipart/form-data" autocomplete="off" method="post" action="{% url 'users:image_upload' %}" target='frameFile'>
+                {#                        <label class="changearea" for="avatarUp">#}
+                                            <span id="avatardiv" class="pic">
+                {#                                <img width="100" height="100" class="js-img-show" id="avatarShow" src="{{ MEDIA_URL }}{{ request.user.image.url }}"/>#}
+                                                 <img  src="{{ MEDIA_URL }}{{ request.user.image.url }}" id="avatarShow" class="h-100 w-100 avatar img-circle rounded-circle img-thumbnail js-img-show" alt="avatar"/>
+                                                  <h6 class="text-center mt-2" >修改头像</h6>
+                                            </span>
+
+                                            <div class="fl upload-inp-box mt-2" >
+
+                                                <input type="file" name="image" id="avatarUp"  class="text-center center-block js-img-up file-upload"/>
+                                            </div>
+                {#                        </label>#}
+                                        {% csrf_token %}
+                                    </form>
+
+
+                            <div class="card mb-2">
+                                <div class="card-header">Website <i class="fa fa-link fa-1x"></i></div>
+                                <div class="card-body"><a href="http://bootnipets.com">bootnipets.com</a></div>
+                            </div>
+
+                            <ul class="list-group mb-2">
+                                <li class="list-group-item text-muted">Activity <i class="fa fa-dashboard fa-1x"></i></li>
+                                <li class="list-group-item text-left"><span class=""><strong>Shares</strong></span> 125</li>
+                                <li class="list-group-item text-left"><span class="pull-left"><strong>Likes</strong></span> 13</li>
+                                <li class="list-group-item text-left"><span class="pull-left"><strong>Posts</strong></span> 37</li>
+                                <li class="list-group-item text-left"><span class="pull-left"><strong>Followers</strong></span> 78</li>
+                            </ul>
+
+                            <div class="card ">
+                                <div class="card-header">Social Media</div>
+                                <div class="card-body">
+                                    <i class="fa fa-facebook fa-2x"></i> <i class="fa fa-github fa-2x"></i> <i class="fa fa-twitter fa-2x"></i> <i class="fa fa-pinterest fa-2x"></i> <i class="fa fa-google-plus fa-2x"></i>
+                                </div>
+                            </div>
+
+                        </div><!--/col-3-->
+                        <div class="col-sm-9">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item"><a data-toggle="tab" class="nav-link active" href="#people-basic-profile">我的基本信息</a></li>
+                                <li class="nav-item"><a data-toggle="tab" class="nav-link " href="#family-profile">我的家庭情况</a></li>
+                                <li class="nav-item"><a data-toggle="tab" class="nav-link " href="#company-profile">我的单位情况</a></li>
+                            </ul>
+
+                               <!--个人资料编辑列表-->
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="people-basic-profile">
+                                    <hr>
+                                    <form class="form" id="jsEditUserBasicProfileForm" autocomplete="off">
+                                         <!--个人资料编辑第一列-->
+                                            <div class="form-row">
+                                                <div class="form-group col-md-6">
+                                                    <label for="mobile">手机</label>
+                                                    <input type="text" class="form-control" value="{{ request.user.contact_number|default:"" }}" id="mobile" name="contact_number" placeholder="电话号码" title="enter your mobile number if any." required>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label for="QQAccount">QQ</label>
+                                                    <input type="text" class="form-control" value="{{ request.user.qq|default:"" }}" name="qq" id="QQAccount" placeholder="QQ号码" >
+                                                </div>
+                                            </div>
+
+                                         <!--个人资料编辑第二列-->
+                                                    <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                  <label for="inputEducationDegree">教育层次</label>
+                                                <div class="input-group mb-3">
+
+                                                  <select class="custom-select" id="highest_qualification" name="highest_qualification" aria-label="Example select with button addon">
+                                                    <option selected>
+                                                    {% if request.user.get_borrower.highest_qualification == "doctor" %}博士
+                                                    {% elif request.user.get_borrower.highest_qualification == "college" %}大专
+                                                    {% elif request.user.get_borrower.highest_qualification == "bachelor" %}本科
+                                                    {% elif request.user.get_borrower.highest_qualification == "master" %}硕士
+                                                    {% else %}选择
+                                                    {% endif %}
+                                                    </option>
+                                                    <option value="college">大专</option>
+                                                    <option value="bachelor">本科</option>
+                                                      <option value="master">硕士</option>
+                                                      <option value="doctor">博士</option>
+                                                  </select>
+
+                                                 <div class="input-group-prepend">
+                                                    <button class="btn btn-outline-secondary" type="button">学历</button>
+                                                  </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                                 <div class="form-group col-md-6">
+                                                     <label for="inputIsPurchasingCar">性别</label>
+                                                <div>
+                                                         <div class="form-check row ml-1 mb-1 form-check-inline">
+                                                          <input class="form-check-input form-control-lg" type="radio"  name="gender" id="inlineRadio1" value="male" {% if request.user.gender == "male" %} checked {% else %} {% endif %}>
+                                                          <label class="form-check-label" for="inlineRadio1">男</label>
+                                                        </div>
+
+                                                        <div class="form-check row ml-1 mb-1 form-check-inline">
+                                                          <input class="form-check-input form-control-lg" type="radio" name="gender" id="inlineRadio2" value="female" {% if request.user.gender == "female" %} checked {% else %} {% endif %} >
+                                                          <label class="form-check-label" for="inlineRadio2">女</label>
+                                                        </div>
+                                                </div>
+                                                </div>
+                                                    </div>
+
+
+                                        <!--个人资料编辑第三列-->
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="inputUniversityName">大学名称</label>
+                                                <input type="text" class="form-control" value="{{ request.user.get_borrower.university_name|default:"无"  }}" id="universityName" name="university_name" placeholder="大学名称" title="enter your mobile number if any." >
+                                            </div>
+
+                                                    <div class="form-group col-md-6">
+                                                    <label for="inputYearOfGraduate">毕业年份</label>
+                                                    <div class="input-group ">
+                                                      <input type="text" class="form-control yearselect" value="{{ request.user.get_borrower.pass_out_year|default:"2010"  }}" name="pass_out_year" id="yearOfGraduate" placeholder="2000" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                                        <div class="input-group-append">
+                                                        <span class="input-group-text" id="basic-addon2">年</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                        </div>
+
+                                         <!--个人资料编辑第四列-->
+                                            <div class="form-group">
+                                                  <label for="inputIdenticalCard">身份证号码</label>
+                                                <input type="text" name="identity_number" id="identity_number" value="{{ request.user.get_borrower.identity_number|default:""  }}" class="form-control" placeholder="请输入身份证号码" required>
+                                            </div>
+
+
+                                         <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <br>
+                                                <button class="btn btn-lg btn-primary" id="jsEditUserBasicProfileBtn">Save</button>
+                                                <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Reset</button>
+                                            </div>
+                                        </div>
+                                        {% csrf_token %}
+                                    </form>
+
+                                    <hr>
+
+                                </div><!--/tab-pane-->
+
+                                <div class="tab-pane" id="family-profile">
+                                    <hr>
+                                    <form class="form" id="jsEditUserFamilyProfileForm" autocomplete="off">
+                                           <!--家庭情况第一列-->
+                                               <div class="form-row">
+
+                                               <div class="form-group col-md-6">
+                                                    <label for="inputMarriageState">婚姻状况</label>
+                                                    <select id="inputMarriageState" name="marriage_state" class="form-control">
+                                                        <option selected>
+                                                     {% if request.user.get_borrower.marriage_state == "1" %}未婚
+                                                     {% elif request.user.get_borrower.marriage_state == "2" %}已婚
+                                                    {% elif request.user.get_borrower.marriage_state == "3" %}丧偶
+                                                    {% elif request.user.get_borrower.marriage_state == "4" %}离婚
+                                                    {% else %}选择
+                                                    {% endif %}
+                                                       </option>
+                                                        <option value="1">未婚</option>
+                                                        <option value="2">已婚</option>
+                                                         <option value="3">丧偶</option>
+                                                         <option value="4">离婚</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="inputDwellingCondition">住宅状况</label>
+                                                    <select id="inputDwellingCondition" name="dwelling_condition" class="form-control">
+                                                        <option selected>
+                                                     {% if request.user.get_borrower.dwelling_condition == 1 %}商品房
+                                                    {% elif request.user.get_borrower.dwelling_condition == 2 %}经济适用房
+                                                    {% elif request.user.get_borrower.dwelling_condition == 3 %}自建私有房
+                                                    {% elif request.user.get_borrower.dwelling_condition == 4 %}租赁房
+                                                                    {% elif request.user.get_borrower.dwelling_condition == "5" %}单位福利分房
+                                                                    {% elif request.user.get_borrower.dwelling_condition == "6" %}学生宿舍
+                                                    {% else %}选择
+                                                    {% endif %}
+                                                            </option>
+                                                        </option>
+                                                        <option value="1">商品房</option>
+                                                        <option value="2">经济适用房</option>
+                                                         <option value="3">自建私有房</option>
+                                                         <option value="4">租赁房</option>
+                                                        <option value="5">单位福利分房</option>
+                                                        <option value="6">学生宿舍</option>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+
+                                            <!--家庭情况第二列-->
+                                           <div class="form-group">
+                                               <label for="inputFamilyAddress">家庭地址</label>
+                                            <div class="citys form-row col-xs-6" id="demo3">
+
+                                            <select  class="form-control col-md-3 ml-1 mr-2" name="province" id="province"></select>
+                                            <select  class="form-control col-md-3 mr-2" name="city"></select>
+                                            <select  class="form-control col-md-3 mr-2" name="area"></select>
+                                            <select  class="form-control col-md-2" name="town"></select>
+                                    <!--    </p>-->
+                                            </div>
+
+                                           </div>
+
+                                            <!--家庭情况三列-->
+                                        <div class="form-group">
+
+                                            <div class="col-xs-6">
+                                                <label for="inputDetailAddress">详细地址</label>
+                                                <input type="text" class="form-control" value="{{ request.user.get_borrower.family_address|default:""  }}" name="detailAddress" id="inputDetailAddress" placeholder="详细地址" title="输入您的详细地址">
+                                            </div>
+                                        </div>
+
+
+                                            <!--家庭情况四列-->
+
+                                        <div class="form-row">
+                                                <div class="form-group col-md-4">
+
+                                                <label for="inputDwellingMobile">住宅电话</label>
+                                                <input type="text" class="form-control" value="{{ request.user.get_borrower.dwelling_mobile|default:""}}" name="dwelling_mobile" id="inputDwellingMobile" placeholder="enter mobile number" title="enter your mobile number if any.">
+
+                                                </div>
+
+                                                <div class="form-group col-md-4">
+                                                    <label for="inputDwellingTime">入住年份</label>
+                                                    <div class="input-group ">
+                                                      <input type="text" class="form-control yearselect" value="{{ request.user.get_borrower.dwelling_time|default:""}}" name="dwelling_time" placeholder="year" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                                        <div class="input-group-append">
+                                                        <span class="input-group-text" id="basic-addon2">年</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                 <div class="form-group col-md-4">
+                                                           <label for="inputIsPurchasingCar">是否购车</label>
+                                                <div>
+                                                         <div class="form-check row ml-1 mb-1 form-check-inline">
+                                                          <input class="form-check-input form-control-lg" type="radio"  name="is_buy_car" id="inlineRadio1" value="1" {% if request.user.get_borrower.is_buy_car == 1 %} checked {% else %} {% endif %}>
+                                                          <label class="form-check-label" for="inlineRadio1">是</label>
+                                                        </div>
+
+                                                        <div class="form-check row ml-1 mb-1 form-check-inline">
+                                                          <input class="form-check-input form-control-lg" type="radio" name="is_buy_car" id="inlineRadio2" value="0" {% if request.user.get_borrower.is_buy_car == 0 %} checked {% else %}  {% endif %} >
+                                                          <label class="form-check-label" for="inlineRadio2">否</label>
+                                                        </div>
+                                                </div>
+                                                </div>
+
+                                            </div>
+
+                                         <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <br>
+                                                <button class="btn btn-lg btn-primary" id="jsEditUserFamlityProfileBtn">Save</button>
+                                                <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Reset</button>
+                                            </div>
+                                        </div>
+                                        {% csrf_token %}
+                                    </form>
+
+                                </div><!--/tab-pane-->
+
+                                <div class="tab-pane" id="company-profile"  >
+                                    <hr>
+                                    <form class="form" id="jsEditUserCompanyProfileForm" autocomplete="off">
+                                         <!--公司信息第一列-->
+                                               <div class="form-row">
+
+                                               <div class="form-group col-md-6">
+                                                    <label for="inpute">就业状态</label>
+                                                    <select id="inputEmploymentState" name="employment_state" class="form-control" required>
+                                                        <option selected >
+                                                       {% if request.user.get_borrower.get_employment_detail.employment_state == "employment" %}已就业
+                                                     {% elif request.user.get_borrower.get_employment_detail.employment_state == "unemployment" %}待业
+                                                    {% else %}选择...
+                                                    {% endif %}</option>
+                                                        <option value="employment">已就业</option>
+                                                        <option value="unemployment">待业</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-md-6">
+                                                           <label for="inputWayOfReceivingWage">收入发放方式</label>
+                                                <div>
+                                                         <div class="form-check row ml-1 mb-1 form-check-inline">
+                                                          <input class="form-check-input form-control-lg" type="radio"  name="receive_wage" id="WayOfReceivingWage1" value="bank" {% if request.user.get_borrower.get_employment_detail.receive_wage == "bank" %} checked {% else %} {% endif %}>
+                                                          <label class="form-check-label"  for="WayOfReceivingWage">银行卡发放</label>
+                                                        </div>
+
+                                                        <div class="form-check row ml-1 mb-1 form-check-inline">
+                                                          <input class="form-check-input form-control-lg" type="radio" name="receive_wage" id="WayOfReceivingWage2" value="cash" {% if request.user.get_borrower.get_employment_detail.receive_wage == "cash" %} checked {% else %} {% endif %}>
+                                                          <label class="form-check-label" for="WayOfReceivingWag">现金发放</label>
+                                                        </div>
+                                                </div>
+                                                </div>
+
+
+
+                                            </div>
+                                         <!--公司信息第二列-->
+                                              <div class="form-row">
+
+                                               <div class="form-group col-md-6">
+                                                    <label for="inputEnterpriseType">单位性质</label>
+                                                    <select id="inputEnterpriseType" name="company_type" class="form-control" required>
+                                                        <option selected>
+                                                         {% if request.user.get_borrower.get_employment_detail.company_type == "1" %}国家行政企业
+                                                             {% elif request.user.get_borrower.get_employment_detail.company_type == "2" %}公私合作企业
+                                                             {% elif request.user.get_borrower.get_employment_detail.company_type == "3" %}中外合资企业
+                                                             {% elif request.user.get_borrower.get_employment_detail.company_type == "4" %}社会组织机构
+                                                             {% elif request.user.get_borrower.get_employment_detail.company_type == "5" %}国际组织机构
+                                                             {% elif request.user.get_borrower.get_employment_detail.company_type == "6" %}外资企业
+                                                             {% elif request.user.get_borrower.get_employment_detail.company_type == "7" %}私营企业
+                                                             {% elif request.user.get_borrower.get_employment_detail.company_type == "8" %}集体企业
+                                                             {% elif request.user.get_borrower.get_employment_detail.company_type == "9" %}国防军事企业
+                                                    {% else %}选择...
+                                                    {% endif %}</option>
+                                                        <option value="1">国家行政企业</option>
+                                                        <option value="2">公私合作企业</option>
+                                                         <option value="3">中外合资企业</option>
+                                                         <option value="4">社会组织机构</option>
+                                                        <option value="5">国际组织机构</option>
+                                                        <option value="6">外资企业</option>
+                                                         <option value="7">私营企业</option>
+                                                         <option value="8">集体企业</option>
+                                                         <option value="9">国防军事企业</option>
+                                                    </select>
+                                                </div>
+
+
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="inputWorkingLife">工作年限</label>
+                                                    <div class="input-group mb-3">
+                                                      <input type="text" class="form-control" value="{{ request.user.get_borrower.get_employment_detail.working_life|default:"2"}}" name="working_life" placeholder="year" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                                        <div class="input-group-append">
+                                                        <span class="input-group-text" id="basic-addon2">年</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                         <!--公司信息第三列-->
+                                            <div class="form-row">
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="inputCompanyName">单位名称</label>
+                                                    <input type="text" class="form-control" value="{{request.user.get_borrower.get_employment_detail.company_name|default:"无"}}" name="company_name" id="companyName" required>
+                                                </div>
+
+                                                  <div class="form-group col-md-6">
+                                                    <label for="inputWorkingDepartment">任职部门</label>
+                                                    <input type="text" class="form-control" id="workingDepartment" value="{{ request.user.get_borrower.get_employment_detail.working_department|default:"无"}}" name="working_department" placeholder="部门" title="enter your mobile number if any." required>
+                                                </div>
+                                            </div>
+                                         <!--公司信息第四列-->
+                                              <div class="form-group">
+                                               <label for="inputCompanyAddress">单位地址</label>
+                                            <div class="citys form-row col-xs-6" id="demo4">
+
+                                            <select  class="form-control col-md-3 ml-1 mr-2" name="province" id="province"></select>
+                                            <select  class="form-control col-md-3 mr-2" name="city"></select>
+                                            <select  class="form-control col-md-3 mr-2" name="area"></select>
+                                            <select  class="form-control col-md-2" name="town"></select>
+                                    <!--    </p>-->
+                                            </div>
+
+                                           </div>
+                                          <!--公司信息第五列-->
+                                              <div class="form-group">
+
+                                                    <div class="col-xs-6">
+                                                        <label for="inputCompanyDetailAddress">详细地址</label>
+                                                        <input type="text" class="form-control" value="{{ request.user.get_borrower.get_employment_detail.company_address|default:"无"}}" name="company_address" id="inputCompanyDetailAddress" placeholder="详细地址" title="输入您的详细地址" required>
+                                                    </div>
+                                                </div>
+                                           <!--公司信息第六列-->
+                                                 <div class="form-row">
+                                                    <label for="inputCompanyMobile">单位电话</label>
+                                                    <input type="text" class="form-control" id="CompanyMobile" value="{{ request.user.get_borrower.get_employment_detail.company_mobile|default:"无"}}" name="company_mobile" placeholder="enter mobile number" title="enter your mobile number if any." required >
+                                                </div>
+                                                                 <div class="form-group">
+                                            <div class="col-xs-12">
+                                                <br>
+                                                <button class="btn btn-lg btn-primary" id="jsEditUserCompanyProfileBtn">Save</button>
+                                                <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Reset</button>
+                                            </div>
+                                        </div>
+                                     {% csrf_token %}
+                                    </form>
+                                </div>
+
+                            </div><!--/tab-pane-->
+                        </div><!--/tab-content-->
+
+                    </div><!--/col-9-->
+                </div>
+
+				</div>
+
+                 <!--个人信用等级-->
+                 <div class="tab-pane fade overdue_analysis_main" id="user_credit_rating" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+
+		                <div id="RightPage"  class="">
+
+                            <table class="borrow_credit_rating_table" border="" cellspacing="" cellpadding="">
+                                <tr >
+                                    <th  style="height: 32px;">借出信用总得分：100</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+
+                                <tr>
+                                    <td rowspan="4" style="width: 19.6938%;">实名认证</td>
+                                    <th class="borrow_credit_rating_num text-center">10分</th>
+                                    <th class="borrow_credit_rating_information"><span class="borrow_credit_rating_icon1"></span><a href="#">身份认证</a>(10分)
+                                        <span class="borrow_credit_rating_check"></span></th>
+                                </tr>
+
+                                <tr>
+                                    <th class="borrow_credit_rating_num text-center">10分</th>
+                                    <th class="borrow_credit_rating_information"><span class="borrow_credit_rating_icon2"></span><a href="#">视频认证</a>(10分)
+                                        <span class="borrow_credit_rating_check"></span></th>
+                                </tr>
+
+                                <tr>
+                                    <th class="borrow_credit_rating_num text-center">10分</th>
+                                    <th class="borrow_credit_rating_information"><span class="borrow_credit_rating_icon3"></span><a href="#">学历认证</a>(10分)
+                                    <span class="borrow_credit_rating_check"></span></th>
+                                </tr>
+
+                                <tr>
+                                    <th class="borrow_credit_rating_num text-center">10分</th>
+                                    <th class="borrow_credit_rating_information"><span class="borrow_credit_rating_icon4"></span><a href="#">手机实名认证</a>(10分)
+                                    <span class="borrow_credit_rating_check"></span></th>
+                                </tr>
+
+                                <tr>
+                                    <td>投标得分</td>
+                                    <th class="borrow_credit_rating_num text-center">2分</th>
+                                    <th class="borrow_credit_rating_information"><span class="borrow_credit_rating_icon5"></span>投标成功（借款成功放款）：1次（2分/次）</th>
+                                </tr>
+
+
+                                <tr>
+                                    <td rowspan="3 ">回报得分</td>
+                                    <th class="borrow_credit_rating_num text-center">0</th>
+                                    <th class="borrow_credit_rating_information"><span class="borrow_credit_rating_icon6"></span>收到完整本息：0笔（2分/笔）</th>
+                                </tr>
+
+                                <tr>
+                                    <th class="borrow_credit_rating_num text-center">0</th>
+                                    <th class="borrow_credit_rating_information"><span class="borrow_credit_rating_icon7"></span>收到本息：0次（2分/次，提前15天还款不加信用分）</th>
+                                </tr>
+
+                                <tr>
+                                    <th class="borrow_credit_rating_num text-center">0</th>
+                                    <th class="borrow_credit_rating_information"><span class="borrow_credit_rating_icon8"></span>逾期（31-无期限）：0笔（-10分/笔）</th>
+                                </tr>
+                            </table>
+
+                            <div class="clear"></div>
+
+                            <div class="borrow_credit_rating_box borrow_credit_rating_box2">
+                                <p class="borrow_credit_rating_box_p1">其他认证</p>
+
+                                <p class="borrow_credit_rating_box_p2">0</p>
+                                <p class="borrow_credit_rating_box_p3">是根据用户的提交的其他信息来确定的，包括了年龄，学历，工作，收入等各个因素“资料评分””</p>
+
+                                	        </div>
+			                     	</div>
+                                          <div class="form-group">
+                                                  <div class="col-xs-12">
+                                                 <br>
+                                                     <button class="btn btn-lg btn-primary" onclick="javascript:window.location.href='{% url 'users:authentication_upload' %}'" >完善认证</button>
+                                                     </div>
+                                                 </div>
+                            </div>
+
+
+
+
+				<!--账户充值-->
+                 <div class="tab-pane fade account_recharge_main" id="account-recharge-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+
+						<div class="lend_follow_main_right_header account_recharge_main_header">
+							<p class="lend_follow_main_right_header_focus">即时到账充值</p>
+							<p>非即时到账充值</p>
+						</div>
+
+						<!--page1-->
+						<div class="account_recharge_main1">
+
+							<p class="account_recharge_p1"><span class="account_recharge_p1_icon"></span>1：充值资金可用于进行多项认证、投标、还款等。<br />
+							2：所有资金将由第三方平台 支付宝、财富通、银行等托管，借贷网本身不存放用户的投标保证金。<br />
+							3：支持国内大部分银行的网上银行，充值成功后资金会立刻划拨到您的个人帐户。</p>
+
+							<p class="account_recharge_p2">请选择下面您最便捷的方式进行帐户充值</p><span class="account_recharge_p2_sp">（充值金额小于10元免收手续费）</span><br />
+
+							<p class="account_recharge_p3">填写充值金额：</p><input type="text" name="" id="account_recharge_p3_text" value="6" /><span>元</span><span class="account_recharge_p3_sp2">实际充值金额：6元</span><br />
+
+							<p class="account_recharge_p3">选择支付平台：</p><input type="radio" name="account_recharge_p3_radio" id="account_recharge_p3_radio1" value="" checked="checked" /><div class="account_recharge_p3_pic"><img src="images/account_recharge_p3_pic1.png"/>转账费用：1%</div><input type="radio" name="account_recharge_p3_radio" id="account_recharge_p3_radio2" value="" /><div class="account_recharge_p3_pic"><img src="images/account_recharge_p3_pic2.png"/>转账费用：1%</div><br />
+							<input type="radio" name="account_recharge_p3_radio" id="account_recharge_p3_radio3" value="" /><div class="account_recharge_p3_pic"><img src="images/account_recharge_p3_pic3.png"/>转账费用：1%</div><input type="radio" name="account_recharge_p3_radio" id="account_recharge_p3_radio4" value="" /><div class="account_recharge_p3_pic"><img src="images/account_recharge_p3_pic4.png"/>转账费用：1%</div><br />
+
+							<input type="button" name="account_recharge_btn" id="account_recharge_btn" value="下一步" />
+
+	   					</div>
+
+	   					<!--page2-->
+	   					<div class="account_recharge_main2">
+	   						<p class="account_recharge_main2_p1"><span class="account_recharge_p1_icon"></span>若您的充值金额<span style="color: #e31600;">大于1000元</span>，未来节约汇款手续费，您可以选择支付宝非即时到账充值（转账手续费：封顶10元）<br />
+							若您的充值金额小于1000元，会按照即时充值流程处理，收取1%的手续费（包括VIP用户）</p>
+
+							<p class="account_recharge_main2_p2">您先到支付宝页面<a href="#">http://me.alipay.com/jiedai</a>将资金成功充值到<span>cz@jiedai.com</span>账号，<br />
+							然后回到此页面进行登记。<a href="#">非即时充值使用流程帮助</a></p>
+
+							<p class="account_recharge_p3">选择支付平台：</p><input type="radio" name="account_recharge_main2_radio" id="account_recharge_main2_radio" value="" checked="checked"/><div class="account_recharge_p3_pic"><img src="images/account_recharge_p3_pic2.png"/>转账费用：1%,封顶10元</div><br />
+
+							<p class="account_recharge_p3">填写充值金额：</p><input type="text" name="" id="account_recharge_p3_text" class="account_recharge_main2_text1" value="6" /><span>元</span><span class="account_recharge_p3_sp2">实际充值金额：6元</span><br />
+
+							<span class="account_recharge_main2_sp1">单笔充值金额请输入<span style="color: #e31600;">不小于1000元</span>的数字（可带2位小数）</span><br />
+
+							<p class="account_recharge_p3">填写充值金额：</p><input type="text" name="" id="account_recharge_p3_text" class="account_recharge_main2_text2" value="6" /><br />
+
+							<span class="account_recharge_main2_sp2">请在支付宝非即时充值成功后填写</span><br />
+
+							<input type="button" name="account_recharge_btn" id="account_recharge_btn" class="account_recharge_btn2" value="下一步" />
+
+	   					</div>
+
+	   					<hr class="account_recharge_dashed" />
+
+							<h6>借贷网提醒：</h6>
+							<p class="account_recharge_p4">1：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容。<br />
+							2：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容。<br />
+							3：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容。<br />
+							4：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容充值资金可用金可用
+		   于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容充值资金可用。</p>
+
+		   					<p class="account_recharge_p5">更多资金充值常见问题，请至<a href="#">帮助中心</a>查看</p>
+
+					</div>
+
+					<!--账户提现-->
+                 <div class="tab-pane fade account_withdrawals_main" id="account-withdrawals-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+						<p class="account_withdrawals_main_p1">提现是指把借贷网账户中的余额提取到银行卡中。<br />
+						提取收费标准：账户余额大于3元，即可取出；转账失败将退还手续费（外部接口返还）；</p>
+						<p class="account_withdrawals_main_p2">1-30000元，3元/笔；30001-45000，6元/比。</p>
+
+						<hr class="account_withdrawals_main_dached" />
+
+						<p class="account_recharge_p3">您的借贷网账户：</p><p class="account_withdrawals_main_p3">王昊<span class="account_withdrawals_main_sp1">wanghao@qq.com</span></p><br />
+
+						<p class="account_recharge_p3">提现银行账户：</p>
+
+						<div class="account_withdrawals_main_form">
+							<div class="account_withdrawals_main_form1">
+								<div class="account_withdrawals_main_form_p1">银行名称</div>
+								<div class="account_withdrawals_main_form_p1">银行卡尾号</div>
+								<div class="account_withdrawals_main_form_p1">到账日期</div>
+								<div class="account_withdrawals_main_form_p1">操作</div>
+							</div>
+							<div class="account_withdrawals_main_form2">
+								<div class="account_withdrawals_main_form_p2">招商银行</div>
+								<div class="account_withdrawals_main_form_p2">4733</div>
+								<div class="account_withdrawals_main_form_p2">预计1-3个工作日到账</div>
+								<div class="account_withdrawals_main_form_p2"><a class="account_withdrawals_main_form_a1">编辑</a></div>
+							</div>
+						</div><br />
+
+						<a class="account_withdrawals_main_form_a2">添加银行卡</a><br />
+
+						<p class="account_recharge_p3">提现金额：</p><input type="text" name="account_withdrawals_main_text" id="account_withdrawals_main_text" value="6" /><span>元</span><br />
+
+						<span class="account_withdrawals_main_sp2"><span style="color: #e31600;">可取金额：</span><span style="color: #e31600;">&yen;50000</span>（待处理的提现申请金额为<span style="color: #e31600;">&yen;5000</span> ;由于您有非提现标，您不能取现的金额为<span style="color: #e31600;">&yen;5000</span>）</span>
+
+						<input type="button" name="account_recharge_btn" id="account_recharge_btn" class="account_withdrawals_main_btn" value="提  交" />
+
+						<hr class="account_recharge_dashed" />
+
+						<h6>借贷网提醒：</h6>
+						<p class="account_recharge_p4">1：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容。<br />
+						2：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容。<br />
+						3：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容。<br />
+						4：充值资金可用于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容充值资金可用金可用
+	   于进行多项认证、投标、还款等提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容提醒内容充值资金可用。</p>
+
+	   					<p class="account_recharge_p5">更多资金充值常见问题，请至<a href="#">帮助中心</a>查看</p>
+
+
+						<div class="BlackScreen"></div>
+
+						<!--编辑-->
+						<div class="account_withdrawals_main_popup1">
+							<h5>编辑新银行卡<span>&times;</span></h5>
+
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>银行账户类型：</p><span class="account_withdrawals_main_popup1_sp2">借记卡</span><br />
+
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>开户人名称：</p><span class="account_withdrawals_main_popup1_sp2">曾飞</span><br />
+
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>选择银行：</p>
+							<div class="account_withdrawals_main_content_bg1">
+								请选择<span class="account_withdrawals_main_content_btn1">
+									<span></span>
+								</span>
+							</div><br />
+
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>开户银行所在城市：</p>
+							<div class="account_withdrawals_main_content_bg2">
+								北京<span class="account_withdrawals_main_content_btn2">
+									<span></span>
+								</span>
+							</div>
+
+							<div class="account_withdrawals_main_content_bg2">
+								北京市<span class="account_withdrawals_main_content_btn2">
+									<span></span>
+								</span>
+							</div>
+							<br />
+
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>开户银行支行名称：</p>
+							<input type="text" name="account_withdrawals_main_popup1_text1" id="account_withdrawals_main_popup1_text1" value="" /><br />
+
+							<span class="account_withdrawals_main_popup1_sp3">没有我需要的支行，请自行填写</span><br />
+
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>银行卡号：</p><span class="account_withdrawals_main_popup1_sp2">************8821</span><br />
+
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>请输入上面银行卡号：</p>
+							<input type="text" name="account_withdrawals_main_popup1_text1" id="account_withdrawals_main_popup1_text2" value="" placeholder="只允许输入数字"/><br />
+
+							<span class="account_withdrawals_main_popup1_sp3">为了保证您的资金安全，请输入之前的银行卡号确认</span><br />
+
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>新的银行卡号：</p>
+							<input type="text" name="account_withdrawals_main_popup1_text1" id="account_withdrawals_main_popup1_text2" value="" placeholder="只允许输入数字"/><br />
+
+							<span class="account_withdrawals_main_popup1_sp3">输入您希望改成的新的银行卡号</span><br />
+
+							<span class="account_withdrawals_main_popup1_sp4">此银行卡的开户名必须为“<span style="color: #df0000;">曾飞</span>”否则提现会失败</span><br />
+
+							<input type="button" name="account_withdrawals_main_popup1_btn1" id="account_withdrawals_main_popup1_btn1" value="确定" />
+							<input type="button" name="account_withdrawals_main_popup1_btn2" id="account_withdrawals_main_popup1_btn2" value="取消" />
+
+
+						</div>
+
+						<!--添加-->
+						<div class="account_withdrawals_main_popup2">
+							<h5>添加新银行卡<span>&times;</span></h5>
+
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1">*</span>银行账户类型：</p><span class="account_withdrawals_main_popup2_sp2">借记卡</span><br />
+
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1">*</span>开户人名称：</p><span class="account_withdrawals_main_popup2_sp2">曾飞</span><br />
+
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1">*</span>选择银行：</p>
+							<div class="account_withdrawals_main_content2_bg1">
+								请选择<span class="account_withdrawals_main_content2_btn1">
+									<span></span>
+								</span>
+							</div><br />
+
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1">*</span>开户银行所在城市：</p>
+							<div class="account_withdrawals_main_content2_bg1">
+								请选择<span class="account_withdrawals_main_content2_btn1">
+									<span></span>
+								</span>
+							</div><br />
+
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1"></span></p>
+							<div class="account_withdrawals_main_content2_bg1">
+								请选择<span class="account_withdrawals_main_content2_btn1">
+									<span></span>
+								</span>
+							</div><br />
+
+							<p class="account_withdrawals_main_popup2_p1"><span class="account_withdrawals_main_popup2_sp1">*</span>开户银行支行名称：</p>
+							<div class="account_withdrawals_main_content2_bg1">
+								请选择<span class="account_withdrawals_main_content2_btn1">
+									<span></span>
+								</span>
+							</div><br />
+
+							<span class="account_withdrawals_main_popup1_sp3">没有我需要的支行，请自行填写</span><br />
+
+							<p class="account_withdrawals_main_popup1_p1"><span class="account_withdrawals_main_popup1_sp1">*</span>银行卡号：</p>
+							<input type="text" name="account_withdrawals_main_popup1_text1" id="account_withdrawals_main_popup1_text2" value="6" placeholder="只允许输入数字"/><br />
+
+							<span class="account_withdrawals_main_popup1_sp4">此银行卡的开户名必须为“<span style="color: #df0000;">曾飞</span>”否则提现会失败</span><br />
+
+							<input type="button" name="account_withdrawals_main_popup1_btn1" id="account_withdrawals_main_popup1_btn1" value="确定" />
+							<input type="button" name="account_withdrawals_main_popup1_btn2" id="account_withdrawals_main_popup1_btn2" value="取消" />
+
+						</div>
+					</div>
+
+				<!--账户资金变动-->
+                  <div class="tab-pane fade changes_in_account_funds_main" id="changes-in-account-funds-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+
+					<div class="changes_in_account_funds_main1">
+						<p class="changes_in_account_funds_main1_p1">资金类型：</p>
+
+						<div class="changes_in_account_funds_main1_content_bg1">
+						借出者投标成功<span class="changes_in_account_funds_main1_content_btn1">
+							<span></span>
+						</span>
+						</div>
+
+						<p class="changes_in_account_funds_main1_p2">时间：</p>
+
+						<div class="changes_in_account_funds_main1_content_bg1">
+							一周以内<span class="changes_in_account_funds_main1_content_btn1">
+								<span></span>
+							</span>
+						</div>
+
+						<input type="button" name="" id="changes_in_account_funds_main_btn" value="确定" />
+
+					</div>
+
+					<table class="changes_in_account_funds_main2" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td colspan="2">资金统计</td>
+						</tr>
+
+						<tr>
+							<th>账户余额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
+							<th>可用余额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
+						</tr>
+
+						<tr>
+							<th>冻结金额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span><span class="changes_in_account_funds_main_sp2">[正在竞标的借款]</span></th>
+							<th>待收金额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span><span class="changes_in_account_funds_main_sp2">[待收的借款]</span></th>
+						</tr>
+
+						<tr>
+							<th>净赚利息：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
+							<th>待还金额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
+						</tr>
+
+					</table>
+
+					<table class="changes_in_account_funds_main3" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td colspan="6">资金流水记录</td>
+						</tr>
+
+						<tr>
+							<th>日期</th>
+							<th>类型</th>
+							<th>支出</th>
+							<th>存入</th>
+							<th>余额</th>
+							<th>说明</th>
+						</tr>
+
+						<tr>
+							<th>2013-08-10<br />22:00</th>
+							<th>充值手续费</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>说明文字说明文字说明文字说<br />明文字说明文字说明文字说明</th>
+						</tr>
+
+						<tr>
+							<th>2013-08-10<br />22:00</th>
+							<th>充值手续费</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>说明文字说明文字说明文字说<br />明文字说明文字说明文字说明</th>
+						</tr>
+
+						<tr>
+							<th>2013-08-10<br />22:00</th>
+							<th>充值手续费</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>&yen;83.21</th>
+							<th>说明文字说明文字说明文字说<br />明文字说明文字说明文字说明</th>
+						</tr>
+
+					</table>
+
+				</div>
+                </div>
+			</div>
+
+
+		</div>
+		</div>
+
+            </div>
+{% endblock %}
+
+{% block custome_jQuery %}
+
+
+    <script type="text/javascript" src="{% static 'js/borrow_home_page.js' %}">  </script>
+        <script src='{% static 'js/plugins/jquery.upload.js' %}' type='text/javascript'></script>
+        <script type="text/javascript" src="{% static 'js/deco-user.js' %}">  </script>
+    		<script  src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+                <script src="{% static 'js/plugins/year-select.js' %}"></script>
+                <script src="{% static 'js/validate.js' %}" type="text/javascript"></script>
+
+        <script type="text/javascript">
+
+
+    </script>
+
+{% endblock %}

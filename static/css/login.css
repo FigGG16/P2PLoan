@@ -1,0 +1,15 @@
+.captcha1 > input{
+     width:186px;
+    height: 35px;
+}
+.captcha1 > img{
+    float:right;
+    margin-top:5px;
+    height: 30px;
+}
+.form-group .mobile-register-captcha{
+    width:85px;
+}
+.form-group .captcha{
+    cursor: pointer;
+}

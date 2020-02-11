@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load upload_tags %}
+{% block custom_css %}
+
+
+  <link rel="stylesheet" href={% static 'css/jquery.fileupload-ui.css' %}>
+{#  <link rel="stylesheet" href={% static 'css/glyphicons.css' %}>#}
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block custome_content %}
+
+		<div class="upload_message_main">
+
+			<div class="upload_message_main_left flex-column nav nav-pills align-content-center justify-content-center" role="tablist" aria-orientation="vertical" id="v-pills-tab">
+
+				<h5 class="text-center"><span class="lend_follow_main_left_icon1"></span>我是借出者</h5>
+                  <a class="nav-link active mt-3  text-center " id="v-pills-home-tab" data-toggle="pill" href="#family_authentication_centent" role="tab" aria-controls="v-pills-home" aria-selected="true"><span id="upload_message_main_icon1"></span>户口认证</a>
+                  <a class="nav-link mt-3 text-center" id="v-pills-profile-tab" data-toggle="pill" href="#education_authentication_centent" role="tab" aria-controls="v-pills-profile" aria-selected="false"><span id="upload_message_main_icon2"></span>学历认证</a>
+                  <a class="nav-link mt-3 text-center" id="v-pills-messages-tab" data-toggle="pill" href="#phone_authentication_centent" role="tab" aria-controls="v-pills-messages" aria-selected="false"><span id="upload_message_main_icon3"></span>手机认证</a>
+                  <a class="nav-link mt-3 text-center" id="v-pills-settings-tab" data-toggle="pill" href="#video_authentication_centent" role="tab" aria-controls="v-pills-settings" aria-selected="false"><span id="upload_message_main_icon5"></span>视频认证</a>
+                  <a class="nav-link mt-3  text-center" id="v-pills-profile-tab" data-toggle="pill" href="#upload_message_centent" role="tab" aria-controls="v-pills-profile" aria-selected="false"><span id="upload_message_main_icon6"></span>上传资料</a>
+
+
+			</div>
+
+			<div class="upload_message_main_right">
+
+                选项标题
+				<div class="upload_message_main_right_title">
+					<div class="upload_message_main_right_title_color">1</div>
+					<h1>户口认证</h1>
+				</div>
+
+				<div class="Principal_protection_main">
+
+                  <div class="tab-content" id="v-pills-tabContent">
+
+					<!--户口认证-->
+                    <div class="tab-pane show active family_authentication_centent" id="family_authentication_centent" role="tabpanel" aria-labelledby="v-pills-home-tab">
+
+
+
+   <form id="fileupload" method="post" action="." enctype="multipart/form-data">{% csrf_token %}
+        <!-- Redirect browsers with JavaScript disabled to the origin page -->
+        <!--<noscript><input type="hidden" name="redirect" value="http://blueimp.github.io/jQuery-File-Upload/"></noscript>-->
+        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+        <div class="mt-3 row fileupload-buttonbar">
+            <div class="col-lg-7">
+                <!-- The fileinput-button span is used to style the file input field as button -->
+                <span class="btn btn-success fileinput-button">
+                    <i class="fa fa-plus"></i>
+                    <span>上传户口资料</span>
+                    <input type="file" name="file" multiple>
+                </span>
+
+                <!-- The loading indicator is shown during file processing -->
+                <span class="fileupload-loading"></span>
+            </div>
+            <!-- The global progress information -->
+            <div class="col-lg-5 fileupload-progress fade">
+                <!-- The global progress bar -->
+                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                </div>
+                <!-- The extended global progress information -->
+                <div class="progress-extended">&nbsp;</div>
+            </div>
+        </div>
+        <!-- The table listing the files available for upload/download -->
+        <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
+    </form>
+
+ {% upload_js %}
+
+
+
+						<p>注：1、如果您的户口曾经发生过迁移、注销或者您曾经除过如果您的户口曾经发生过迁移、注销或者您曾经除过<br />
+		    				  &nbsp;&nbsp;2、如果您的户口曾经发生过迁移、注销或者您曾经除过如果您的户口曾经发生过迁移、注销或<br />
+						资费标准：通过户口认证后，将从您的贷款网账户扣除 <span style="color: #f00;">9.9</span>元认证费</p>
+
+					</div>
+
+					<!--学历认证-->
+                  <div class="tab-pane  show  education_authentication_centent" id="education_authentication_centent" role="tabpanel" aria-labelledby="v-pills-home-tab">
+						<p>限时优惠：若您的学历若您的学历若您的学历若您的学历若您的学历若您的学历若您的学历若您的学历若您的学历若您的学历若您的学历若您的学历<br />
+						1、<span>文字若您的学历文字若您的学历文字若您</span>的学历文字若您的学历文字若您的学历文字若您的学历文字若您的学历文字若您的学历文字若您的学历文字若您的学历文字若您的学历文字若您的学历文字若您的学历<br />
+						<input type="button" name="education_authentication_centent_btn1" id="education_authentication_centent_btn1" value="马上进行学历认证" /><br />
+						2、文字若您的学历文字若您的学历文字若您的学历<span>文字若您的学历文字若您的学历文</span>字若您的学历文字若您的学历文字若您的学历文字若您的学历文字若您的学历文字若您的学历文字若您的学历文字若您的学历<br />
+						<input type="text" name="education_authentication_centent_txt" id="education_authentication_centent_txt" value="" />
+						<input type="button" name="education_authentication_centent_btn2" id="education_authentication_centent_btn2" value="确定" /><br />
+
+						</p>
+					</div>
+
+					<!--手机认证-->
+                   <div class="tab-pane  show  phone_authentication_centent" id="phone_authentication_centent" role="tabpanel" aria-labelledby="v-pills-home-tab">
+						<p>注：1、手机认证目前免费，请用户今早进行认证；<br />
+		    				  &nbsp;&nbsp;2、做手机认证前，需要<span>先绑定手机号；</span><br />
+		    				  &nbsp;&nbsp;3、手机认证目前免费，请用户今早进行认证；<br />
+		    				  &nbsp;&nbsp;4、做手机认证前，需要先绑定手机号；<br />
+		    				  &nbsp;&nbsp;5、手机认证目前免费，请用户今早进行认证；<br />
+		    				  &nbsp;&nbsp;6、做手机认证前，需要先绑定手机号；</p><br />
+						<p>手机号:</p>
+						<input type="text" name="" id="phone_authentication_centent_tet1" value="18583949023" /><br />
+						<p>手机密码:</p>
+						<input type="text" name="" id="phone_authentication_centent_tet2" value="" />
+						<span>北京移动用户请确保“网站密码”和“客服密码”一致。</span><br />
+						<span>网上营业厅连接：</span><a href="#">http://www.bj.10086.cn/index/</a><br />
+						<input type="button" name="phone_authentication_centent_btn" id="phone_authentication_centent_btn" value="确定" />
+						<p>我们将在1-3个工作日尽快帮您认证，请您及时反馈验证码给我，谢谢</p>
+					</div>
+
+					<!--视频认证-->
+                    <div class="tab-pane  show  video_authentication_centent" id="video_authentication_centent" role="tabpanel" aria-labelledby="v-pills-home-tab">
+
+						<div class="video_authentication_explain">
+							<div class="video_authentication_explain1">
+								<span class="video_authentication_explain1_pic"><img src="images/video_authentication_explain1.png"/></span>
+								<p>借款成功率高<span>46%</span><br />
+								       借款列表的受关注度高<span>60%</span></p>
+							</div>
+
+							<div class="video_authentication_explain2">
+								<span class="video_authentication_explain2_pic"><img src="images/video_authentication_explain2.png"/></span>
+								<p>视频认证费用：10元<br />
+								       审核时间：1个工作日内<br />
+								      认证有效期：<span>永久</span></p>
+							</div>
+						</div>
+
+						<div class="video_authentication_content">
+							<div class="video_authentication_box">
+								<h1>视频认证样本</h1>
+								<span class="video_authentication_box_video"><img src="images/video_authentication_box_video.jpg"/></span>
+								<h5>视频中诵读内容请按照如下文字阅读：</h5>
+								<p>我是王昊，正在做贷款网视频认证，我昊，正在做贷款网视频认证，我是王昊，正在做贷款网视频认证，我是正在做贷款网视认证，我是王昊，正在做贷款网视频认证，视频认证，我是王昊，正在做贷款网视频认做贷款网视频认证，我是正在做贷款网视频认证，我是王昊，正在做贷款网视频认证，我是王昊，正在做贷款网视频认证，我是王昊，正在做贷款网视频认证，我是王款网视频在做贷款网视频认证，我是王昊，正在做贷款网视频认证，我是王款网视频认证。</p>
+							</div>
+
+							<div class="video_authentication_box">
+								<h1>视频认证样本</h1>
+								<span class="video_authentication_box_video"><img src="images/video_authentication_box_video.jpg"/></span>
+								<h5>视频中诵读内容请按照如下文字阅读：</h5>
+								<p>我是王昊，正在做贷款网视频认证，我昊，正在做贷款网视频认证，我是王昊，正在做贷款网视频认证，我是正在做贷款网视认证，我是王昊，正在做贷款网视频认证，视频认证，我是王昊，正在做贷款网视频认做贷款网视频认证，我是正在做贷款网视频认证，我是王昊，正在做贷款网视频认证，我是王昊，正在做贷款网视频认证，我是王昊，正在做贷款网视频认证，我是王款网视频在做贷款网视频认证，我是王昊，正在做贷款网视频认证，我是王款网视频认证。</p>
+							</div>
+
+							<span>上传视频文件：</span>
+							<div class="video_authentication_bg">
+								<div class="video_authentication_search">浏览</div>
+							</div>
+							<input type="button" name="video_authentication_btn" id="video_authentication_btn" value="上传" /><br />
+							<span>请上传真实有效的本人视频，可以是avi、mepg、mvrb、3gp、mp4、avi等类型文件。</span>
+						</div>
+					</div>
+
+					<!--上传资料-->
+                      <div class="tab-pane  show  upload_message_centent" id="upload_message_centent" role="tabpanel" aria-labelledby="v-pills-home-tab">
+						<div class="upload_message_main_right_tips">
+							<span></span>
+							<p>我们是一个注重诚信的网络平台。<br />
+							如果我们发现您上传的资料系伪造或有人工修改痕迹，会将你加入系统黑名单，永久取消您在的借款资格。</p>
+						</div>
+
+						<table id="upload_message_main_right_table" border="" cellspacing="" cellpadding="">
+							<tr>
+								<th style="height: 32px;"></th>
+								<th style="text-align: left; padding-left: 15px;">资料类型</th>
+								<th>图片(张)</th>
+								<th>最新上传时间</th>
+								<th>未通过理由</th>
+								<th>状态</th>
+
+							</tr>
+							<tr>
+								<td rowspan="4" style="background: #f8f8f8;">必填项</td>
+								<th style="width: 32%;">个人身份证（正反面）</th>
+								<th>1</th>
+								<th>2012-10-12 21:24:32</th>
+								<th>规格不正确</th>
+								<th><input type="button" name="upload_message_btn" id="upload_message_btn" value="上传资料" /></th>
+
+							</tr>
+
+							<tr>
+								<th>稳定工作证明（劳动合同、工作证、工牌、名片等）</th>
+								<th>1</th>
+								<th>2012-10-12 21:24:32</th>
+								<th>规格不正确</th>
+								<th><input type="button" name="upload_message_btn" id="upload_message_btn" value="上传资料" /></th>
+
+							</tr>
+
+							<tr>
+								<th>个人身份证（正反面）</th>
+								<th>1</th>
+								<th>2012-10-12 21:24:32</th>
+								<th>规格不正确</th>
+								<th><input type="button" name="upload_message_btn" id="upload_message_btn" value="上传资料" /></th>
+
+							</tr>
+
+							<tr>
+								<th>个人身份证（正反面）</th>
+								<th>1</th>
+								<th>2012-10-12 21:24:32</th>
+								<th>规格不正确</th>
+								<th><input type="button" name="upload_message_btn" id="upload_message_btn" value="上传资料" /></th>
+
+							</tr>
+
+						</table>
+						<div class="clear"></div>
+						<h5>友情提示：</h5>
+						<p class="upload_message_main_right_attention">1.用数码相机拍摄前，请把图像尺寸设置成2M。<br />
+						   2.上传资料要求需清晰，完整2M左右的数码照片。图片需清晰可见。<br />
+						   3.上传的图片须是数码相机的未经修改的原图，不可ps裁减等处理，不可上传复印件或扫描件。<br />
+						   4.如果我们发现您资料有做假嫌疑并被确认，将会将您加入系统黑名单，取消借贷资格并可能通过信用合作和第三方共享。</p>
+					</div>
+
+                  </div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+
+<script src="{% static 'js/plugins/js/jquery-1.11.3.min.js' %}"></script>
+{#<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>#}
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script src="{% static 'js/plugins/js/vendor/jquery.ui.widget.js' %}"></script>
+<!-- The Templates plugin is included to render the upload/download listings -->
+<script src="{% static 'js/plugins/js/tmpl.min.js' %}"></script>
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="{% static 'js/plugins/js/load-image.min.js' %}"></script>
+<!-- The Canvas to Blob plugin is included for image resizing functionality -->
+<script src="{% static 'js/plugins/js/canvas-to-blob.min.js' %}"></script>
+<!-- Bootstrap JS is not required, but included for the responsive demo navigation -->
+<script src="{% static 'js/plugins/js/bootstrap.min.js' %}"></script>
+<!-- blueimp Gallery script -->
+<script src="{% static 'js/plugins/js/jquery.blueimp-gallery.min.js' %}"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="{% static 'js/plugins/js/jquery.iframe-transport.js' %}"></script>
+<!-- The basic File Upload plugin -->
+<script src="{% static 'js/plugins/js/jquery.fileupload.js' %}"></script>
+<!-- The File Upload processing plugin -->
+<script src="{% static 'js/plugins/js/jquery.fileupload-process.js' %}"></script>
+<!-- The File Upload image preview & resize plugin -->
+<script src="{% static 'js/plugins/js/jquery.fileupload-image.js' %}"></script>
+<!-- The File Upload audio preview plugin -->
+<script src="{% static 'js/plugins/js/jquery.fileupload-audio.js' %}"></script>
+<!-- The File Upload video preview plugin -->
+<script src="{% static 'js/plugins/js/jquery.fileupload-video.js' %}"></script>
+<!-- The File Upload validation plugin -->
+<script src="{% static 'js/plugins/js/jquery.fileupload-validate.js' %}"></script>
+<!-- The File Upload user interface plugin -->
+<script src="{% static 'js/plugins/js/jquery.fileupload-ui.js' %}"></script>
+<!-- The main application script -->
+<script src="{% static 'js/plugins/js/main.js' %}"></script>
+<script src="{% static 'js/plugins/js/locale.js' %}"></script>
+<script src="{% static 'js/plugins/js/csrf.js' %}"></script>
+
+
+
+{% endblock %}
+
+{% block custome_jQuery %}
+
+{#        <script type="text/javascript" src="{% static 'js/deco-user.js' %}">  </script>#}
+{#                <script src="{% static 'js/jquery-1.10.1.min.js' %}" type="text/javascript" charset="utf-8"></script>#}
+{#    	<script type="text/javascript" src="{% static 'js/Function.js' %}" ></script>#}
+
+
+{% endblock %}
