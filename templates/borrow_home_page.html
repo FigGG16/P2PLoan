@@ -7,10 +7,406 @@
 
 
 
+
     		<script  src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+{#            <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>#}
     		<script  src="{% static 'js/jquery.cities.js' %}"></script>
            <script src="{% static 'js/jquery-migrate-1.2.1.min.js' %}" type="text/javascript"></script>
 
+
+
+        <link rel="stylesheet" href="{% static 'css/core.css' %}" type="text/css" />
+                <link rel="stylesheet" href={% static 'bootstrap-4.3.1/css/bootstrap.css' %}>
+        <link type="text/css" rel="stylesheet" href="{% static 'css/account.css' %}" />
+         <link rel="stylesheet" href={% static 'bootstrap-4.3.1/css/bootstrap.min.css' %}>
+
+
+
+
+    <style type="text/css">
+        #realAuthForm input ,#realAuthForm select{
+            width: 260px;
+        }
+        .idCardItem{
+            width: 160px;
+            height: 150px;
+            float:left;
+            margin-right:10px;
+            border: 1px solid #e3e3e3;
+            text-align: center;
+            padding: 5px;
+        }
+        .uploadImg{
+            width: 120px;
+            height: 100px;
+            margin-top: 5px;
+        }
+        .swfupload{
+            left: 0px;
+            cursor: pointer;
+        }
+        .uploadify{
+            height: 20px;
+            font-size:13px;
+            line-height:20px;
+            text-align:center;
+            position: relative;
+            margin-left:auto;
+            margin-right:auto;
+            cursor:pointer;
+            background-color: #337ab7;
+            border-color: #2e6da4;
+            color: #fff;
+        }
+        #viewExample{
+            position: relative;
+            left: 50px;
+            top: 60px;
+        }
+        .uploadExample{
+            width: 200px;
+            height: 130px;
+            margin-bottom: 20px;
+        }
+    </style>
+    //参照身份证显示
+    <script type="text/javascript">
+           function printPage() {
+                console.log("你好啊 ")
+               $("#modalCrop").modal("show");
+            }
+
+        $(document).ready(function(){
+
+            $('[data-toggle="popover"]').popover({
+                html:true,
+                content:'正面<img src="http://127.0.0.1:8010/media/image/upload_source_2.jpg" class="uploadExample"/><br/>反面<img src="http://127.0.0.1:8010/media/image/upload_source_2_1.jpg" class="uploadExample"/>',
+                trigger:"hover",
+                placement:"top"
+            });
+        });
+    </script>
+
+
+
+{#    //上传认证信息逻辑#}
+    <script>
+
+
+
+
+
+    </script>
+
+{#    //上传身份证逻辑#}
+    <script>
+
+      $('#fileParent').on('change','#file', function () {
+      //上传操作
+      //上传成功后清空file元素中的内容，否则选择同一文件无法触发change事件
+      $("#file").val("");
+  });
+
+
+
+      //crop配置jquey
+        $(function () {
+            //初始化input监听事件
+      /* SCRIPT TO OPEN THE MODAL WITH THE PREVIEW */
+         //添加父类监听事件解决重复上传无效问题
+       $('#inputFileDiv1').on('change','.inputImage1', function () {
+      {#$(".inputImage1").change(function () {#}
+          console.log("FileReader1");
+        if (this.files && this.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            $("#image").attr("src", e.target.result);
+
+            $("#modalCrop").modal("show");
+          };
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+
+        $('#inputFileDiv2').on('change','.inputImage2', function () {
+          {#$(".inputImage2").change(function () {#}
+          console.log("FileReader2");
+        if (this.files && this.files[0]) {
+          var reader2 = new FileReader();
+          reader2.onload = function (e) {
+            $("#image").attr("src", e.target.result);
+            $("#modalCrop").modal("show");
+          };
+          reader2.readAsDataURL(this.files[0]);
+        }
+      });
+
+      /* SCRIPTS TO HANDLE THE CROPPER BOX */
+      var $image = $("#image");
+      var cropBoxData;
+      var canvasData;
+      var uploadedImageURL;
+      $("#modalCrop").on("shown.bs.modal", function () {
+        $image.cropper({
+          viewMode: 1,
+          aspectRatio: NaN,
+          minCropBoxWidth: 200,
+          minCropBoxHeight: 200,
+          ready: function () {
+            $image.cropper("setCanvasData", canvasData);
+            $image.cropper("setCropBoxData", cropBoxData);
+          }
+        });
+      }).on("hidden.bs.modal", function () {
+        cropBoxData = $image.cropper("getCropBoxData");
+        canvasData = $image.cropper("getCanvasData");
+
+         console.log('调用destory()');
+        $image.cropper("destroy");
+
+      });
+
+      $(".js-zoom-in").click(function () {
+        $image.cropper("zoom", 0.1);
+      });
+
+      $(".js-zoom-out").click(function () {
+        $image.cropper("zoom", -0.1);
+      });
+
+      /* SCRIPT TO COLLECT THE DATA AND POST TO THE SERVER */
+      {#$(".js-crop-and-upload").click(function () {#}
+      {#  var cropData = $image.cropper("getData");#}
+      {#  $("#id_x").val(cropData["x"]);#}
+      {#  $("#id_y").val(cropData["y"]);#}
+      {#  $("#id_height").val(cropData["height"]);#}
+      {#  $("#id_width").val(cropData["width"]);#}
+      {#  $("#formUpload").submit();#}
+      //});
+
+    });
+
+
+
+
+
+    // 异步提交form
+    $(function(){
+        //////
+
+    //保存个人资料
+    $(".js-crop-and-upload").on('click', function(){
+        console.log('同一一次都不行？');
+        $(this).val("");
+        //获取图片的坐标
+        var $image = $("#image");
+        var cropData = $image.cropper("getData");
+        $("#id_x").val(cropData["x"]);
+        $("#id_y").val(cropData["y"]);
+        $("#id_height").val(cropData["height"]);
+        $("#id_width").val(cropData["width"]);
+
+        var _self = $(this)
+
+        {#    $formUpload = $('#formUpload')#}
+        {#解决不能上传文件问题#}
+        var formdata=new FormData($('#formUpload')[0]);
+
+
+        {#不必上传不需要的图片#}
+        if($('#inputFileDiv2').html() == '')  //inputFileDiv2 已经不存在
+            {
+
+                formdata.set("image1","True");
+                formdata.delete('image2');
+            }
+        else if($('#inputFileDiv1').html() == '')
+           {
+                formdata.set("image2","True");
+                formdata.delete('image1');
+
+
+                }
+
+        {#formdata.append('applier','{{ request.user.username }}');#}
+        $.ajax({
+            cache: false,
+            type: 'post',
+            dataType:'json',
+            url:"{% url 'certification:return_image' %}",
+            data:formdata,
+            async: true,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                console.log(data.image1);
+                console.log(typeof data);
+               if(data.status == "failure"){
+
+                }else if(data.status == "success"){
+                 console.log('success');
+
+                  var bodyFa = document.getElementById("idCardItem1");//通过id号获取frameDiv 的父类（也就是上一级的节点）
+                   var bodyFa2 = document.getElementById("idCardItem2");//通过id号获取frameDiv 的父类（也就是上一级的节点）
+
+
+                 if (data.image2 == "False" && !document.getElementById("uploadImg1"))
+                 {
+                     createImgLabelAndAddToFaNode(data.image1,"uploadImg1",bodyFa);
+
+                        //图片已经选择
+                 $('.inputImage1').prop("required", false);
+
+                 }
+
+                   if (data.image1 == "False" && !document.getElementById("uploadImg2"))
+                 {
+
+                     createImgLabelAndAddToFaNode(data.image2,"uploadImg2",bodyFa2);
+                                  //图片已经选择
+                 $('.inputImage2').prop("required", false);
+                }
+
+                   if ( !(data.image2 == "False") && !(data.image1 == "False"))
+                   {
+                       //返回值为真 并且 如果节点存在 删除已经存在节点
+                       if (!(data.image1 == "False") && document.getElementById("uploadImg1"))
+                          bodyFa.removeChild(document.getElementById("uploadImg1"));
+
+                        if (!(data.image2 == "False") && document.getElementById("uploadImg2"))
+                            bodyFa2.removeChild(document.getElementById("uploadImg2"));
+
+                    //创建img
+                     createImgLabelAndAddToFaNode(data.image1,"uploadImg1",bodyFa);
+                     createImgLabelAndAddToFaNode(data.image2,"uploadImg2",bodyFa2);
+
+                                      //图片已经选择
+                     $('.inputImage1').prop("required", false);
+                                  //图片已经选择
+                     $('.inputImage2').prop("required", false);
+                       }
+                 }
+            },
+            complete: function(XMLHttpRequest){
+               console.log("完成");
+            }
+        });
+
+      //解决input file重复提交文件失败
+        {
+         var change = document.getElementById('id_file');
+         change.value = '';
+
+       //恢复文件上传功能input
+       if($('#inputFileDiv2').html() == '')  //inputFileDiv2 已经不存在 //回复div2
+        {
+            recoverInputFileDive2();
+        }
+        else
+           {
+               recoverInputFileDive1();
+
+                }
+
+        console.log('最后的转变');
+}
+    });
+
+
+
+     $(".submit-real-auth-data").on('click', function(){
+
+        console.log("dianji");
+
+        $.ajax({
+        cache: false,
+        type: 'post',
+        dataType:'json',
+        url:"{% url 'certification:real_auth_info' %}",
+        data:$('#formUpload').serialize(),
+        async: true,
+        success: function(data) {
+
+                if(data.status == "success"){
+
+
+                }else if(data.status == "failure"){
+
+
+                }
+
+        },
+        complete: function(XMLHttpRequest){
+
+
+        }
+    });
+
+    });
+
+});
+
+function createImgLabelAndAddToFaNode(src, id, fatherNode) {
+                   var image=new Image();
+                   image.setAttribute("class", "uploadImg");
+                    image.src=src;
+                   image.id = id;
+                   fatherNode.appendChild(image);
+    // 函数体
+}
+
+
+
+ {#监听input点击#}
+function file1Click() {
+
+    document.getElementById("inputFileDiv2").innerHTML = "";
+
+}
+
+function file2Click() {
+
+        //删除所有字节点
+    document.getElementById("inputFileDiv1").innerHTML = "";
+
+}
+
+        //HTML反转义
+function HTMLDecode(text) {
+    var temp = document.createElement("div");
+    temp.innerHTML = text;
+    var output = temp.innerText || temp.textContent;
+    temp = null;
+    return output;
+}
+
+function recoverInputFileDive1(){
+
+            var zhuanyi = " &lt;input type=&quot;file&quot; name=&quot;file&quot; accept=&quot;image/*&quot; required=&quot;&quot; id=&quot;id_file&quot; " +
+                "class=&quot;inputImage1&quot; onclick=&quot;file1Click();&quot;&gt;&lt;input type=&quot;hidden&quot; name=&quot;x&quot; id=&quot;id_x&quot;&g" +
+                "t;&lt;input type=&quot;hidden&quot; name=&quot;y&quot; id=&quot;id_y&quot;&gt;&lt;input type=&quot;hidden&quot; " +
+                "name=&quot;width&quot; id=&quot;id_width&quot;&gt;&lt;input type=&quot;hidden&quot; name=&quot;height&quot; id=&quot;id_height&quot;&gt;";
+            var newDiv =  HTMLDecode(zhuanyi);
+            document.getElementById("inputFileDiv1").insertAdjacentHTML("beforeEnd", newDiv);
+
+}
+function recoverInputFileDive2(){
+
+            var zhuanyi = "&lt;input type=&quot;file&quot; name=&quot;file&quot; accept=&quot;image/*&quot; required=&quot;&quot; " +
+                "id=&quot;id_file&quot; class=&quot;inputImage2&quot; onclick=&quot;file2Click();&quot;&gt;&lt;input type=&quot;hidden&quot; " +
+                "name=&quot;x&quot; id=&quot;id_x&quot;&gt;&lt;input type=&quot;hidden&quot; name=&quot;y&quot; id=&quot;id_y&quot;&gt;&lt;input type=&quot;hidden&quot; " +
+                "name=&quot;width&quot; id=&quot;id_width&quot;&gt;&lt;input type=&quot;hidden&quot; name=&quot;height&quot; id=&quot;id_height&quot;&gt;";
+            var newDiv =  HTMLDecode(zhuanyi);
+
+            //id不同的HTML对象，并附加到容器最后
+            document.getElementById("inputFileDiv2").insertAdjacentHTML("beforeEnd", newDiv);
+
+}
+
+
+
+
+  </script>
 
 {% endblock %}
 
@@ -21,6 +417,61 @@
 {% endblock %}
 
 {% block custome_content %}
+
+{#    <div id="test" class="bg-info pt-5 h-100 w-100">#}
+{##}
+{#  //你妹的。那么难做！！！！！！#}
+{#      <h1 class="page-header">Album</h1>#}
+
+
+
+
+  <div class="modal" id="modalCrop">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Crop the photo</h4>
+        </div>
+        <div class="modal-body">
+          <img src="" id="image" style="max-width: 100%;">
+        </div>
+        <div class="modal-footer">
+          <div class="btn-group float-left" role="group">
+            <button type="button" class="btn btn-secondary js-zoom-in">
+              <span class="glyphicon glyphicon-zoom-in">大</span>
+
+            </button>
+            <button type="button" class="btn btn-secondary  js-zoom-out">
+              <span class="glyphicon glyphicon-zoom-out">小</span>
+            </button>
+          </div>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Nevermind</button>
+          <button type="button" class="btn btn-primary js-crop-and-upload" data-dismiss="modal">Crop and upload</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTAINER TO DISPLAY THE CROPPED IMAGES -->
+
+
+{#  <div class="row" style="margin-top: 20px">#}
+{#    {% for photo in photos %}#}
+{#      <div class="col-sm-4 col-md-3">#}
+{#        <img src="{{ photo.file.url }}" class="img-thumbnail img-fluid">#}
+{#      </div>#}
+{#    {% endfor %}#}
+{#  </div>#}
+
+    </div>
+
+
+
+
+
 
  <div class="dialog" id="jsDialog">
     <div class="successbox dialogbox" id="jsSuccessTips">
@@ -39,6 +490,7 @@
 				<h5><span class="lend_follow_main_left_icon1"></span>我是借出者</h5>
 
                   <a class="nav-link active mt-1 text-center" id="v-pills-home-tab" data-toggle="pill" href="#lend-home-page" role="tab" aria-controls="v-pills-home" aria-selected="true">我的账户首页</a>
+                             <a class="nav-link mt-1 text-center" id="v-pills-realAuth-tab" data-toggle="pill" href="#real-auth-main" role="tab" aria-controls="v-pills-realAuth" aria-selected="false">实名认证</a>
                   <a class="nav-link mt-1 text-center" id="v-pills-profile-tab" data-toggle="pill" href="#momey-query-main" role="tab" aria-controls="v-pills-profile" aria-selected="false">我的借出列表</a>
                   <a class="nav-link mt-1 text-center" id="v-pills-messages-tab" data-toggle="pill" href="#tender-historical-records-main" role="tab" aria-controls="v-pills-messages" aria-selected="false">投标历史记录</a>
                   <a class="nav-link mt-1 text-center" id="v-pills-settings-tab" data-toggle="pill" href="#current-loan-term" role="tab" aria-controls="v-pills-settings" aria-selected="false">出借人 - 正在竞标中的</a>
@@ -77,102 +529,354 @@
 				<h1>我的账户首页</h1>
 			</div>
 
-
 			<div class="Right_Main">
                 <div class="tab-content" id="v-pills-tabContent">
 				<!--借出首页-->
                 <div class="tab-pane fade show active lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
-				<div id="RightPage" class="lend_home_page" data-page="0">
-					<div class="account_fund_management_main_right2">
-
-						<div class="account_fund_management_main_right2_1">
-								<h6>最新公告<span>更多</span></h6>
-								<a href="#" class="account_fund_management_main_right2_a">如何发布借款列表？</a>
-								<a href="#" class="account_fund_management_main_right2_a">怎样才能尽快满标？</a>
-								<a href="#" class="account_fund_management_main_right2_a">发标后还需要做什么事情？</a>
-								<a href="#" class="account_fund_management_main_right2_a">审核需要什么资料？</a>
-								<a href="#" class="account_fund_management_main_right2_a">审核需要多少时间？</a>
-						</div>
-
-						<div class="account_fund_management_main_right2_2">
-								<h6>帮助中心<span>更多</span></h6>
-								<a href="#" class="account_fund_management_main_right2_a">如何发布借款列表？</a>
-								<a href="#" class="account_fund_management_main_right2_a">怎样才能尽快满标？</a>
-								<a href="#" class="account_fund_management_main_right2_a">发标后还需要做什么事情？</a>
-								<a href="#" class="account_fund_management_main_right2_a">审核需要什么资料？</a>
-								<a href="#" class="account_fund_management_main_right2_a">审核需要多少时间？</a>
-						</div>
-
-					</div>
-
-					<div class="account_fund_management_main">
-						<div class="account_fund_management_main_left">
-							<img class="rounded-circle" src="{{ MEDIA_URL }}{{ request.user.image.url }}"/>
-						</div>
-
-						<div class="account_fund_management_main_right">
-							<h5>XXXX，欢迎来到本站！</h5>
-							<p class="account_fund_management_main_right_p1">借出信用分：<span class="account_fund_management_main_right_sp1">12分</span></p><p class="account_fund_management_main_right_p2">可用余额：<span class="account_fund_management_main_right_sp1">&yen;500,000</span></p>
-							<hr />
-
-							<table class="account_fund_management_main_right_table" border="" cellspacing="" cellpadding="">
-								<tr>
-									<td colspan="2">账户统计</td>
-								</tr>
-
-								<tr>
-									<th><p class="borrow_home_page_p1">资产总额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
-									<th><p class="borrow_home_page_p1">可用金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
-								</tr>
-
-								<tr>
-									<th><p class="borrow_home_page_p1">投标中金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
-									<th><p class="borrow_home_page_p1">提现中金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
-								</tr>
-
-								<tr>
-									<th><p class="borrow_home_page_p1">待收本金：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
-									<th><p class="borrow_home_page_p1">待收利息：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>
-								</tr>
-
-							</table>
-
-							<p class="account_fund_management_main_right_p4">交易数据详见：<a href="#">[借出统计]</a></p>
+				<div id="RightPage" class="lend_home_page border" data-page="0">
 
 
-							<div class="mt-2 " >
-								<div class="d-flex">
-									<div class="p-0 mr-2 ml-5 flex-fill "> <button type="submit" class="btn btn-sm btn-primary btn-block">充值</button></div>
-									<div class="p-0 ml-2 mr-5 flex-fill"><button type="submit" class="btn btn-sm btn-success btn-block">提现</button></div>
-								</div>
-							</div>
+                    <!--                //右边主要内容显示-->
+                <div class="card-body el-account">
+                    <div class="el-account-info ">
+<!--                        //头像-->
+                        <div class="float-left el-head-img">
+                           <img class="icon rounded" style="width: 128px; height: 128px" src="{{ MEDIA_URL }}{{ request.user.image.url }}" />
+                        </div>
+                        <div class="float-left el-head">
+                            <p>用户名：borrow1</p>
+                            <p>最后登录时间：2020-02-11 10:35:29 </p>
+                        </div>
+                        <div class="float-left" style="text-align: center;width: 400px;margin:30px auto 0px auto;">
+                            <a class="btn btn-primary btn-lg" href="/recharge.do">账户充值</a>
+                            <a class="btn btn-danger btn-lg" href="/moneyWithdraw.do">账户提现</a>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
 
-<!--							<input type="button" name="account_fund_management_main_right_btn1" id="account_fund_management_main_right_btn1" value="充值" />-->
-<!--							<input type="button" name="account_fund_management_main_right_btn2" id="account_fund_management_main_right_btn2" value="提现" />-->
+                    <div class="row h6 account-info">
+                        <div class="col-sm-4">
+                            账户总额：<span class="text-primary">0元</span>
+                        </div>
+                        <div class="col-sm-4">
+                            可用金额：<span class="text-primary">0元</span>
+                        </div>
+                        <div class="col-sm-4">
+                            冻结金额：<span class="text-primary">0元</span>
+                        </div>
+                    </div>
 
-						</div>
+                    <div class="row h6 account-info">
+                        <div class="col-sm-4">
+                            待收利息：<span class="text-primary">0元</span>
+                        </div>
+                        <div class="col-sm-4">
+                            待收本金：<span class="text-primary">0元</span>
+                        </div>
+                        <div class="col-sm-4">
+                            待还本息：<span class="text-primary">0元</span>
+                        </div>
+                    </div>
 
-					</div>
+                    <div class="el-account-info top-margin">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="el-accoun-auth">
+                                    <div class="el-accoun-auth-left">
+                                        <img src="{% static 'images/shiming.png' %}" />
+                                    </div>
+                                    <div class="el-accoun-auth-right">
+                                        <h6>实名认证</h6>
+                                        <p>
+                                            未认证
+                                            <a href="/realAuth.do" id="">立刻绑定</a>
+                                        </p>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <p class="info">实名认证之后才能在平台投资</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="el-accoun-auth">
+                                    <div class="el-accoun-auth-left">
+                                        <img src="{% static 'images/shouji.jpg' %}" />
+                                    </div>
+                                    <div class="el-accoun-auth-right">
+                                        <h6>手机认证</h6>
+                                        <p>
+                                            未认证
+                                            <a href="javascript:;" id="showBindPhoneModal">立刻绑定</a>
+                                        </p>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <p class="info">可以收到系统操作信息,并增加使用安全性</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="el-accoun-auth">
+                                    <div class="el-accoun-auth-left">
+                                        <img src="{% static 'images/youxiang.jpg' %}" />
+                                    </div>
+                                    <div class="el-accoun-auth-right">
+                                        <h6>邮箱认证</h6>
+                                        <p>
+                                            未绑定
+                                            <a href="javascript:;" id="showBindEmailModal">去绑定</a>
+                                        </p>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <p class="info">您可以设置邮箱来接收重要信息</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="el-accoun-auth">
+                                    <div class="el-accoun-auth-left">
+                                        <img src="{% static 'images/baozhan.jpg' %}" />
+                                    </div>
+                                    <div class="el-accoun-auth-right">
+                                        <h6>VIP会员</h6>
+                                        <p>
+                                            普通用户
+                                            <a href="#">查看</a>
+                                        </p>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <p class="info">VIP会员，让你更快捷的投资</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-						<img class="borrow_home_page_img1" src="{% static 'images/borrow_home_page_img1.jpg' %}"/>
 
-						<table class="borrow_home_page_table" border="" cellspacing="" cellpadding="">
-							<tr>
-								<td colspan="6">我的信用评测</td>
-							</tr>
-
-							<tr>
-								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img1"></div>户口认证</th>
-								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img2"></div>户口认证</th>
-								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img3"></div>户口认证</th>
-								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img4"></div>户口认证</th>
-								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img5"></div>户口认证</th>
-								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img6"></div>户口认证</th>
-							</tr>
-
-						</table>
+{#                  -----------------------   注销备份div-------------------------#}
+                    <div>
+{#					<div class="account_fund_management_main_right2">#}
+{##}
+{#						<div class="account_fund_management_main_right2_1">#}
+{#								<h6>最新公告<span>更多</span></h6>#}
+{#								<a href="#" class="account_fund_management_main_right2_a">如何发布借款列表？</a>#}
+{#								<a href="#" class="account_fund_management_main_right2_a">怎样才能尽快满标？</a>#}
+{#								<a href="#" class="account_fund_management_main_right2_a">发标后还需要做什么事情？</a>#}
+{#								<a href="#" class="account_fund_management_main_right2_a">审核需要什么资料？</a>#}
+{#								<a href="#" class="account_fund_management_main_right2_a">审核需要多少时间？</a>#}
+{#						</div>#}
+{##}
+{#						<div class="account_fund_management_main_right2_2">#}
+{#								<h6>帮助中心<span>更多</span></h6>#}
+{#								<a href="#" class="account_fund_management_main_right2_a">如何发布借款列表？</a>#}
+{#								<a href="#" class="account_fund_management_main_right2_a">怎样才能尽快满标？</a>#}
+{#								<a href="#" class="account_fund_management_main_right2_a">发标后还需要做什么事情？</a>#}
+{#								<a href="#" class="account_fund_management_main_right2_a">审核需要什么资料？</a>#}
+{#								<a href="#" class="account_fund_management_main_right2_a">审核需要多少时间？</a>#}
+{#						</div>#}
+{##}
+{#					</div>#}
+{##}
+{#					<div class="account_fund_management_main">#}
+{#						<div class="account_fund_management_main_left">#}
+{#							<img class="rounded-circle" src="{{ MEDIA_URL }}{{ request.user.image.url }}"/>#}
+{#						</div>#}
+{##}
+{#						<div class="account_fund_management_main_right">#}
+{#							<h5>XXXX，欢迎来到本站！</h5>#}
+{#							<p class="account_fund_management_main_right_p1">借出信用分：<span class="account_fund_management_main_right_sp1">12分</span></p><p class="account_fund_management_main_right_p2">可用余额：<span class="account_fund_management_main_right_sp1">&yen;500,000</span></p>#}
+{#							<hr />#}
+{##}
+{#							<table class="account_fund_management_main_right_table" border="" cellspacing="" cellpadding="">#}
+{#								<tr>#}
+{#									<td colspan="2">账户统计</td>#}
+{#								</tr>#}
+{##}
+{#								<tr>#}
+{#									<th><p class="borrow_home_page_p1">资产总额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>#}
+{#									<th><p class="borrow_home_page_p1">可用金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>#}
+{#								</tr>#}
+{##}
+{#								<tr>#}
+{#									<th><p class="borrow_home_page_p1">投标中金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>#}
+{#									<th><p class="borrow_home_page_p1">提现中金额：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>#}
+{#								</tr>#}
+{##}
+{#								<tr>#}
+{#									<th><p class="borrow_home_page_p1">待收本金：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>#}
+{#									<th><p class="borrow_home_page_p1">待收利息：</p><span class="account_fund_management_main_right_sp1">&yen;500,000</span></th>#}
+{#								</tr>#}
+{##}
+{#							</table>#}
+{##}
+{#							<p class="account_fund_management_main_right_p4">交易数据详见：<a href="#">[借出统计]</a></p>#}
+{##}
+{##}
+{#							<div class="mt-2 " >#}
+{#								<div class="d-flex">#}
+{#									<div class="p-0 mr-2 ml-5 flex-fill "> <button type="submit" class="btn btn-sm btn-primary btn-block">充值</button></div>#}
+{#									<div class="p-0 ml-2 mr-5 flex-fill"><button type="submit" class="btn btn-sm btn-success btn-block">提现</button></div>#}
+{#								</div>#}
+{#							</div>#}
+{##}
+{#<!--							<input type="button" name="account_fund_management_main_right_btn1" id="account_fund_management_main_right_btn1" value="充值" />-->#}
+{#<!--							<input type="button" name="account_fund_management_main_right_btn2" id="account_fund_management_main_right_btn2" value="提现" />-->#}
+{##}
+{#						</div>#}
+{##}
+{#					</div>#}
+{##}
+{#						<img class="borrow_home_page_img1" src="{% static 'images/borrow_home_page_img1.jpg' %}"/>#}
+{##}
+{#						<table class="borrow_home_page_table" border="" cellspacing="" cellpadding="">#}
+{#							<tr>#}
+{#								<td colspan="6">我的信用评测</td>#}
+{#							</tr>#}
+{##}
+{#							<tr>#}
+{#								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img1"></div>户口认证</th>#}
+{#								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img2"></div>户口认证</th>#}
+{#								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img3"></div>户口认证</th>#}
+{#								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img4"></div>户口认证</th>#}
+{#								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img5"></div>户口认证</th>#}
+{#								<th><div id="borrow_home_page_table_img" class="borrow_home_page_table_img6"></div>户口认证</th>#}
+{#							</tr>#}
+{##}
+{#						</table>#}
+                    </div>
 				</div>
                 </div>
+
+				<!--实名认证-->
+                 <div class="tab-pane fade show  real-auth-main" id="real-auth-main" role="tabpanel" aria-labelledby="v-pills-realAuth">
+				<div id="RightPage" class="lend_home_page " data-page="0">
+
+
+                    <!--                //右边主要内容显示-->
+                        <!-- 功能页面 -->
+
+                        <div class="card panel-default mt-3">
+
+                            <form  method="post"  enctype="multipart/form-data" id="formUpload" >#
+                    <fieldset>
+                        <div class="form-group">
+                            <p class="text-center text-danger">为保护您账户安全，实名认证成功之后不能修改信息，请认真填写！</p>
+                        </div>
+
+                        <div class="form-group row align-content-center ">
+                            <label class="col-sm-4 control-label  text-right ">用户名</label>
+
+                            <div class="col-sm-4 ">
+                                <p class="form-control-static">{{ request.user.username }}</p>
+                                <input type="hidden" name="applier" value="{{ request.user.username }}" />
+
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row align-content-center">
+                            <label class="col-sm-4 control-label col-form-label text-right " for="realName">姓名</label>
+                            <div class="col-sm-4">
+                                <input type="text" id="realName" name="realName" class="form-control" type="text" value="">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row align-content-center">
+                            <label class="col-sm-4  control-label col-form-label text-right" for="sex">性别</label>
+                            <div class="col-sm-4">
+                                <select id="sex" class="form-control" name="gender" size="1">
+                                    <option value="male">男</option>
+                                    <option value="female">女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row align-content-center">
+                            <label class="col-sm-4  control-label text-right col-form-label" for="idnumber" >证件号码</label>
+                            <div class="col-sm-4">
+                                <input id="idNumber" class="form-control" name="idNumber"  type="text" value="" required/>
+                            </div>
+                        </div>
+                        <div class="form-group row align-content-center">
+                            <label class="col-sm-4  control-label text-right col-form-label" for="bornDate" >出生日期</label>
+                            <div class="col-sm-4">
+                                <input  id="birthDate"  class="form-control" name="bornDate" type="date">
+                            </div>
+                        </div>
+                        <div class="form-group row align-content-center">
+                            <label class="col-sm-4  control-label text-right col-form-label" for="address">证件地址</label>
+                            <div class="col-sm-8">
+                                <input id="address" class="form-control" name="address"  type="text" style="max-width: 100%;width:500px;" required/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row align-content-center">
+                            <label class="col-sm-4  control-label  text-right col-form-label" for="address">身份证照片</label>
+                            <div class="col-sm-8">
+                                <p class="text-help text-primary">请点击“选择图片”,选择证件的正反两面照片。</p>
+                                <a href="javascript:;" data-toggle="popover" >查看样板</a>
+                                <div class="idCardItem" id="idCardItem1">
+                                    <div class="" id="inputFileDiv1" style="height: 19px">
+                                                    {{ form }}
+
+                                    </div>
+                                </div>
+                                <div class="idCardItem" id="idCardItem2">
+                                    <div class="" id="inputFileDiv2" style="height: 19px">
+                                        {{ form }}
+                                    </div>
+
+{#                                           //动态给input file标签添加属性#}
+                                        <script>
+                                            function fun() {
+                                                    var ass1=document.getElementById("inputFileDiv1");
+                                                    var child1 = ass1.firstElementChild;
+                                                    ass1.removeChild(child1);
+
+
+
+                                                     var ass=document.getElementById("inputFileDiv2");
+                                                    var child = ass.firstElementChild;
+                                                    ass.removeChild(child);
+                                            }
+                                            window.onload=fun();
+
+                                        </script>
+                                            {#分别给两个input标签添加不同的class属性值区别#}
+                                         <script>
+                                            function fun2() {
+
+                                                    var ass1=document.getElementById("inputFileDiv1");
+                                                    var child1 = ass1.firstElementChild;
+                                                    child1.setAttribute('class','inputImage1');
+                                                    child1.setAttribute('onclick','file1Click();');
+
+
+
+                                                    var ass=document.getElementById("inputFileDiv2");
+                                                    var child = ass.firstElementChild;
+                                                    child.setAttribute('class','inputImage2');
+                                                    child.setAttribute('onclick','file2Click();');
+
+                                            }
+                                            window.onload=fun2();
+
+                                        </script>
+
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                        <div class="form-group row align-content-center justify-content-center">
+                            <button type="button"  id = "submitRealAuthData1" class="submit-real-auth-data btn btn-primary col-sm-offset-4"><i class="icon-ok"></i> 提交认证</button>
+                        </div>
+                    </fieldset>
+                                           {% csrf_token %}
+                </form>
+                            </div>
+
+
+				</div>
+                </div>
+
 
 				<!--我的借出列表-->
                 <div class="tab-pane fade momey_query_main" id="momey-query-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
@@ -1606,7 +2310,8 @@
                             <div class="tab-content">
                                 <div class="tab-pane fade show active" id="people-basic-profile">
                                     <hr>
-                                    <form class="form" id="jsEditUserBasicProfileForm" autocomplete="off">
+                                    <form class="form"
+                                          autocomplete="off">
                                          <!--个人资料编辑第一列-->
                                             <div class="form-row">
                                                 <div class="form-group col-md-6">
@@ -2359,7 +3064,14 @@
 		</div>
 
             </div>
+
+
+
+
 {% endblock %}
+
+
+
 
 {% block custome_jQuery %}
 
@@ -2367,13 +3079,20 @@
     <script type="text/javascript" src="{% static 'js/borrow_home_page.js' %}">  </script>
         <script src='{% static 'js/plugins/jquery.upload.js' %}' type='text/javascript'></script>
         <script type="text/javascript" src="{% static 'js/deco-user.js' %}">  </script>
-    		<script  src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+
+{#  此文件影响crop  		<script  src="{% static 'js/jquery-1.11.3.min.js' %}"></script>#}
                 <script src="{% static 'js/plugins/year-select.js' %}"></script>
                 <script src="{% static 'js/validate.js' %}" type="text/javascript"></script>
 
-        <script type="text/javascript">
+
+{#//显示popper#}
+            <script  src="{% static 'js/1.14.7.popper.min.js' %}"></script>
 
 
-    </script>
+{#    //解决model显示问题 bootstrap.min.js should declared after all jQuery libraries.#}
+        <script src="{% static 'js/plugins/cropJs/cropper.minOK.js' %}"></script>
+         <link href="{% static 'css/cropCss/cropper.css' %}" rel="stylesheet">
+		    <script  src="{% static 'bootstrap-4.3.1/js/bootstrap.min.js' %}"></script>
+
 
 {% endblock %}

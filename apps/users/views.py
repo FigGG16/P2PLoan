@@ -2,7 +2,6 @@ from django.shortcuts import render
 import  json
 import os
 from P2PLoan.settings import BASE_DIR
-from django.views.generic import CreateView
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
@@ -16,13 +15,14 @@ from django.urls import reverse
 from .models import Banner, EmailVerifyRecord, UserProfile, Borrower, Investor, Picture, UsersFamilyAuthentication
 from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm, LoginRequiredMixin, UploadImageForm, \
     UserBasicProfile, UserEmploymentDetail, UserFamilyCondition, EmploymentDetail, UploadFamilyAuthenticationImageForm
-from django.db.models import Q
 from apps.utils.email_send import send_register_email
 
 from django.views.generic import ListView, CreateView, DeleteView
 from .serialize import serialize
 from .response import JSONResponse, response_mimetype
 # Create your views here.
+
+from certification.forms import ReturnRealAuthImageForm
 
 
 #实现邮箱账户都能够登录
@@ -107,7 +107,7 @@ class RegisterView(View):
             user_profile.bornDate = user_born_date
             user_profile.is_active = False
             user_profile.password = make_password(pass_word)
-
+            user_profile.save()
             # 保存userProfile与一对一模型关系
             def DivideUser(is_borrower_apply, user_profile_model):
                 if is_borrower_apply:
@@ -227,10 +227,17 @@ class PersonCenterView(View):
         return render(request, "personal_center.html", )
 
 
+
+
+
 class UserAccountView(LoginRequiredMixin, View):
     def get(self, request):
-        print(request.user.username)
-        return render(request, "borrow_home_page.html", )
+        form = ReturnRealAuthImageForm()
+        return render(request, 'borrow_home_page.html', {'form': form})
+
+    def post(self, request):
+        return render({'form': 'nihaho'})
+
 
 
 class UploadImageView(LoginRequiredMixin, View):

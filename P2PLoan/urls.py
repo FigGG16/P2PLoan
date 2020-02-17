@@ -42,6 +42,9 @@ urlpatterns = [
     # 配置上传文件的访问处理函数
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 
-    # 课程相关url配置
-    url(r'^userAccountView/', include('users.urls', namespace="users")),
+    # 用户信息相关url配置
+    url(r'^userAccountView0/', include('users.urls', namespace="users")),
+
+    # 用户资料认证url配置
+    url(r'^userAccountView1/', include('certification.urls', namespace="certification")),
 ]

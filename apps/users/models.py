@@ -12,11 +12,13 @@ class UserProfile(AbstractUser):
     trueName = models.CharField(max_length=50, verbose_name=u"真实昵称", default="")
     bornDate = models.DateField(verbose_name=u"生日", null=True, blank=True)
     gender = models.CharField(max_length=6, choices=(("male", u"男"), ("female", "女")), default="female")
-    image = models.ImageField(upload_to="image/%Y/%m", default=u"image/default.png", max_length=100)
+    image = models.ImageField(upload_to="image/%Y/%m", default=u"image/default.png", max_length=100, null=True)
     contact_number = models.CharField(max_length=20, null=True, blank=True, verbose_name=u"电话号码")
     kyc_complete = models.CharField(max_length=1, null=True, blank=True, verbose_name=u"验证程度")
     escrow_account_number = models.CharField(max_length=1, null=True, blank=True, verbose_name=u"银行存管账号")
     qq = models.CharField(max_length=10, null=True, blank=True, verbose_name=u"QQ号码")
+    bitState = models.BigIntegerField(null=True,blank=True,verbose_name=u"用户状态码")
+    real_auth_id = models.CharField(max_length=20, null=True, blank=True, verbose_name=u"实名认证表")
 
     def get_is_borrower(self):
         field_value = getattr(self, 'is_borrower')
@@ -39,7 +41,7 @@ class UserProfile(AbstractUser):
 
 class BorrowerUserProfile(UserProfile):
     class Meta:
-        verbose_name = "贷款者"
+        verbose_name = "借款者"
         verbose_name_plural = verbose_name
         # 避免表重复
         proxy = True

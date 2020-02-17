@@ -31,6 +31,7 @@ class UserProfileAdmin(object):
     inlines = [InvestorInlines, UsersFamilyAuthenticationInline]
     list_display = ['username', 'nickname', 'trueName', 'email', 'is_active', 'is_superuser']
 
+
     list_filter = ['is_borrower']
 
     def queryset(self):
@@ -47,6 +48,13 @@ class UserProfileAdmin(object):
 class BorrowerUserProfileAdmin(object):
     inlines = [BorrowerInlines, UsersFamilyAuthenticationInline]
     list_display = ['username', 'nickname', 'trueName', 'email', 'is_active', ]
+
+    # 可快速编辑
+    list_editable = ['username', 'nickname', 'trueName', 'email', 'is_active', ]
+
+    # 只读
+    readonly_fields = ['email']
+    show_detail_fileds = ['username', 'nickname', 'trueName', 'email', 'is_active', ]
     list_filter = ['is_borrower']
 
     def queryset(self):
@@ -60,6 +68,8 @@ class BorrowerUserProfileAdmin(object):
 
 class ManagerProfileAdmin(object):
     list_display = ['username', 'is_superuser']
+    # 只读
+    readonly_fields = ['image']
     def queryset(self):
         qs = super(ManagerProfileAdmin, self).queryset()
         qs = qs.filter(is_staff=True)
