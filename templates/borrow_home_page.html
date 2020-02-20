@@ -3,6 +3,7 @@
 
 {% load staticfiles %}
 
+{% load user_model_tags %}
 {% block custom_js %}
 
 
@@ -16,12 +17,23 @@
 
 
         <link rel="stylesheet" href="{% static 'css/core.css' %}" type="text/css" />
-                <link rel="stylesheet" href={% static 'bootstrap-4.3.1/css/bootstrap.css' %}>
+{#                <link rel="stylesheet" href={% static 'bootstrap-4.3.1/css/bootstrap.css' %}>#}
         <link type="text/css" rel="stylesheet" href="{% static 'css/account.css' %}" />
-         <link rel="stylesheet" href={% static 'bootstrap-4.3.1/css/bootstrap.min.css' %}>
+{#         <link rel="stylesheet" href={% static 'bootstrap-4.3.1/css/bootstrap.min.css' %}>#}
 
 
+          {# JQUERY FILE UPLOAD SCRIPTS #}
+  <script src="{% static 'js/plugins/muti-file_upload/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+  <script src="{% static 'js/plugins/muti-file_upload/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+  <script src="{% static 'js/plugins/muti-file_upload/jquery-file-upload/jquery.fileupload.js' %}"></script>
 
+  {# PHOTOS PAGE SCRIPTS #}
+{#  <script src="{% static 'js/plugins/muti-file_upload/photos/js/progress-bar-upload.js' %}"></script>#}
+
+
+{#    额外测试#}
+{#    <link href="{% static 'muti-file-uploadCss/bootstrap.min.css' %}" rel="stylesheet">#}
+{#   <script src="{% static 'js/plugins/muti-file_upload/bootstrap.min.js' %}"></script>#}
 
     <style type="text/css">
         #realAuthForm input ,#realAuthForm select{
@@ -313,7 +325,7 @@
     });
 
 
-
+    {##提交实名认证图片#}
      $(".submit-real-auth-data").on('click', function(){
 
         console.log("dianji");
@@ -337,13 +349,46 @@
 
         },
         complete: function(XMLHttpRequest){
-
-
+            console.log("完成刷新啊？");
+            {#提交数据成功，进行局部刷新#}
+             $(".real-auth-main").load(location.href + " .real-auth-main");
         }
     });
 
     });
 
+
+     $(document).on("click","#btn_uploadUserFiles",function(e){
+
+     {#$("#btn_uploadUserFiles").on('click', function(){#}
+
+
+        $.ajax({
+        cache: false,
+        type: 'post',
+        dataType:'json',
+        url:"{% url 'certification:user-file-type' %}",
+        data:$('#formUserFileUpload').serialize(),
+        async: true,
+        success: function(data) {
+
+                if(data.status == "success"){
+
+
+                }else if(data.status == "failure"){
+
+
+                }
+
+        },
+        complete: function(XMLHttpRequest){
+
+            {#提交数据成功，进行局部刷新#}
+            $(".user-file-main").load(location.href + " .user-file-main");
+        }
+    });
+
+    });
 });
 
 function createImgLabelAndAddToFaNode(src, id, fatherNode) {
@@ -408,6 +453,56 @@ function recoverInputFileDive2(){
 
   </script>
 
+
+
+{#    上传文件#}
+    <script>
+$(function () {
+
+  $(".js-upload-photos").click(function () {
+    $("#fileupload").click();
+  });
+
+  $("#fileupload").fileupload({
+    dataType: 'json',
+    sequentialUploads: true,
+
+    start: function (e) {
+      $("#modal-progress").modal("show");
+    },
+
+    stop: function (e) {
+      $("#modal-progress").modal("hide");
+    },
+
+    progressall: function (e, data) {
+
+      var progress = parseInt(data.loaded / data.total * 100, 10);
+      console.log('tiem::'+progress);
+      var strProgress = progress + "%";
+      $(".progress-bar").css({"width": strProgress});
+      $(".progress-bar").text(strProgress);
+    },
+
+    done: function (e, data) {
+      if (data.result.is_valid) {
+
+          console.log("done完成");
+
+            {#提交数据成功，进行局部刷新#}
+            $("#user-file-main").load(location.href + " #user-file-main");
+
+      }
+    }
+
+  });
+
+});
+
+
+
+    </script>
+
 {% endblock %}
 
 
@@ -418,14 +513,28 @@ function recoverInputFileDive2(){
 
 {% block custome_content %}
 
-{#    <div id="test" class="bg-info pt-5 h-100 w-100">#}
-{##}
+{#    <div id="test" class=" pt-5 h-100 w-100">#}
+
 {#  //你妹的。那么难做！！！！！！#}
+        {#                测试div#}
 {#      <h1 class="page-header">Album</h1>#}
 
-
-
-
+{#    加载进度条#}
+      <div class="modal active  pt-5" id="modal-progress" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Uploading...</h4>
+        </div>
+        <div class="modal-body">
+          <div class="progress" style="height: 25px;">
+            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{#    cropmodel#}
   <div class="modal" id="modalCrop">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -490,7 +599,8 @@ function recoverInputFileDive2(){
 				<h5><span class="lend_follow_main_left_icon1"></span>我是借出者</h5>
 
                   <a class="nav-link active mt-1 text-center" id="v-pills-home-tab" data-toggle="pill" href="#lend-home-page" role="tab" aria-controls="v-pills-home" aria-selected="true">我的账户首页</a>
-                             <a class="nav-link mt-1 text-center" id="v-pills-realAuth-tab" data-toggle="pill" href="#real-auth-main" role="tab" aria-controls="v-pills-realAuth" aria-selected="false">实名认证</a>
+                  <a class="nav-link mt-1 text-center" id="v-pills-realAuth-tab" data-toggle="pill" href="#real-auth-main" role="tab" aria-controls="v-pills-realAuth" aria-selected="false">实名认证</a>
+                <a class="nav-link mt-1 text-center" id="v-pills-realAuth-tab" data-toggle="pill" href="#user-file-main" role="tab" aria-controls="v-pills-userFile" aria-selected="false">分控材料认证</a>
                   <a class="nav-link mt-1 text-center" id="v-pills-profile-tab" data-toggle="pill" href="#momey-query-main" role="tab" aria-controls="v-pills-profile" aria-selected="false">我的借出列表</a>
                   <a class="nav-link mt-1 text-center" id="v-pills-messages-tab" data-toggle="pill" href="#tender-historical-records-main" role="tab" aria-controls="v-pills-messages" aria-selected="false">投标历史记录</a>
                   <a class="nav-link mt-1 text-center" id="v-pills-settings-tab" data-toggle="pill" href="#current-loan-term" role="tab" aria-controls="v-pills-settings" aria-selected="false">出借人 - 正在竞标中的</a>
@@ -532,7 +642,7 @@ function recoverInputFileDive2(){
 			<div class="Right_Main">
                 <div class="tab-content" id="v-pills-tabContent">
 				<!--借出首页-->
-                <div class="tab-pane fade show active lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                <div class="tab-pane fade show  lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
 				<div id="RightPage" class="lend_home_page border" data-page="0">
 
 
@@ -650,7 +760,6 @@ function recoverInputFileDive2(){
                     </div>
                 </div>
 
-
 {#                  -----------------------   注销备份div-------------------------#}
                     <div>
 {#					<div class="account_fund_management_main_right2">#}
@@ -746,10 +855,40 @@ function recoverInputFileDive2(){
                 </div>
 
 				<!--实名认证-->
-                 <div class="tab-pane fade show  real-auth-main" id="real-auth-main" role="tabpanel" aria-labelledby="v-pills-realAuth">
-				<div id="RightPage" class="lend_home_page " data-page="0">
+                 <div class="tab-pane fade show  real-auth-main" id="real-auth-main" role="tabpanel" aria-labelledby="v-pills-realAuth-tab">
+
+                 {% is_real_audited request.user as result %}
+
+                     {% if result %}
+                                     <div class="card panel-default id_card_show" >
+                                        <div class="card-header ">
+                                            实名认证
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="text-success h5 "> {% is_real_audit_normal request.user as result2 %} {% if  result2 %}
+                                                    你已经通过实名认证
+                                                {% else %}
+                                                    待审核
+                                            {% endif %}  </h4>
+                                            <hr />
+                                            <table style="width: 100%;height: 100px;">
+                                                <tr>
+                                                    <td><span>真实姓名： {{ request.user.username }}</span></td>
+                                                    <td><span>性别：男</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span>证件号码：{{ request.user.identity_number}} </span></td>
+                                                    <td><span>出生日期：{{ request.user.bornDate}}</span></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                      {% else %}
 
 
+                        {#                     折叠 #}
+                     <div>
+                         <div id="RightPage" class="lend_home_page audit_apply_view_show" data-page="0">
                     <!--                //右边主要内容显示-->
                         <!-- 功能页面 -->
 
@@ -824,42 +963,7 @@ function recoverInputFileDive2(){
                                         {{ form }}
                                     </div>
 
-{#                                           //动态给input file标签添加属性#}
-                                        <script>
-                                            function fun() {
-                                                    var ass1=document.getElementById("inputFileDiv1");
-                                                    var child1 = ass1.firstElementChild;
-                                                    ass1.removeChild(child1);
 
-
-
-                                                     var ass=document.getElementById("inputFileDiv2");
-                                                    var child = ass.firstElementChild;
-                                                    ass.removeChild(child);
-                                            }
-                                            window.onload=fun();
-
-                                        </script>
-                                            {#分别给两个input标签添加不同的class属性值区别#}
-                                         <script>
-                                            function fun2() {
-
-                                                    var ass1=document.getElementById("inputFileDiv1");
-                                                    var child1 = ass1.firstElementChild;
-                                                    child1.setAttribute('class','inputImage1');
-                                                    child1.setAttribute('onclick','file1Click();');
-
-
-
-                                                    var ass=document.getElementById("inputFileDiv2");
-                                                    var child = ass.firstElementChild;
-                                                    child.setAttribute('class','inputImage2');
-                                                    child.setAttribute('onclick','file2Click();');
-
-                                            }
-                                            window.onload=fun2();
-
-                                        </script>
 
                                 </div>
                                 <div class="clearfix"></div>
@@ -875,10 +979,117 @@ function recoverInputFileDive2(){
 
 
 				</div>
+                     </div>
+                     {% endif %}
+{#                     {{ BitStatesUtils.GET_OP_REAL_AUTH }}#}
+{#                     {{ request.user.gender }}#}
+{#                {{ BitStatesUtils.GET_OP_REAL_AUTH }}#}
+{#                 {{ up }}#}
+{#                     {%  %}#}
+{#                 {{ BitStatesUtils.hasState(request.user.bitState, BitStatesUtils.GET_OP_REAL_AUTH) }}#}
+{##}
+{#            {% if is_audited request.user.bitState  %}#}
+{##}
+{#                {% else %}#}
+{#                     {% endif %}#}
+
+
+
+
+
                 </div>
 
+                <!--分控材料认证-->
+                <div class="tab-pane fade show active user-file-main" id="user-file-main"  role="tabpanel" aria-labelledby="v-pills-userFile-tab">
 
-				<!--我的借出列表-->
+                           <!-- 功能页面 -->
+{#                测试div#}
+                                        <div>
+                     <button type="button" class="btn btn-primary js-upload-photos">
+                          <span class="glyphicon glyphicon-cloud-upload"></span> Upload photos
+                        </button>
+
+                        {# 2. FILE INPUT TO BE USED BY THE PLUG-IN #}
+                        <input id="fileupload" type="file" name="image" multiple
+                               style="display: none;"
+                               data-url="{% url 'certification:user_file_upload' %}"
+                               data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+
+                    </div>
+
+{#                ---------------------------------------------------#}
+
+                        <div class="card">
+                            <div class="card-header">
+                                用户认证文件信息
+                            </div>
+                        </div>
+                <form  method="post"  enctype="multipart/form-data" id="formUserFileUpload" >
+                        <div class="row" >
+
+                        {% is_exist_none_file_type_field userFileObj as user_file_result %}
+
+{#                        存在用户未分类图片#}
+                        {% if user_file_result %}
+{#                            显示未分类图片#}
+                                {% for userfile in userFileObj %}
+{#                                    遍历未选择分类图片#}
+                                    {% if userfile.fileType == 0 %}
+
+                                        <div class="col-sm-6 col-md-4 pt-3">
+                                <div class="border ">
+
+                                    <img style="height: 200px" class="img-thumbnail img-fluid" src="{{ userfile.image.url }}" />
+                                    <div class=" pt-2 input-group ">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text" for="inputGroupSelect01">材料类型</label>
+                                            </div>
+                                            <select class="custom-select" id="inputGroupSelect01" name="fileType">
+                                                {% all_user_file_type as choices%}
+                                                {% for numb,value in choices %}
+                                                     <option value="{{ numb }}">{{ value }}</option>
+                                                {% endfor %}
+                                            </select>
+
+                                    </div>
+                                </div>
+                            </div>
+                                    {% endif %}
+
+                            {% endfor %}
+
+                        {% else %}
+
+{#                            当前用户未存在未分类的图片#}
+                                       {% for userfile in userFileObj %}
+                                                        <div class="col-sm-6 col-md-4 pb-3">
+
+                                                            <div class="border">
+                                                                <img style="height: 200px" class="img-thumbnail img-fluid"  src="{{ userfile.image.url }}" />
+                                                                <div class="caption m-3">
+                                                                    <p class="h6" c>{% get_user_file_type userfile.fileType %}</p>
+
+                            {#                            获得用户文件的审核状态#}
+
+                                                                    <p>得分：{{ userfile.score }} &nbsp;&nbsp;状态：{% get_user_file_state userfile.state %}</p>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+
+                        {% endif %}
+
+                        </div>
+                            <div class="row center-align justify-content-center pt-2">
+                                <button href="javascript:;" type="button" class="btn btn-primary col-3" id="btn_uploadUserFiles">提交资料</button>
+                            </div>
+                    {% csrf_token %}
+
+                </form>
+                </div>
+
+                    <!--我的借出列表-->
                 <div class="tab-pane fade momey_query_main" id="momey-query-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
 				<div id="RightPage" class="momey_query_main" data-page="1">
 
@@ -2393,7 +2604,8 @@ function recoverInputFileDive2(){
                                          <!--个人资料编辑第四列-->
                                             <div class="form-group">
                                                   <label for="inputIdenticalCard">身份证号码</label>
-                                                <input type="text" name="identity_number" id="identity_number" value="{{ request.user.get_borrower.identity_number|default:""  }}" class="form-control" placeholder="请输入身份证号码" required>
+{#                                                {{ request.user.get_borrower.identity_number|default:""  }}#}
+                                                <input type="text" name="identity_number" id="identity_number" value="" class="form-control" placeholder="请输入身份证号码" required>
                                             </div>
 
 
@@ -3079,20 +3291,60 @@ function recoverInputFileDive2(){
     <script type="text/javascript" src="{% static 'js/borrow_home_page.js' %}">  </script>
         <script src='{% static 'js/plugins/jquery.upload.js' %}' type='text/javascript'></script>
         <script type="text/javascript" src="{% static 'js/deco-user.js' %}">  </script>
-
+{##}
 {#  此文件影响crop  		<script  src="{% static 'js/jquery-1.11.3.min.js' %}"></script>#}
                 <script src="{% static 'js/plugins/year-select.js' %}"></script>
                 <script src="{% static 'js/validate.js' %}" type="text/javascript"></script>
-
-
+{##}
+{##}
 {#//显示popper#}
             <script  src="{% static 'js/1.14.7.popper.min.js' %}"></script>
-
-
+{##}
+{##}
 {#    //解决model显示问题 bootstrap.min.js should declared after all jQuery libraries.#}
         <script src="{% static 'js/plugins/cropJs/cropper.minOK.js' %}"></script>
          <link href="{% static 'css/cropCss/cropper.css' %}" rel="stylesheet">
 		    <script  src="{% static 'bootstrap-4.3.1/js/bootstrap.min.js' %}"></script>
+
+
+
+    {# //动态给input file标签添加属性#}
+     <script>
+                                            function fun() {
+                                                    var ass1=document.getElementById("inputFileDiv1");
+                                                    var child1 = ass1.firstElementChild;
+                                                    ass1.removeChild(child1);
+
+
+
+                                                     var ass=document.getElementById("inputFileDiv2");
+                                                    var child = ass.firstElementChild;
+                                                    ass.removeChild(child);
+                                            }
+                                            window.onload=fun();
+
+                                        </script>
+{#        分别给两个input标签添加不同的class属性值区别#}
+       <script>
+                                            function fun2() {
+
+                                                    var ass1=document.getElementById("inputFileDiv1");
+                                                    var child1 = ass1.firstElementChild;
+                                                    child1.setAttribute('class','inputImage1');
+                                                    child1.setAttribute('onclick','file1Click();');
+
+
+
+                                                    var ass=document.getElementById("inputFileDiv2");
+                                                    var child = ass.firstElementChild;
+                                                    child.setAttribute('class','inputImage2');
+                                                    child.setAttribute('onclick','file2Click();');
+
+                                            }
+                                            window.onload=fun2();
+
+                                        </script>
+
 
 
 {% endblock %}
