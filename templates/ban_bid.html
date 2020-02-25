@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block custom_js %}
+
+        <script type="text/javascript">
+        $(function(){
+            $("#editForm").validate({
+                rules : {
+                    bidRequestAmount:{
+                        required:true,
+                        number:true,
+                        min:500,
+                        max:5000
+                    },
+                    currentRate:{
+                        required:true,
+                        number:true,
+                        min:5,
+                        max:20
+                    },
+                    minBidAmount:{
+                        required:true,
+                        number:true,
+                        min:50
+                    },
+                    title:"required"
+                },
+                messages: {
+                    bidRequestAmount:{
+                        required:"请填写借款金额",
+                        number:"借款金额为数字",
+                        min:"借款金额最小为{0}",
+                        max:"借款金额最大为{0}"
+                    },
+                    currentRate:{
+                        required:"请填写借款利息",
+                        number:"借款利息为数字",
+                        min:"最低借款利息为{0}%",
+                        max:"最大借款利息不能超过{0}%"
+                    },
+                    minBidAmount:{
+                        required:"请填写最小投标金额",
+                        number:"最小投标金额为数字",
+                        min:"最小投标金额必须大于{0}"
+                    },
+                    title:"必须填写借款原因"
+                },
+                //自定义错误样式
+                errorClass:"text-danger col-sm-6",
+                //未通过验证,进行高亮处理或其他处理；
+                highlight:function(input){
+                    $(input).closest(".form-group").addClass("has-error");
+                },
+                //通过验证,清除高亮效果或其他处理；
+                unhighlight:function(input){
+                    $(input).closest(".form-group").removeClass("has-error");
+                },
+                //错误提示信息加载的位置
+                errorPlacement:function(label, element){
+                    label.appendTo(element.closest(".form-group"));
+                }
+            });
+        });
+    </script>
+
+
+{% endblock %}
+{% block custom_css %}
+         <link rel="stylesheet" href="{% static 'css/core.css' %}" type="text/css" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/account.css' %}" />
+
+        <style type="text/css">
+        body {
+            font: 14px/1.5 "Verdana", "微软雅黑", YaHei, tahoma, arial, Hiragino Sans GB, "宋体";
+        }
+        .el-borrow-form{
+            position: relative;
+        }
+        .el-borrow-form-tip{
+            width: 300px;
+            border-radius: 3px;
+            border:1px solid #ddd;
+            box-shadow: 1px 1px 20px #ddd;
+            padding:20px 30px;
+            position: absolute;
+            top:10px;
+            right: 100px;
+        }
+        .text-danger{text-align: center;}
+    </style>
+
+ {% endblock %}
+
+{% block custome_content %}
+
+<div class="container pt-5">
+<div class="el-tip-info">
+    <h3>借款提示</h3>
+    <p>你目前有标正在申请的流程当中，不能再次发标；或者你恶意的进入了发标流程，请按照正常流程完成发标前的相关资料提交，谢谢！</p>
+</div>
+
+
+</div>
+
+
+
+{% endblock %}

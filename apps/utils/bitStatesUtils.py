@@ -101,7 +101,7 @@ class BitStatesUtils:
     # * /
     @classmethod
     def removeState(cls, states, value):
-        if not BitStatesUtils(states, value):
+        if not BitStatesUtils.removeState(states, value):
             return states
         return states ^ value
 

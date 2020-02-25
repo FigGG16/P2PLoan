@@ -1,6 +1,6 @@
 from django.conf.urls import url, include
 
-from .views import RealAuthImageView, RealAuthView
+from .views import RealAuthImageView, RealAuthView, UserFileUploadView, UserFileTypeView
 
 app_name = 'certification'
 
@@ -10,6 +10,12 @@ urlpatterns = [
     # return data
     url(r'^return_auth_image/$', RealAuthImageView.as_view(), name="return_image"),
     url(r'^real_auth_save/$', RealAuthView.as_view(), name="real_auth_info"),
+    #风控材料上传文件执行
+    url(r'^user-file-upload/$', UserFileUploadView.as_view(), name='user_file_upload'),
+
+    #风控材料分类
+    url(r'^user-file-type/$', UserFileTypeView.as_view(), name='user-file-type'),
+
     # # 用户家庭信息保存
     # url(r'^family_info_Save/$', UserFamilyProfileView.as_view(), name="user_family_info"),
     #

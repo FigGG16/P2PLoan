@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import RealAuth
+from .models import RealAuth, UserFile
 
 
 class RealAuthSerializer(serializers.ModelSerializer):
@@ -17,7 +17,7 @@ class RealAuthSerializer(serializers.ModelSerializer):
         # else:
         #     return None
 
-
+    #获取图片的绝对url
     def get_image1(self, realauth):
         request = self.context.get('request')
         if realauth.image1 and hasattr(realauth.image1, 'url'):
@@ -34,6 +34,7 @@ class RealAuthSerializer(serializers.ModelSerializer):
         else:
             return "False"
 
+    #规避图片出错
     def to_representation(self, instance):
         data = super().to_representation(instance)
         if not data['image1']:
@@ -41,3 +42,21 @@ class RealAuthSerializer(serializers.ModelSerializer):
         if not data['image2']:
             data['image2'] = "False"
         return data
+
+
+class UserFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserFile
+        fields = ('image')
+
+    def get_image1(self, userfile):
+        request = self.context.get('request')
+        if userfile.image1 and hasattr(userfile.image1, 'url'):
+            image = userfile.image.url
+            return request.build_absolute_uri(image)
+
+
+
+
+
+

@@ -1,7 +1,7 @@
 import xadmin
 
 from .models import EmailVerifyRecord, Banner, Borrower, Investor, UserProfile, BorrowerUserProfile, ManagerProfile, \
-    EmploymentDetail, UsersFamilyAuthentication
+    EmploymentDetail, UsersFamilyAuthentication, Account
 from xadmin import views
 from django.db.models import Q
 
@@ -10,6 +10,11 @@ from django.utils.safestring import mark_safe
 class UsersFamilyAuthenticationInline(object):
     model = UsersFamilyAuthentication
     extra = 0
+
+class AccountInline(object):
+    model = Account
+    extra = 0
+
 
 class InvestorInlines(object):
     model = Investor
@@ -28,12 +33,12 @@ class BorrowerInlines(object):
 
 
 class UserProfileAdmin(object):
-    inlines = [InvestorInlines, UsersFamilyAuthenticationInline]
+    search_fields = ['username']
+    inlines = [InvestorInlines, UsersFamilyAuthenticationInline, AccountInline]
     list_display = ['username', 'nickname', 'trueName', 'email', 'is_active', 'is_superuser']
-
+    readonly_fields = ['email', 'image','image']
 
     list_filter = ['is_borrower']
-
     def queryset(self):
         qs = super(UserProfileAdmin, self).queryset()
         qs = qs.filter(is_investor=True)
@@ -46,16 +51,22 @@ class UserProfileAdmin(object):
 
 
 class BorrowerUserProfileAdmin(object):
-    inlines = [BorrowerInlines, UsersFamilyAuthenticationInline]
+    inlines = [BorrowerInlines, UsersFamilyAuthenticationInline, AccountInline]
     list_display = ['username', 'nickname', 'trueName', 'email', 'is_active', ]
+    search_fields =['username']
+    autocomplete_fields =['username']
 
     # 可快速编辑
     list_editable = ['username', 'nickname', 'trueName', 'email', 'is_active', ]
 
     # 只读
-    readonly_fields = ['email']
+    readonly_fields = ['email', 'image']
     show_detail_fileds = ['username', 'nickname', 'trueName', 'email', 'is_active', ]
-    list_filter = ['is_borrower']
+    list_filter = ['is_borrower','username']
+
+    autocomplete_fields = ('circassian_word',)
+
+
 
     def queryset(self):
         qs = super(BorrowerUserProfileAdmin, self).queryset()
@@ -77,8 +88,14 @@ class ManagerProfileAdmin(object):
 
 
 class EmploymentDetailAdmin(object):
+    # autocomplete_fields = ['borrower']
+    search_fields = ['borrower']
     list_display = ['borrower', 'employment_state', 'receive_wage', 'company_type', 'working_life']
     list_filter = ['borrower', 'employment_state']
+    def save_models(self):
+        #获取保持对象
+        obj = self.new_obj
+        obj.save()
 
 
 class EmailVerifyRecordAdmin(object):

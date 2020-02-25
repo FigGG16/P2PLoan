@@ -4,7 +4,9 @@
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from utils.BidConst import BidConst
+from django.contrib.auth.hashers import make_password,check_password
+from utils.bitStatesUtils import BitStatesUtils
 
 class UserProfile(AbstractUser):
     is_investor = models.BooleanField(default=False)
@@ -17,8 +19,10 @@ class UserProfile(AbstractUser):
     kyc_complete = models.CharField(max_length=1, null=True, blank=True, verbose_name=u"验证程度")
     escrow_account_number = models.CharField(max_length=1, null=True, blank=True, verbose_name=u"银行存管账号")
     qq = models.CharField(max_length=10, null=True, blank=True, verbose_name=u"QQ号码")
-    bitState = models.BigIntegerField(null=True,blank=True,verbose_name=u"用户状态码")
-    real_auth_id = models.CharField(max_length=20, null=True, blank=True, verbose_name=u"实名认证表")
+    bitState = models.BigIntegerField(null=True,blank=True, default=0, verbose_name=u"用户状态码")
+    real_auth_id = models.IntegerField(null=True, blank=True, verbose_name=u"实名认证表")
+    identity_number = models.CharField(max_length=25, null=True, blank=True, verbose_name=u"身份证号码")
+    score = models.IntegerField(blank=True,null=True, verbose_name="风控累计分数")
 
     def get_is_borrower(self):
         field_value = getattr(self, 'is_borrower')
@@ -34,9 +38,46 @@ class UserProfile(AbstractUser):
         verbose_name = u"投资者"
         verbose_name_plural = verbose_name
 
-
     def get_borrower(self):
         return self.borrower
+    def get_investor(self):
+        return self.investor
+
+    def isRealAuth(self):
+        return BitStatesUtils.hasState(self.bitState,BitStatesUtils.GET_OP_REAL_AUTH())
+
+    def isCheckInBasicInfo(self):
+        return BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_OP_BASIC_INFO())
+
+    def isVedioAuth(self):
+        return BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_OP_VEDIO_AUTH())
+
+    def isHasBidRequestProcess(self):
+        return BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_OP_HAS_BIDREQUEST_PROCESS())
+
+    def isBindBankInfo(self):
+        return BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_OP_BIND_BANKINFO())
+
+    def getScore(self):
+        return self.score
+
+    def addState(self, value):
+        self.bitState = BitStatesUtils.addState(self.bitState, value)
+
+
+    def removeState(self,value):
+        self.bitState = BitStatesUtils.removeState(self.bitState, value)
+
+
+
+    # __OP_BIND_PHONE = 1 << 0# 用户绑定手机状态码
+    # __OP_BIND_EMAIL = 1 <<1# 用户绑定邮箱
+    # __OP_BASIC_INFO = 1 <<2# 用户是否填写基本资料
+    # __OP_REAL_AUTH = 1 <<3# 用户是否实名认证
+    # __OP_VEDIO_AUTH = 1 <<4# 用户是否视频认证
+    # __OP_HAS_BIDREQUEST_PROCESS = 1 <<5# 用户是否有一个借款正在处理流程当中
+    # __OP_BIND_BANKINFO = 1 <<6# 用户是否绑定银行卡
+    # __OP_HAS_MONEYWITHDRAW_PROCESS = 1 <<7 # 用户是否有一个提现申请在处理中
 
 
 class BorrowerUserProfile(UserProfile):
@@ -53,6 +94,39 @@ class ManagerProfile(UserProfile):
         verbose_name_plural = verbose_name
         # 避免表重复
         proxy = True
+
+
+class Account(models.Model):
+
+    user_profile = models.ForeignKey(UserProfile, verbose_name=u"用户名称", on_delete=models.CASCADE, null=True)
+    usableAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户可用余额")
+    freezedAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户冻结金额")
+    unReceiveInterest = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户待收利息")
+    unReceivePrincipal = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户待收本金")
+    unReturnAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户待还金额")
+    remainBorrowLimit = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户剩余授信额度")
+    borrowLimit = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户授信额度")
+    tradePassword = models.CharField(max_length=128,verbose_name="交易密码",null=True, blank=True)
+    verifyCode = models.CharField(max_length=128,verbose_name="数据校验",null=True, blank=True)
+
+    def getRemainBorrowLimit(self):
+        return self.remainBorrowLimit
+
+
+    class Meta:
+        verbose_name = "用户账户"
+        verbose_name_plural = verbose_name
+
+# 自定义密码加密
+    def _set_password(self, password):
+        self.password = make_password(password)
+
+    def _check_password(self, password):
+        return check_password(password, self.password)
+
+
+
+
 
 
 class Investor(models.Model):
@@ -100,7 +174,7 @@ class Borrower(models.Model):
                                              default='NONE', verbose_name=u"教育层次")
     pass_out_year = models.CharField(max_length=4, verbose_name=u"毕业日期", null=True, blank=True)
     university_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='大学名称')
-    identity_number = models.CharField(max_length=25, null=True, blank=True, verbose_name=u"身份证号码")
+
     marriage_state = models.CharField(max_length=50, null=True, choices=MARRIAGE_STATE_CHOICE, blank=True,
                                               default='1', verbose_name=u"婚姻状况")
     dwelling_condition = models.CharField(max_length=50, null=True, choices=DWELLING_CONDITION_CHOICE, blank=True,

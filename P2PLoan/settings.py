@@ -47,7 +47,8 @@ REST_FRAMEWORK = {
 
 
 INSTALLED_APPS = [
-
+    'dal',
+    'dal_select2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,10 +57,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'crispy_forms',
+
+
     'xadmin',
     'captcha',
     'certification',
     'rest_framework',
+    'users.templatetags',
+    'business'
 ]
 
 MIDDLEWARE = [

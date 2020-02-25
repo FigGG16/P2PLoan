@@ -1,6 +1,6 @@
 from django import template
 from django.utils.safestring import mark_safe
-
+from utils.bitStatesUtils import BitStatesUtils
 register = template.Library()
 
 @register.simple_tag

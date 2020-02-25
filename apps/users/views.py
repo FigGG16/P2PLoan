@@ -23,7 +23,8 @@ from .response import JSONResponse, response_mimetype
 # Create your views here.
 
 from certification.forms import ReturnRealAuthImageForm
-
+from utils.bitStatesUtils import BitStatesUtils
+from certification.models import UserFile
 
 #实现邮箱账户都能够登录
 class CustomBackend(ModelBackend):
@@ -233,7 +234,9 @@ class PersonCenterView(View):
 class UserAccountView(LoginRequiredMixin, View):
     def get(self, request):
         form = ReturnRealAuthImageForm()
-        return render(request, 'borrow_home_page.html', {'form': form})
+        user_file_list = UserFile.objects.filter(applier=request.user)
+        return render(request, 'borrow_home_page.html', {'form': form, 'BitStatesUtils': BitStatesUtils, 'userFileObj': user_file_list})
+
 
     def post(self, request):
         return render({'form': 'nihaho'})

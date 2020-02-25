@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load user_model_tags %}
+
+{% block custom_js %}
+
+{% endblock %}
+
+
+{% block custom_css %}
+         <link rel="stylesheet" href="{% static 'css/core.css' %}" type="text/css" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/account.css' %}" />
+
+        <style type="text/css">
+        body {
+            font: 14px/1.5 "Verdana", "微软雅黑", YaHei, tahoma, arial, Hiragino Sans GB, "宋体";
+        }
+        .el-borrow-form{
+            position: relative;
+        }
+        .el-borrow-form-tip{
+            width: 300px;
+            border-radius: 3px;
+            border:1px solid #ddd;
+            box-shadow: 1px 1px 20px #ddd;
+            padding:20px 30px;
+            position: absolute;
+            top:10px;
+            right: 100px;
+        }
+        .text-danger{text-align: center;}
+    </style>
+
+ {% endblock %}
+
+
+
+{% block custome_content %}
+
+
+<div class="container el-borrow">
+		<div class="row">
+			<div class="el-borrow-item col-sm-4">
+				<div class="el-borrow-item-title" style="background-color: #40d47e;">
+					信用贷</div>
+				<div class="el-borrow-item-content">
+					<p>
+						认证后可借金额 <i>¥ 2,000.00</i>
+					</p>
+					<a href="#" class="text-primary">申请条件</a>
+					<p class="help-block">仅限广州地区</p>
+					<ul>
+						<li>填写基本资料</li>
+						<li>身份认证</li>
+						<li>材料认证分数达到30分</li>
+						<li>视频认证</li>
+					</ul>
+				     {% if request.user.is_authenticated %}
+
+
+
+                                     <a href="{% url 'business:check_in_bid' %}" class="el-borrow-apply">我要申请</a>
+
+
+                    {% else %}
+                        <a href="{% url 'login' %}" class="el-borrow-apply">
+						登陆后申请
+					</a>
+                    {% endif %}
+				</div>
+			</div>
+			<div class="el-borrow-item col-sm-4">
+				<div class="el-borrow-item-title">车易贷</div>
+				<div class="el-borrow-item-content">
+					<p>
+						认证后可借金额 <i>¥ 10,000.00</i>
+					</p>
+					<a href="#" class="text-primary">申请条件</a>
+					<p class="help-block">仅限广州地区</p>
+					<ul>
+						<li>填写基本资料</li>
+						<li>身份认证</li>
+						<li>材料认证分数达到30分</li>
+						<li>提交车辆抵押相关资料</li>
+						<li>视频认证</li>
+					</ul>
+
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'business:check_in_bid' %}" class="el-borrow-apply">
+						我要申请
+					</a>
+
+                    {% else %}
+                        <a href="{% url 'login' %}" class="el-borrow-apply">
+						登陆后申请
+					</a>
+                    {% endif %}
+
+
+				</div>
+			</div>
+			<div class="el-borrow-item col-sm-4">
+				<div class="el-borrow-item-title" style="background-color: #2ca2ee;">
+					房易贷</div>
+				<div class="el-borrow-item-content">
+					<p>
+						可借金额 <i>¥ 10,0000.00</i>
+					</p>
+					<a href="#" class="text-primary">申请条件</a>
+					<p class="help-block">仅限广州地区</p>
+					<ul>
+						<li>填写基本资料</li>
+						<li>身份认证</li>
+						<li>材料认证分数达到50分</li>
+						<li>提交房屋抵押相关资料</li>
+						<li>视频认证</li>
+					</ul>
+					<a href="#" class="el-borrow-apply">
+						登陆后申请
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+{% endblock %}

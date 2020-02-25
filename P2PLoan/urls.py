@@ -23,6 +23,8 @@ from users.views import LoginView, RegisterView, AciveUserView, ForgetPwdView, R
 from P2PLoan.settings import MEDIA_ROOT
 from django.urls import include, path
 
+from autocomplete import UserProfileAutocomplete
+
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
     url('^$', TemplateView.as_view(template_name="index.html"), name="index"),
@@ -47,4 +49,10 @@ urlpatterns = [
 
     # 用户资料认证url配置
     url(r'^userAccountView1/', include('certification.urls', namespace="certification")),
+
+    # 用户招标与借标url配置
+    url(r'^', include('business.urls', namespace="business")),
+
+    url(r'^category-autocomplete/$', UserProfileAutocomplete.as_view(), name='category-autocomplete'),
+
 ]

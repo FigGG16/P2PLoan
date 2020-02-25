@@ -68,5 +68,5 @@ class UserBasicProfile(forms.ModelForm):
     class Meta:
         model = Borrower
         # fields = ['contact_number', 'qq']
-        fields = ['highest_qualification', 'university_name', 'pass_out_year', 'identity_number']
+        fields = ['highest_qualification', 'university_name', 'pass_out_year']
 
