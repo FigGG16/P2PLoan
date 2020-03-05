@@ -40,6 +40,7 @@ class UserProfile(AbstractUser):
 
     def get_borrower(self):
         return self.borrower
+
     def get_investor(self):
         return self.investor
 
@@ -98,7 +99,7 @@ class ManagerProfile(UserProfile):
 
 class Account(models.Model):
 
-    user_profile = models.ForeignKey(UserProfile, verbose_name=u"用户名称", on_delete=models.CASCADE, null=True)
+    userProfile = models.ForeignKey(UserProfile, verbose_name=u"用户名称", on_delete=models.CASCADE, null=True)
     usableAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户可用余额")
     freezedAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户冻结金额")
     unReceiveInterest = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户待收利息")
@@ -112,6 +113,9 @@ class Account(models.Model):
     def getRemainBorrowLimit(self):
         return self.remainBorrowLimit
 
+
+    def getTotalAmount(self):
+        return self.usableAmount+self.freezedAmount+self.unReceivePrincipal
 
     class Meta:
         verbose_name = "用户账户"

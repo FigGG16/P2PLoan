@@ -64,7 +64,8 @@ INSTALLED_APPS = [
     'certification',
     'rest_framework',
     'users.templatetags',
-    'business'
+    'business',
+
 ]
 
 MIDDLEWARE = [

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load business_model %}
 
 {% block custome_content %}
 		<div id="carouselExampleIndicators" class="row carousel slide banner carousel-fade bg-danger "  data-ride="carousel">
@@ -44,143 +45,63 @@
 				<p class="index-MainTitle-p2">我有闲钱</p>
 				<input type="button" name="btn2" id="btn2" value="我要借出" />
 			</div>
-			<div class="main_list">
-				<div class="main_list_title">
-					进行中的列表
+			<div class="main_list card border-light">
+
+				<div class="main_list_title card-title border-bottom mb-0">
+                    <span class="h4">进行中借款</span>
 					<a href="account_fund_management.html"></a>
 				</div>
 
-				<div class="main_list1">
+                {% all_bid_request_objs as objs %}
+
+                {% for obj in objs %}
+                    	<div class="main_list1 ">
 					<div class="main_list1_pic">
-						<div class="warpper">
+						<div class="warpper" >
 							<a href="#"></a>
 						</div>
 					</div>
 					<table id="main_list_table">
-						<tr>
-							<td><strong>优质商家信用借贷</strong></td>
+						<tr class="card-">
+                            <td><strong class="h6"><a href="{% url 'business:borrow_info' %}?bid={{ obj.id }}">{{ obj.title }}</a></strong></td>
 						</tr>
 
 						<tr>
-							<td>借贷金额<span id="momey">&yen;500,000</span></td>
-							<td>年利率<span id="percent">20.00%</span></td>
+							<td >借贷金额<span id="momey">&yen;{% formate_decimal_show obj.bidRequestAmount %}</span></td>
+							<td>年利率<span id="percent">{% formate_decimal_show obj.currentRate  %}%</span></td>
 						</tr>
 
 						<tr>
-							<td>借贷期限<span id="date">12个月</span></td>
-							<td>信用等级<span id="level"><img src="/static/images/credit1.png"/></span></td>
+							<td>借贷期限<span id="date">{{ obj.monthes2Return }}</span></td>
+							<td>信用等级<span id="level"><img  src="/static/images/credit1.png"/></span></td>
 						</tr>
 
 					</table>
 
 					<div class="schedule">
-						<div class="schedule_tip_bg">
-							<div class="schedule_tip"></div>
-						</div>
-						<span id="schedule_percent">36.00%</span>
-						<p>已完成<span id="schedule_num">103</span>笔投标</p>
+{#						<div class="schedule_tip_bg">#}
+{#							<div class="schedule_tip"></div>#}
+{#						</div>#}
+{#						<span id="schedule_percent">36.00%</span>#}
+{#						<p>已完成<span id="schedule_num">103</span>笔投标</p>#}
+{#                        .schedule_tip_bg{#}
+{#	width: 139px;#}
+{#	height: 13px;#}
+{#	background: #f0f0f0;#}
+{#	margin: 45px 0 0 16px;#}
+{#	float: left;#}
+{#	position: relative;#}
+
+                        <div class="progress mt-5" style="height: 25px;width: 200px">
+                          <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+
+                        </div>
+                          <p>已完成<span class="h4" id="schedule_num">103</span>笔投标</p>
 					</div>
 
 				</div>
+                {% endfor %}
 
-				<div class="main_list1">
-					<div class="main_list1_pic">
-						<div class="warpper">
-							<a href="#"></a>
-						</div>
-					</div>
-					<table id="main_list_table">
-						<tr>
-							<td><strong>优质商家信用借贷</strong></td>
-						</tr>
-
-						<tr>
-							<td>借贷金额<span id="momey">&yen;500,000</span></td>
-							<td>年利率<span id="percent">20.00%</span></td>
-						</tr>
-
-						<tr>
-							<td>借贷期限<span id="date">12个月</span></td>
-							<td>信用等级<span id="level"><img src="/static/images/credit2.png"/></span></td>
-						</tr>
-
-					</table>
-
-					<div class="schedule">
-						<div class="schedule_tip_bg">
-							<div class="schedule_tip"></div>
-						</div>
-						<span id="schedule_percent">36.00%</span>
-						<p>已完成<span id="schedule_num">103</span>笔投标</p>
-					</div>
-
-				</div>
-
-				<div class="main_list1">
-					<div class="main_list1_pic">
-						<div class="warpper">
-							<a href="#"></a>
-						</div>
-					</div>
-					<table id="main_list_table">
-						<tr>
-							<td><strong>优质商家信用借贷</strong></td>
-						</tr>
-
-						<tr>
-							<td>借贷金额<span id="momey">&yen;500,000</span></td>
-							<td>年利率<span id="percent">20.00%</span></td>
-						</tr>
-
-						<tr>
-							<td>借贷期限<span id="date">12个月</span></td>
-							<td>信用等级<span id="level"><img src="/static/images/credit1.png"/></span></td>
-						</tr>
-
-					</table>
-
-					<div class="schedule">
-						<div class="schedule_tip_bg">
-							<div class="schedule_tip"></div>
-						</div>
-						<span id="schedule_percent">36.00%</span>
-						<p>已完成<span id="schedule_num">103</span>笔投标</p>
-					</div>
-
-				</div>
-
-				<div class="main_list1">
-					<div class="main_list1_pic">
-						<div class="warpper">
-							<a href="#"></a>
-						</div>
-					</div>
-					<table id="main_list_table">
-						<tr>
-							<td><strong>优质商家信用借贷</strong></td>
-						</tr>
-
-						<tr>
-							<td>借贷金额<span id="momey">&yen;500,000</span></td>
-							<td>年利率<span id="percent">20.00%</span></td>
-						</tr>
-
-						<tr>
-							<td>借贷期限<span id="date">12个月</span></td>
-							<td>信用等级<span id="level"><img src="/static/images/credit2.png"/></span></td>
-						</tr>
-
-					</table>
-
-					<div class="schedule">
-						<div class="schedule_tip_bg">
-							<div class="schedule_tip"></div>
-						</div>
-						<span id="schedule_percent">36.00%</span>
-						<p>已完成<span id="schedule_num">103</span>笔投标</p>
-					</div>
-
-				</div>
 			</div>
 
 			<div class="main_news">

@@ -5,8 +5,6 @@
 {% block custom_js %}
 
 
-
-
 {% endblock %}
 {% block custom_css %}
          <link rel="stylesheet" href="{% static 'css/core.css' %}" type="text/css" />
@@ -39,7 +37,7 @@
 <div class="container pt-5">
 <div class="el-tip-info">
     <h3>借款提示</h3>
-    <p>你目前有标正在申请的流程当中，不能再次发标；或者你恶意的进入了发标流程，请按照正常流程完成发标前的相关资料提交，谢谢！</p>
+    <p>{{ message }}，请耐心等待，谢谢！</p>
 </div>
 
 

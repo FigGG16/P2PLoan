@@ -1,0 +1,502 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load business_model %}
+{% block custom_js %}
+
+    <script  src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+
+   //添加父类监听事件解决重复上传无效问题
+            $(".refresh_bid_view").on('click','.bidBtn', function () {
+
+              console.log("将来");
+                $('#WarnModal').modal('show');
+                var amount = parseFloat($("#amount").val());
+                if(!amount){
+
+                    $("#alert-message").text("请输入投资金额！");
+
+                    return;
+                }
+                if(parseFloat($("#usableAmount").val())<amount){
+                     $("#alert-message").text("投资金额已超过账户余额！");
+                    return;
+                }
+                if(parseFloat($("#minBidAmount").val())>amount){
+                    $("#alert-message").text("投资金额低于最小投标金额");
+                    return;
+                }
+                if(parseFloat($("#maxBidAmount").val())<amount){
+                     $("#alert-message").text("投资金额已超过借款标金额");
+                    return;
+                }
+
+                $.ajax({
+                cache: false,
+                type: 'post',
+                dataType:'json',
+                url:"{% url 'business:bid' %}",
+                data:{'bidRequestId': {{ bid_request.id }}, 'amount': amount },
+                async: true,
+                beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function(data) {
+
+                        if(data.status == "success"){
+                                     {#提交数据成功，进行局部刷新#}
+                            console.log("success");
+                             {#$(".refresh_bid_view").load(location.href + " .refresh_bid_view");#}
+
+                            //删除重复创建div
+                             $(".refresh_bid_view").load(" .refresh_bid_view > *");
+                             $("#alert-message").text(data.message);
+
+
+
+                        }else if(data.status == "failure"){
+                            console.log("failure");
+                            $("#alert-message").text(data.message);
+                        }
+                },
+                complete: function(XMLHttpRequest){
+
+                }
+            });
+            });
+        });
+    </script>
+
+{% endblock %}
+{% block custom_css %}
+         <link rel="stylesheet" href="{% static 'css/core.css' %}" type="text/css" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/account.css' %}" />
+
+
+        <style type="text/css">
+        .el-userhead{
+            width: 100px;
+            height: 100px;
+            display: block;
+            margin: 0px auto;
+
+        }
+        .muted{
+            color: #999;
+        }
+        .text-info{
+            color: #09d;
+        }
+    </style>
+
+ {% endblock %}
+
+{% block custome_content %}
+
+<div class="container pt-5">
+
+{#//model#}
+<div class="modal fade" id="WarnModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">提醒</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body alert alert-warning">
+                <span id="alert-message">ggggggggggggg</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{#-----------------#}
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header">
+                    借款人
+                </div>
+                <div class="card-body">
+                    <img class="el-userhead" src="{{ MEDIA_URL }}{{ user_profile.image.url }}" />
+                    <p class="text-center">
+                        <a class="text-info" href="#">{{ user_profile.username}}</a>
+                    </p><br />
+                    <div>
+                        籍贯： 四川 - 成都
+                    </div>
+                    <div>
+                        认证信息：
+                        <label class="label label-success">
+                            <span class="glyphicon glyphicon-user"></span>
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <h3 class="text-info" style="margin-top: 0px;">
+                {{ bid_request.title }}
+                <small>&emsp;<label class="label label-primary">信</label></small>
+            </h3>
+            <div>
+                <table width="100%" height="250px">
+                    <tr>
+                        <td class="muted" width="80px">借款金额</td>
+                        <td class="text-info" width="120px" style="padding-left: 10px;">
+                            {{ bid_request.bidRequestAmount }}
+                        </td>
+                        <td class="muted" width="80px">年化利率</td>
+                        <td class="text-info" style="padding-left: 10px;">
+                            {{ bid_request.currentRate }}%
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="muted ">借款期限</td>
+                        <td class="text-info" style="padding-left: 10px;">
+                            {{ bid_request.monthes2Return }}月
+                        </td>
+                        <td class="muted">总可得利息</td>
+                        <td class="text-info" style="padding-left: 10px;">
+                            {{ bid_request.totalRewardAmount }}元
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="muted">还款方式</td>
+                        <td class="text-info" style="padding-left: 10px;">
+                            等额本息
+                        </td>
+                        <td class="muted">最小投标</td>
+                        <td class="text-info" style="padding-left: 10px;">
+                            {{ bid_request.minBidAmount }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="muted">风控意见</td>
+                        <td class="text-info" style="padding-left: 10px;" colspan="3">
+                            {{ bid_request.note }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="muted">剩余时间</td>
+                        <td class="text-info" style="padding-left: 10px;" colspan="3">
+                            <div id="retroclockbox"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-sm-3 refresh_bid_view"  >
+
+
+
+
+           {% is_bidding bid_request as result %}
+        {% if result == False %}
+<!--        //投标已完成显示-->
+            <table style="height:110px;width:230px;">
+                <tr>
+                    <td  class="muted">投标总数</td><td class="text-info" style="padding-left: 10px;">
+                    2
+                </td>
+                </tr>
+                <tr>
+                    <td  class="muted">还需金额</td><td class="text-info" style="padding-left: 10px;">
+                    0 元
+                </td>
+                </tr>
+                <tr>
+                    <td  class="muted" colspan="2">投标进度</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div style="margin-bottom: 10px;" class="progress">
+                            <div style="width: 100px" class="progress-bar progress-bar-info progress-bar-striped"></div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <h4 class="text-primary">还款中</h4>
+
+{#                分割线-----------------------#}
+
+            {% else %}
+{#                    //竞标中显示#}
+            <table style="height:110px;width:230px;">
+                <tbody><tr>
+                    <td class="muted">投标总数</td><td class="text-info" style="padding-left: 10px;">
+                    {{ bid_request.bidCount }}
+                </td>
+                </tr>
+                <tr>
+                    <td class="muted">还需金额</td><td class="text-info" style="padding-left: 10px;">
+                    {{ bid_request.getRemainAmount }}元
+                </td>
+                </tr>
+                <tr>
+                    <td class="muted" colspan="2">投标进度</td>
+                </tr>
+                <tr>
+                    <td colspan="10">
+                         <div class="progress " style="height: 20px;width: 250px">
+                          <div class="progress-bar" role="progressbar" style="width: {{ bid_request.getPersent }}%;" aria-valuenow="{{ bid_request.getPersent }}" aria-valuemin="0" aria-valuemax="100">{{ bid_request.getPersent }}%</div>
+
+                        </div>
+
+
+
+                    </td>
+                </tr>
+                </tbody></table>
+            <input id="usableAmount" autocomplete="off" value="{{ loan_user_account.usableAmount }}" type="hidden">
+            <input id="minBidAmount" autocomplete="off" value="{{ bid_request.minBidAmount }}" type="hidden">
+            <input id="maxBidAmount" autocomplete="off" value="{{ bid_request.getRemainAmount }}" type="hidden">
+
+            <table style="height:100px;width:180px;">
+                <tbody><tr>
+                    <td class="muted">可用余额</td>
+                    <td>
+									<span class="text-info">
+										{{ loan_user_account.usableAmount }}
+									</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="muted">已投</td>
+                    <td>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="muted">还需要</td>
+                    <td>
+									<span class="text-info">
+										{{ bid_request.getRemainAmount }}
+									</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="form-group">
+                            <input class="form-control input-sm" id="amount" autocomplete="off" placeholder="投资金额">
+                        </div>
+                    </td>
+                </tr>
+                </tbody></table>
+
+            <button style="height:40px;width:250px;" id="bidBtn" type="button"  class="bidBtn btn btn-danger  btn-block">
+                马上投标
+            </button>
+                    {% endif %}
+
+        </div>
+
+
+    </div>
+
+
+    <div class="card ">
+        <div class="card-header">
+            借款人信息
+        </div>
+        <div class="card-body">
+            <table>
+                <tbody>
+                <tr>
+                    <td class="muted text-right" width="140px;">出生时间</td>
+                    <td width="150px;" style="padding-left: 10px;" class="text-info">
+                        1988-1-1
+                    </td>
+                    <td class="muted text-right" width="140px;">借款额度</td>
+                    <td width="150px;" style="padding-left: 10px;" class="text-info">
+                        5,000
+                    </td>
+                    <td class="muted text-right" width="140px;">性别</td>
+                    <td width="150px;" style="padding-left: 10px;" class="text-info">
+                        男
+                    </td>
+                    <td class="muted text-right" width="140px;">住房条件</td>
+                    <td width="150px;" style="padding-left: 10px;" class="text-info">
+                        有自有房
+                    </td>
+                </tr>
+                <tr>
+                    <td class="muted text-right">文化程度</td>
+                    <td style="padding-left: 10px;" class="text-info">
+                        大专以下
+                    </td>
+                    <td class="muted text-right">每月收入</td>
+                    <td style="padding-left: 10px;" class="text-info">
+                        3000以下
+                    </td>
+                    <td class="muted text-right">婚姻情况</td>
+                    <td style="padding-left: 10px;" class="text-info">
+                        已婚
+                    </td>
+                    <td class="muted text-right">子女情况</td>
+                    <td style="padding-left: 10px;" class="text-info">
+                        有子女
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <div style="font-size: 16px;">材料信息</div>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>材料类型</th>
+                    <th>材料数量</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr style="cursor: pointer;" lid="2101" st="1" class="more">
+                    <th>房产证正面</th>
+                    <td>1</td>
+                </tr>
+                <tr style="cursor: pointer;" lid="2101" st="1" class="more">
+                    <th>房产证反面</th>
+                    <td>1</td>
+                </tr>
+                <tr style="cursor: pointer;" lid="2101" st="1" class="more">
+                    <th>户口本</th>
+                    <td>1</td>
+                </tr>
+                <tr style="cursor: pointer;" lid="2101" st="1" class="more">
+                    <th>结婚证</th>
+                    <td>1</td>
+                </tr>
+                <tr style="cursor: pointer;" lid="2101" st="1" class="more">
+                    <th>银行流水证明</th>
+                    <td>1</td>
+                </tr>
+                <tr style="cursor: pointer;" lid="2101" st="1" class="more">
+                    <th>银行流水证明</th>
+                    <td>1</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <div style="font-size: 16px;">还款情况</div>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>还款状态</th>
+                    <th>最近一周</th>
+                    <th>最近1月</th>
+                    <th>最近6月</th>
+                    <th>6个月前</th>
+                    <th>总计[?]</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>提前还款</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>准时还款</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>逾期已还</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>逾期未还</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card mt-3">
+        <div class="card-header">
+            <div style="font-size: 16px;">投标记录</div>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>投标人</th>
+                    <th>年利率 </th>
+                    <th>有效金额(¥)</th>
+                    <th>投标时间</th>
+                    <th>类型</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>test1</td>
+                    <td>
+                        12%
+                    </td>
+                    <td style="padding-right:60px;" class="text-info">
+                        2,000
+                    </td>
+                    <td>
+                        2019-09-05 01:59:55
+                    </td>
+                    <td>手动投标</td>
+                </tr>
+                <tr>
+                    <td>test2</td>
+                    <td>
+                        12%
+                    </td>
+                    <td style="padding-right:60px;" class="text-info">
+                        3,000
+                    </td>
+                    <td>
+                        2019-09-05 02:02:04
+                    </td>
+                    <td>手动投标</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock %}

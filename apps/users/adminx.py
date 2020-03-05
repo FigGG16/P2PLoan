@@ -31,12 +31,12 @@ class BorrowerInlines(object):
     # verbose_name_plural = 'Borrower'
     # fk_name = 'userProfile'
 
-
+#投资者
 class UserProfileAdmin(object):
     search_fields = ['username']
     inlines = [InvestorInlines, UsersFamilyAuthenticationInline, AccountInline]
     list_display = ['username', 'nickname', 'trueName', 'email', 'is_active', 'is_superuser']
-    readonly_fields = ['email', 'image','image']
+    readonly_fields = ['email', 'image']
 
     list_filter = ['is_borrower']
     def queryset(self):

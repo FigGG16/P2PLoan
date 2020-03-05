@@ -229,8 +229,6 @@ class PersonCenterView(View):
 
 
 
-
-
 class UserAccountView(LoginRequiredMixin, View):
     def get(self, request):
         form = ReturnRealAuthImageForm()
@@ -437,16 +435,4 @@ class UploadUserAuthenticationListView(ListView):
 
 
 
-
-
-
-# class PictureListView(ListView):
-#     model = Picture
-#
-#     def render_to_response(self, context, **response_kwargs):
-#         files = [ serialize(p) for p in self.get_queryset() ]
-#         data = {'files': files}
-#         response = JSONResponse(data, mimetype=response_mimetype(self.request))
-#         response['Content-Disposition'] = 'inline; filename=files.json'
-#         return response
 

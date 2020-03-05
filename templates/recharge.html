@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block custom_js %}
+
+{% load business_model %}
+
+
+{% endblock %}
+{% block custom_css %}
+         <link rel="stylesheet" href="{% static 'css/core.css' %}" type="text/css" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/account.css' %}" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/bank.css' %}" />
+        <style type="text/css">
+        body {
+            font: 14px/1.5 "Verdana", "微软雅黑", YaHei, tahoma, arial, Hiragino Sans GB, "宋体";
+        }
+        .el-borrow-form{
+            position: relative;
+        }
+        .el-borrow-form-tip{
+            width: 300px;
+            border-radius: 3px;
+            border:1px solid #ddd;
+            box-shadow: 1px 1px 20px #ddd;
+            padding:20px 30px;
+            position: absolute;
+            top:10px;
+            right: 100px;
+        }
+        .text-danger{text-align: center;}
+    </style>
+
+ {% endblock %}
+
+{% block custome_content %}
+
+<div class="container pt-5">
+    <div class="el-tip-info">
+        <h3>账户充值</h3>
+        <p>1. 由于银行系统的限制，充值功能建议使用 IE 内核（IE8及以上）的浏览器。</p>
+        <p>2. 请注意：为打击信用卡套现行为，充值资金必须经过投资回款后方能允许提现。</p>
+    </div>
+    <div role="tabpanel">
+        <!-- Nav tabs -->
+
+        <ul class="nav nav-pills nav-fill">
+            <li class="nav-item "><a data-toggle="tab" class="nav-link active" href="#tab2">线下充值</a></li>
+            <li class="nav-item"><a data-toggle="tab" class="nav-link " href="#tab1">线上充值（第三方平台）</a></li>
+
+
+        </ul>
+
+<!--        <ul class="nav nav-pills nav-fill" role="tablist">-->
+<!--            <li role="presentation" class="nav-item" ><a href="#tab1" data-toggle="tab">线上充值（第三方平台）</a></li>-->
+<!--            <li role="presentation" class="nav-item"><a href="#tab2" data-toggle="tab">线下充值</a></li>-->
+<!--        </ul>-->
+
+        <!-- Tab panes -->
+
+
+        <div class="tab-content">
+            <div  class="tab-pane active" id="tab2">
+                <table class="table el-recharge-table">
+                    <thead>
+                    <tr>
+                        <th>银行名称</th>
+                        <th>开户人姓名</th>
+                        <th>银行帐号</th>
+                        <th>开户行支行名称</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for obj in all_bank_info %}
+                        <tr>
+                            <td>
+                                <div class="bank bank_{{ obj.bankName }}"></div>
+                            </td>
+                            <td>{{ obj.accountName }}</td>
+                            <td>{{ obj.accountNumber }}</td>
+                            <td>{{ obj.bankForkName }}</td>
+                        </tr>
+                                        {% endfor %}
+                    </tbody>
+                </table>
+                <div>
+                    <p class="text-primary h6" style="padding: 0px;margin: 0px;;">第一步:</p><p class="text-primary">请选择往以上一个账号汇款或转账您所要充值的金额（若您是跨行转账，推荐选择建行）。注：请保存您的交易记录信息。</p>
+                    <p class="text-primary h6" style="padding: 0px;margin: 0px;;">第二步:</p><p class="text-primary">款或转账成功后，再选择你所汇款或转账的账号，并填写以下完整的信息后，提交您的线下充值申请。我们将会在下个工作日核对您的申请。</p>
+
+
+
+                    <form class="pl-5" method="post" href="{% url 'business:recharge' %}">
+                        <div class="form-group row">
+                        <label class="col-sm-1 mr-3 col-form-label text-right" for="inlineFormCustomSelectPref">银行</label>
+                        <select class="custom-select col-sm-5" id="inlineFormCustomSelectPref" name="bankAccountNumber">
+{#                            #}
+                              {% for foo in all_bank_info %}
+
+
+                                        <option  selected value="{{ foo.accountNumber }}">
+                                           {{ foo.accountNumber }}({{foo.bankForkName }})";
+                                        </option>
+
+
+                                {% endfor %}
+
+
+
+                        </select>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-1 col-form-label text-right">交易号</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="tradeCode" id="inputTradeCode">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputPassword3" class="col-sm-1 col-form-label text-rightl">充值时间</label>
+                            <div class="col-sm-4">
+                                <input type="date" class="form-control" name="tradeTime"  id="inputPassword3">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputAmount" class="col-sm-1 col-form-label text-right">充值金额</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="amount" id="inputAmount">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputPassword3" class="col-sm-1 col-form-label text-right">说明</label>
+                            <div class="col-sm-4">
+                                <textarea class="form-control" id="exampleFormControlTextarea1" name="note" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-sm-10">
+                                <button type="submit" class="btn btn-primary">确认提交</button>
+                            </div>
+                        </div>
+                    {% csrf_token %}
+                    </form>
+
+
+
+                </div>
+            </div>
+            <div class="tab-pane " id="tab1">
+                <p class="h3 text-danger text-center" style="margin-top:0px;padding-top:10px;">系统暂不支持，请采用线下充值</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+
+
+{% endblock %}

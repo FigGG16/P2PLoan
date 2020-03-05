@@ -4,6 +4,9 @@
 {% load staticfiles %}
 
 {% load user_model_tags %}
+
+{% load business_model %}
+
 {% block custom_js %}
 
 
@@ -373,10 +376,13 @@
         success: function(data) {
 
                 if(data.status == "success"){
+                            {#提交数据成功，进行局部刷新#}
+{#            $(".user-file-main").load(location.href + " .user-file-main");#}
 
 
                 }else if(data.status == "failure"){
-
+                            {#提交数据成功，进行局部刷新#}
+{#            $(".user-file-main").load(location.href + " .user-file-main");#}
 
                 }
 
@@ -642,11 +648,11 @@ $(function () {
 			<div class="Right_Main">
                 <div class="tab-content" id="v-pills-tabContent">
 				<!--借出首页-->
-                <div class="tab-pane fade show  lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                <div class="tab-pane fade show active lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
 				<div id="RightPage" class="lend_home_page border" data-page="0">
 
 
-                    <!--                //右边主要内容显示-->
+                    <!--       //右边主要内容显示-->
                 <div class="card-body el-account">
                     <div class="el-account-info ">
 <!--                        //头像-->
@@ -658,33 +664,46 @@ $(function () {
                             <p>最后登录时间：2020-02-11 10:35:29 </p>
                         </div>
                         <div class="float-left" style="text-align: center;width: 400px;margin:30px auto 0px auto;">
-                            <a class="btn btn-primary btn-lg" href="/recharge.do">账户充值</a>
+                            <a class="btn btn-primary btn-lg" href="{% url 'business:recharge' %}">账户充值</a>
                             <a class="btn btn-danger btn-lg" href="/moneyWithdraw.do">账户提现</a>
                         </div>
                         <div class="clearfix"></div>
                     </div>
 
+                    {% get_user_account request.user as account_obj %}
+
+{#                        user_profile = models.ForeignKey(UserProfile, verbose_name=u"用户名称", on_delete=models.CASCADE, null=True)#}
+{#    usableAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户可用余额")#}
+{#    freezedAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户冻结金额")#}
+{#    unReceiveInterest = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户待收利息")#}
+{#    unReceivePrincipal = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户待收本金")#}
+{#    unReturnAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户待还金额")#}
+{#    remainBorrowLimit = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户剩余授信额度")#}
+{#    borrowLimit = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户授信额度")#}
+{#    tradePassword = models.CharField(max_length=128,verbose_name="交易密码",null=True, blank=True)#}
+{#    verifyCode = models.CharField(max_length=128,verbose_name="数据校验",null=True, blank=True)#}
+
                     <div class="row h6 account-info">
                         <div class="col-sm-4">
-                            账户总额：<span class="text-primary">0元</span>
+                            账户总额：<span class="text-primary">{% formate_decimal_show account_obj.getTotalAmount %}元</span>
                         </div>
                         <div class="col-sm-4">
-                            可用金额：<span class="text-primary">0元</span>
+                            可用金额：<span class="text-primary">{% formate_decimal_show account_obj.usableAmount %}元</span>
                         </div>
                         <div class="col-sm-4">
-                            冻结金额：<span class="text-primary">0元</span>
+                            冻结金额：<span class="text-primary">{% formate_decimal_show account_obj.freezedAmount %}元</span>
                         </div>
                     </div>
 
                     <div class="row h6 account-info">
                         <div class="col-sm-4">
-                            待收利息：<span class="text-primary">0元</span>
+                            待收利息：<span class="text-primary">{% formate_decimal_show account_obj.unReceiveInterest %}元</span>
                         </div>
                         <div class="col-sm-4">
-                            待收本金：<span class="text-primary">0元</span>
+                            待收本金：<span class="text-primary">{% formate_decimal_show account_obj.unReceivePrincipal %}元</span>
                         </div>
                         <div class="col-sm-4">
-                            待还本息：<span class="text-primary">0元</span>
+                            待还本息：<span class="text-primary">{% formate_decimal_show account_obj.getTotalAmount %}元</span>
                         </div>
                     </div>
 
@@ -1000,7 +1019,7 @@ $(function () {
                 </div>
 
                 <!--分控材料认证-->
-                <div class="tab-pane fade show active user-file-main" id="user-file-main"  role="tabpanel" aria-labelledby="v-pills-userFile-tab">
+                <div class="tab-pane fade show  user-file-main" id="user-file-main"  role="tabpanel" aria-labelledby="v-pills-userFile-tab">
 
                            <!-- 功能页面 -->
 {#                测试div#}

@@ -4,6 +4,7 @@ from utils.bitStatesUtils import BitStatesUtils
 from certification.models import RealAuth, UserFile,BaseAudit
 from business.models import BidRequest
 from django.db.models import Q
+from users.models import Account
 register = template.Library()
 
 #user是否存在实名认证记录
@@ -56,7 +57,13 @@ def is_biding(user_profile):
         return True
     return False
 
-# @register.simple_tag(name='get_user_id')
+#获取用户账户
+@register.simple_tag()
+def get_user_account(user):
+    user_account_obj = Account.objects.get(userProfile=user)
+    return user_account_obj
+# @register.simple_tag(name
+# ='get_user_id')
 # def get_user_identity_number(user_profile):
 #     user_profile_detail = user_profile.Person.objects.get(name='alex')
 #     if user_profile.real_auth_id is None:

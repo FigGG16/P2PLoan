@@ -107,7 +107,7 @@
         借款信息
         <label class="label label-primary">信用标</label>
     </div>
-    <form class="form-horizontal el-borrow-form" id="editForm" novalidate="novalidate" method="post" action="/borrow_apply.do">
+    <form class="form-horizontal el-borrow-form" id="editForm" novalidate="novalidate" action="{% url 'business:bid_apply' %}" method="POST">
         <div class="form-group row">
             <label class="col-sm-3 control-label text-right col-form-label">
                 借款金额
@@ -228,6 +228,7 @@
                 <span class="el-borrow-cost" id="cost03">--</span>
             </p>
         </div>
+        {% csrf_token %}
     </form>
 </div>
 

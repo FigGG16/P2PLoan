@@ -20,6 +20,9 @@ class BitStatesUtils:
     __STATE_REJECT = 2 # ÉóºË¾Ü¾ø
 
 
+
+
+
     @classmethod
     def GET_OP_BIND_PHONE(cls):
         return cls.__OP_BIND_PHONE
@@ -101,7 +104,7 @@ class BitStatesUtils:
     # * /
     @classmethod
     def removeState(cls, states, value):
-        if not BitStatesUtils.removeState(states, value):
+        if not BitStatesUtils.hasState(states, value):
             return states
         return states ^ value
 
