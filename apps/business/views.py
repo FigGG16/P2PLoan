@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.views.generic.base import View
-from .models import BidRequest, PlatformBankInfo, BidRequestAuditHistory
+from .models import BidRequest, PlatformBankInfo, BidRequestAuditHistory,UserBanknInfo
 from users.models import UserProfile, Account
 from utils.BidConst import BidConst
-from .form import BidRequestForm, RechargeOfflineForm, BidForm, AccountFlowForm
+from .form import BidRequestForm, RechargeOfflineForm, BidForm, AccountFlowForm,UserBanknInfoForm
 from django.http import HttpResponse
 from certification.models import UserFile, RealAuth
 from django.db.models import Q
@@ -14,6 +14,7 @@ from decimal import *
 
 class BorrowTypeList(View):
     def get(self, request):
+
         return render(request, "borrow_type_list.html", )
 
 
@@ -103,7 +104,7 @@ class BidView(View):
 
                  #// 3,生成一条投标流水;
                  account_flow = AccountFlowForm()
-                 account_flow.save(user=request.user, loaner_account=loaner_account,bid_request=bid_request, loaner_bid_amount=loaner_bid_amount)
+                 account_flow.save(loaner_account=loaner_account, loaner_bid_amount=loaner_bid_amount)
 
                  # // 4, 修改借款相关信息;
                  bid_request.bidCount = bid_request.bidCount+1
@@ -148,3 +149,13 @@ class RechargeView(View):
             return render(request, "succeed_bid.html", {'message': '提交成功'})
         return render(request, "index.html", )
 
+class BindUserBankInfoView(View):
+    def post(self,request):
+
+        if not request.user.isBindBankInfo():
+            form = UserBanknInfoForm(request.POST)
+            if form.is_valid():
+                form.save(user_profile=request.user)
+                #修改用户状态码
+            return HttpResponse('{"status":"success", "message":"绑定成功"}', content_type='application/json')
+        return HttpResponse('{"status":"failure", "message":"银行卡已经绑定"}', content_type='application/json')

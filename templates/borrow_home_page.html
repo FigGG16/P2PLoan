@@ -506,6 +506,71 @@ $(function () {
 });
 
 
+//绑定银行卡
+   $(function(){
+
+   //添加父类监听事件解决重复上传无效问题
+            {#$(".refresh_bid_view").on('click','.bidBtn', function () {#}
+            $(".bind-bank-button").click(function () {
+              console.log("将来");
+                $('#WarnModal').modal('show');
+                {#var amount = parseFloat($("#amount").val());#}
+                {#if(!amount){#}
+                {##}
+                {#    $("#alert-message").text("请输入投资金额！");#}
+                {##}
+                {#    return;#}
+             //   {#}#}
+                {#if(parseFloat($("#usableAmount").val())<amount){#}
+                {#     $("#alert-message").text("投资金额已超过账户余额！");#}
+                {#    return;#}
+              //  {#}#}
+                {#if(parseFloat($("#minBidAmount").val())>amount){#}
+                {#    $("#alert-message").text("投资金额低于最小投标金额");#}
+                {#    return;#}
+               // {#}#}
+                {#if(parseFloat($("#maxBidAmount").val())<amount){#}
+                {#     $("#alert-message").text("投资金额已超过借款标金额");#}
+                {#    return;#}
+              //  {#}#}
+
+                $bankForm = $('#bankForm')
+
+                $.ajax({
+                cache: false,
+                type: 'post',
+                dataType:'json',
+                url:"{% url 'business:BindUserBankInfo' %}",
+                data:$bankForm.serialize(),
+                async: true,
+                beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function(data) {
+
+                        if(data.status == "success"){
+                                     {#提交数据成功，进行局部刷新#}
+                            console.log("success");
+                             {#$(".refresh_bid_view").load(location.href + " .refresh_bid_view");#}
+
+                            //删除重复创建div
+                             $(".bank-info-main").load(" .bank-info-main > *");
+                             $("#alert-message").text(data.message);
+
+
+
+                        }else if(data.status == "failure"){
+                            console.log("failure");
+                            $("#alert-message").text(data.message);
+                        }
+                },
+                complete: function(XMLHttpRequest){
+
+                }
+            });
+            });
+        });
+
 
     </script>
 
@@ -570,18 +635,29 @@ $(function () {
     </div>
   </div>
 
-  <!-- CONTAINER TO DISPLAY THE CROPPED IMAGES -->
+{#绑定银行卡提醒#}
+    {#//model#}
 
-
-{#  <div class="row" style="margin-top: 20px">#}
-{#    {% for photo in photos %}#}
-{#      <div class="col-sm-4 col-md-3">#}
-{#        <img src="{{ photo.file.url }}" class="img-thumbnail img-fluid">#}
-{#      </div>#}
-{#    {% endfor %}#}
-{#  </div>#}
-
+<div class="modal fade" id="WarnModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">提醒</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body alert alert-warning">
+                <span id="alert-message">ggggggggggggg</span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
+</div>
+
+</div>
 
 
 
@@ -606,7 +682,9 @@ $(function () {
 
                   <a class="nav-link active mt-1 text-center" id="v-pills-home-tab" data-toggle="pill" href="#lend-home-page" role="tab" aria-controls="v-pills-home" aria-selected="true">我的账户首页</a>
                   <a class="nav-link mt-1 text-center" id="v-pills-realAuth-tab" data-toggle="pill" href="#real-auth-main" role="tab" aria-controls="v-pills-realAuth" aria-selected="false">实名认证</a>
-                <a class="nav-link mt-1 text-center" id="v-pills-realAuth-tab" data-toggle="pill" href="#user-file-main" role="tab" aria-controls="v-pills-userFile" aria-selected="false">分控材料认证</a>
+                <a class="nav-link mt-1 text-center" id="v-pills-realAuth-tab" data-toggle="pill" href="#user-file-main" role="tab" aria-controls="v-pills-userFile" aria-selected="false">风控材料认证</a>
+                <a class="nav-link mt-1 text-center" id="v-pills-bankInfo-tab" data-toggle="pill" href="#bank-info-main" role="tab" aria-controls="v-pills-bankInfo" aria-selected="false">绑定银行卡</a>
+                 <a class="nav-link mt-1 text-center" id="v-pills-moneyWithout-tab" data-toggle="pill" href="#money-without-main" role="tab" aria-controls="v-pills-moneyWithout" aria-selected="false">提现</a>
                   <a class="nav-link mt-1 text-center" id="v-pills-profile-tab" data-toggle="pill" href="#momey-query-main" role="tab" aria-controls="v-pills-profile" aria-selected="false">我的借出列表</a>
                   <a class="nav-link mt-1 text-center" id="v-pills-messages-tab" data-toggle="pill" href="#tender-historical-records-main" role="tab" aria-controls="v-pills-messages" aria-selected="false">投标历史记录</a>
                   <a class="nav-link mt-1 text-center" id="v-pills-settings-tab" data-toggle="pill" href="#current-loan-term" role="tab" aria-controls="v-pills-settings" aria-selected="false">出借人 - 正在竞标中的</a>
@@ -648,7 +726,7 @@ $(function () {
 			<div class="Right_Main">
                 <div class="tab-content" id="v-pills-tabContent">
 				<!--借出首页-->
-                <div class="tab-pane fade show active lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                <div class="tab-pane fade show lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
 				<div id="RightPage" class="lend_home_page border" data-page="0">
 
 
@@ -671,17 +749,6 @@ $(function () {
                     </div>
 
                     {% get_user_account request.user as account_obj %}
-
-{#                        user_profile = models.ForeignKey(UserProfile, verbose_name=u"用户名称", on_delete=models.CASCADE, null=True)#}
-{#    usableAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户可用余额")#}
-{#    freezedAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户冻结金额")#}
-{#    unReceiveInterest = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户待收利息")#}
-{#    unReceivePrincipal = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户待收本金")#}
-{#    unReturnAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户待还金额")#}
-{#    remainBorrowLimit = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户剩余授信额度")#}
-{#    borrowLimit = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),verbose_name="账户授信额度")#}
-{#    tradePassword = models.CharField(max_length=128,verbose_name="交易密码",null=True, blank=True)#}
-{#    verifyCode = models.CharField(max_length=128,verbose_name="数据校验",null=True, blank=True)#}
 
                     <div class="row h6 account-info">
                         <div class="col-sm-4">
@@ -1107,6 +1174,175 @@ $(function () {
 
                 </form>
                 </div>
+                  <!--绑定银行卡-->
+                <div class="tab-pane fade show bank-info-main" id="bank-info-main"  role="tabpanel" aria-labelledby="v-pills-bankInfo-tab">
+
+                {% if request.user.isRealAuth %}
+                    {% if request.user.isBindBankInfo %}
+                     <div class="card">
+                <div class="card-header">
+                    绑定银行卡
+                </div>
+                <div class="card-body">
+                    <h4 class="text-success ">你已经绑定了银行卡</h4>
+                    <hr />
+                    <table style="width: 100%;height: 100px;">
+                        {% get_user_bank_info request.user as bank_info %}
+                        <tr>
+                            <td><span>开户名： {{ bank_info.accountName }}</span></td>
+                            <td><span>开户行： {% get_bank_type bank_info.bankName %}</span></td>
+                        </tr>
+                        <tr>
+                            <td><span>支行名称： {{ bank_info.bankForkName }}</span></td>
+                            <td><span>银行账号：{{ bank_info.accountNumber }}</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+                    {% else %}
+                      <div class="card">
+                        <div class="card-header">
+                            绑定银行卡
+                        </div>
+                        <form class="form-horizontal" id="bankForm" method="post" novalidate="novalidate">
+                            <fieldset>
+                                <div class="form-group row align-content-center justify-content-center">
+                                    <p class="text-center text-danger">为保护您账户安全，绑定银行卡之后，不能自己修改，请认真填写！</p>
+                                </div>
+                                <div class="form-group row align-content-center">
+                                    <label class="col-sm-4 control-label col-form-label text-right">开户名</label>
+                                    <div class="col-sm-4">
+                                        <p  class="form-control-static">{{ request.user.trueName }}</p>
+                                        <input type="hidden" name="accountName" value="{{ request.user.trueName }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row align-content-center">
+                                    <label class="col-sm-4  control-label col-form-label text-right" for="bankName">开户行</label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" name="bankName" size="1">
+                                              {% all_bank_type as choices%}
+                                                        {% for numb,value in choices %}
+                                                             <option value="{{ numb }}">{{ value }}</option>
+                                                        {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row align-content-center">
+                                    <label class="col-sm-4  control-label col-form-label text-right" for="bankforkname">支行名称</label>
+                                    <div class="col-sm-4">
+                                        <input id="idNumber" class="form-control" name="bankForkName"  type="text" value="">
+                                    </div>
+                                </div>
+                                <div class="form-group row align-content-center">
+                                    <label class="col-sm-4  control-label col-form-label text-right" for="accountNumber">银行账号</label>
+                                    <div class="col-sm-4">
+                                        <input id="idNumber" class="form-control" name="accountNumber"  type="text" value="">
+                                    </div>
+                                </div>
+                                <div class="form-group row align-content-center  justify-content-center">
+                                    <button type="button" class="btn btn-primary col-sm-offset-4 bind-bank-button" data-loading-text="正在提交"><i class="icon-ok"></i> 绑定银行卡</button>
+                                </div>
+                            </fieldset>
+                        {% csrf_token %}
+                        </form>
+                    </div>
+                        {% endif %}
+                {% else %}
+                      <div class="card">
+                                <div class="card-header">
+                                    绑定银行卡
+                                </div>
+                                    <div class="el-tip-info">
+                                        <p class="text-info">请先完成实名认证之后，才能进行银行卡绑定；</p>
+                                    </div>
+                      </div>
+                {% endif %}
+                 </div>
+                  <!--提现-->
+                 <div class="tab-pane fade show active  money-without-main" id="money-without-main"  role="tabpanel" aria-labelledby="v-pills-moneyWithout-tab">
+
+
+                 {% if not request.user.isMoneyWithoutProcess %}
+
+                            {% if request.user.isBindBankInfo %}
+                            <div class="el-tip-info">
+                <h3>账户提现</h3>
+                <p>1. 本平台工作日会处理当天 17:00 之前的提款申请。</p>
+                <p>2. 为了确保银行转账成功，请您确认银行账号信息的 正确性。</p>
+                <p>3. 单笔提现范围-普通用户500.00 元 ~ 500000.00 元。</p>
+                <p>4. 单笔提现范围-VIP用户500.00 元 ~ 500000.00 元。</p>
+                <p>5. 目前提现服务费：1万元(含) 之内：2.00 元/笔；1万元（以上） ：5.00 元/笔。</p>
+                <p>6. 为避免信用卡套现，故充值15日内未投资提现按提现金额的0.4%收取提现费用。</p>
+                <p>7. 本次可提现 = 可用余额  - 最高服务费</p>
+            </div>
+                            <div style="margin: 10px 2px;" class="row h5">
+                                <div class="col-sm-5 text-right">
+                                    可提现金额：<span class="text-primary">{% formate_decimal_show account_obj.usableAmount %} 元</span>
+                                </div>
+                                <div class="col-sm-5 text-right">
+                                    冻结金额：<span class="text-primary">{% formate_decimal_show account_obj.freezedAmount %}元</span>
+                                </div>
+                            </div>
+                            <div>
+
+                                <form id="editForm" class="form-horizontal el-form" action="/moneyWithdraw_apply.do" method="post">
+
+                                {% get_user_bank_info request.user as bank_info %}
+                                    <div class="form-group row align-content-center">
+                                        <label class="col-sm-4 col-form-label text-right">开户行</label>
+                                        <div class="col-sm-5">
+                                            <label class="form-control">{{ bank_info.accountName }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-content-center">
+                                        <label class="col-sm-4 col-form-label text-right">开户支行</label>
+                                        <div class="col-sm-5">
+                                            <label class="form-control">{{ bank_info.bankForkName }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-content-center">
+                                        <label class="col-sm-4 col-form-label text-right">银行卡号</label>
+                                        <div class="col-sm-5">
+                                            <label class="form-control">{{ bank_info.accountNumber }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-content-center">
+                                        <label class="col-sm-4 col-form-label text-right">户主姓名</label>
+                                        <div class="col-sm-5">
+                                            <label class="form-control">{{ bank_info.accountName }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-content-center">
+                                        <label class="col-sm-4 col-form-label text-right">提现金额</label>
+                                        <div class="col-sm-5">
+                                            <input class="form-control " name="moneyAmount" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group row ml-5 align-content-center  justify-content-center">
+                                        <button type="submit" class="col-sm-offset-2 btn btn-primary col-sm-2 ">确认提交</button>
+                                    </div>
+                                </form>
+
+                            </div>
+
+                                {% else %}
+                                <!--  未绑定银行逻辑-->
+                                <div>
+                                    <div class="el-tip-info">
+                                        <p class="text-info">请先绑定银行卡，再申请提现；</p>
+                                    </div>
+                                </div>
+                                 {% endif %}
+                     {% else %}
+                                 <!--  有提现进程在执行-->
+                        <div>
+                                    <div class="el-tip-info">
+                                        <p class="text-info">请先绑定银行卡，再申请提现；</p>
+                                    </div>
+                                </div>
+
+                     {% endif %}
+                 </div>
 
                     <!--我的借出列表-->
                 <div class="tab-pane fade momey_query_main" id="momey-query-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">

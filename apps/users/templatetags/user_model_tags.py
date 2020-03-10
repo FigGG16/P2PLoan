@@ -62,13 +62,4 @@ def is_biding(user_profile):
 def get_user_account(user):
     user_account_obj = Account.objects.get(userProfile=user)
     return user_account_obj
-# @register.simple_tag(name
-# ='get_user_id')
-# def get_user_identity_number(user_profile):
-#     user_profile_detail = user_profile.Person.objects.get(name='alex')
-#     if user_profile.real_auth_id is None:
-#         return False
-#     elif BitStatesUtils.hasState(user_profile.bitState, BitStatesUtils.GET_OP_REAL_AUTH()):
-#         return True
-#
-#     return False
+

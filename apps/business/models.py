@@ -2,7 +2,7 @@ from django.db import models
 from decimal import *
 # Create your models here.
 from utils.BidConst import BidConst
-from users.models import Borrower, Investor, Account
+from users.models import Borrower, Investor, Account,UserProfile
 from certification.models import BaseAudit
 from utils.DecimalFormatUtil import DecimalFormatUtil
 
@@ -121,11 +121,20 @@ class BidRequestAuditHistory(BaseAudit):
     auditType = models.IntegerField(choices=AUDIT_TYPE_STATE_CHOICE, default=PUBLISH_AUDIT, blank=True, verbose_name='审核状态', null=True)
 
     class Meta:
-        verbose_name = u"发标前审核"
+        verbose_name = u"所有标的审核历史"
         verbose_name_plural = verbose_name
 
     def getAuditTypeDisplay(self):
         return self.auditType
+
+
+class PublishBidAaudit(BidRequestAuditHistory):
+
+    class Meta:
+        verbose_name = '发标前审核'
+        verbose_name_plural = verbose_name
+        # 这里必须设置proxy=True，这样就不会再生成一张表，同时还具有Model的功能
+        proxy = True
 
 class FullAuditOne(BidRequestAuditHistory):
 
@@ -226,4 +235,123 @@ class AccountFlow(models.Model):
 
     class Meta:
         verbose_name = u"账户流水"
+        verbose_name_plural = verbose_name
+
+
+class SystemAccount(models.Model):
+    usableAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                       verbose_name="平台账户剩余金额")
+    freezedAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                        verbose_name="平台账户冻结金额")
+    class Meta:
+        verbose_name = u"平台账户"
+        verbose_name_plural = verbose_name
+
+class SystemAccountFlow(models.Model):
+
+
+    ACCOUNT_ACTION_TYPE_CCHOICE = (
+        (1 , "账户管理费"),
+        (2 , "利息管理费"),
+        (3 , "提现手续费"),
+    )
+    amount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                 verbose_name="变化的余额")  # // 这次账户发生变化的金额
+    accountActionType = models.IntegerField(blank=True, null=True, choices=ACCOUNT_ACTION_TYPE_CCHOICE, verbose_name="资金变化类型")  # // 资金变化类型
+    createdTime = models.DateTimeField(auto_now_add=True,blank=True, null=True, verbose_name=u"创建时间")  # // 这次账户发生变化的时间
+    usableAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                       verbose_name="平台账户剩余金额")
+    freezedAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                        verbose_name="平台账户冻结金额")
+    note = models.TextField(max_length=100, null=True, blank=True, verbose_name="系统账户流水说明") #; // 账户流水说明
+    systemAccountId = models.ForeignKey(SystemAccount, verbose_name=u"用户账户", on_delete=models.CASCADE)  # // 流水是关于哪个账户的
+
+    class Meta:
+        verbose_name = u"平台账户流水"
+        verbose_name_plural = verbose_name
+
+
+class PaymentSchedule(models.Model):
+    RETURN_TYPE_CHOICE =(
+        (0, "按月分期还款"),
+        (1, "按月到期还款")
+    )
+    STATE_CHOICE= (
+        (0, "正常待还"),
+        (1, "已还"),
+        (2, "逾期")
+    )
+    BID_REQUEST_TYPE_CHOICE = (
+        (0, "普通信用标"),
+        (1, "普通信用标")
+    )
+    bidRequestId = models.ForeignKey(BidRequest,related_name='PaymentSchedules',null=True, verbose_name=u"借款标", on_delete=models.CASCADE)#; // 对应借款
+    bidRequestTitle = models.CharField(max_length=50,blank=True, null=True, verbose_name="借款名称")# // 借款名称
+    borrower = models.ForeignKey(Borrower, verbose_name=u"还款人",null=True,related_name='PaymentSchedules', on_delete=models.CASCADE)#; // 还款人
+    deadLine = models.DateTimeField(null=True, verbose_name=u"本期还款截止期限") # // 本期还款截止期限
+    payDate = models.DateTimeField(null=True, verbose_name=u"还款时间") # // 还款时间
+    totalAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                        verbose_name="本期还款总金额")#// // 本期还款总金额，利息 + 本金
+    principal = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                        verbose_name="本期还款本金")#// 本期还款本金
+    interest = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                        verbose_name="本期还款总利息")# // 本期还款总利息
+    monthIndex = models.IntegerField(null=True, blank=True, verbose_name="第几期")#// 第几期(即第几个月)
+    state = BidConst.PAYMENT_STATE_NORMAL = models.IntegerField(null=True, blank=True,default=BidConst.GET_PAYMENT_STATE_NORMAL(),choices=STATE_CHOICE,verbose_name="本期还款状态")# // 本期还款状态（默认正常待还）
+    bidRequestType = models.IntegerField(null=True, blank=True, choices=BID_REQUEST_TYPE_CHOICE, verbose_name="借款类型(信用标)") #// 借款类型
+    returnType = models.IntegerField(null=True, blank=True, choices=RETURN_TYPE_CHOICE, verbose_name="还款方式")#// 还款方式，等同借款(BidRequest)
+
+    class Meta:
+        verbose_name = u"还款计划"
+        verbose_name_plural = verbose_name
+
+class PaymentScheduleDetail(models.Model):
+    RETURN_TYPE_CHOICE =(
+        (0, "按月分期还款"),
+        (1, "按月到期还款")
+    )
+    bidAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                        verbose_name="总共投标金额")# // 该投标人总共投标金额, 便于还款 / 垫付查询
+    bidId = models.ForeignKey(Bid,null=True,related_name='PaymentScheduleDetails', verbose_name=u"借款标来源", on_delete=models.CASCADE)#// 关联借款 来自于哪个借款标
+    totalAmount =  models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                        verbose_name="本期还款总金额")# // 本期还款总金额( = 本金 + 利息)
+    principal = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                        verbose_name="本期应还款本金")# // 本期应还款本金
+    interest = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                        verbose_name="本期应还款利息")#// 本期应还款利息
+    monthIndex = models.IntegerField(null=True, blank=True, verbose_name="第几期")#// 第几期(即第几个月)
+    deadline = models.DateTimeField(null=True, verbose_name=u"本期还款截止期限") #// 本期还款截止时间
+    bidRequestId = models.ForeignKey(BidRequest, null=True,related_name='PaymentScheduleDetails', verbose_name=u"借款标", on_delete=models.CASCADE) #// 所属哪个借款
+    payDate = models.DateTimeField(null=True, verbose_name=u"实际付款日期") #  // 实际付款日期
+    returnType = models.IntegerField(null=True, blank=True, choices=RETURN_TYPE_CHOICE, verbose_name="还款方式")#// 还款方式
+    paymentScheduleId = models.ForeignKey(PaymentSchedule, null=True,related_name='PaymentScheduleDetails', verbose_name=u"借款标", on_delete=models.CASCADE) # // 所属还款计划
+    borrower = models.ForeignKey(Borrower,null=True, verbose_name=u"还款人",related_name='PaymentScheduleDetails', on_delete=models.CASCADE)  # ;fromLogininfo; // 还款人(即发标人) borrowUser
+    investor = models.ForeignKey(Investor,null=True, verbose_name=u"收款人",related_name='PaymentScheduleDetails', on_delete=models.CASCADE)  # // 收款人(即投标人) toLogininfoId
+    class Meta:
+        verbose_name = u"投资人的回款明细"
+        verbose_name_plural = verbose_name
+
+
+class UserBanknInfo(models.Model):
+    bankName = models.CharField(max_length=50,blank=True, null=True, verbose_name="银行名称") #// 银行名称
+    accountName = models.CharField(max_length=50,blank=True, null=True, verbose_name="开户人姓名")# // 开户人姓名
+    accountNumber = models.CharField(max_length=50,blank=True, null=True, verbose_name="银行账号") #// 银行账号
+    bankForkName = models.CharField(max_length=50,blank=True, null=True, verbose_name="开户支行") # // 开户支行I
+    userProfile = models.ForeignKey(UserProfile,null=True, verbose_name=u"用户",related_name='userBanknInfos', on_delete=models.CASCADE)  # // 收款人(即投标人) toLogininfoId
+    class Meta:
+        verbose_name = u"投资人的回款明细"
+        verbose_name_plural = verbose_name
+
+
+class MoneyWithdraw(BaseAudit):
+    amount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                        verbose_name="提现金额")# // 提现金额
+    charge = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+                                        verbose_name="提现手续费") #// 提现手续费
+    bankName = models.CharField(max_length=50, blank=True, null=True, verbose_name="银行名称")  # // 银行名称
+    accountName = models.CharField(max_length=50, blank=True, null=True, verbose_name="开户人姓名")  # // 开户人姓名
+    accountNumber = models.CharField(max_length=50, blank=True, null=True, verbose_name="银行账号")  # // 银行账号
+    bankForkName = models.CharField(max_length=50, blank=True, null=True, verbose_name="开户支行")  # // 开户支行I
+    class Meta:
+        verbose_name = u"提现审核"
         verbose_name_plural = verbose_name

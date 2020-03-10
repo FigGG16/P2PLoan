@@ -73,10 +73,11 @@ class UserFile(BaseAudit):
         verbose_name_plural = verbose_name
 
 
-
 class UserFileAudit(UserFile):
     class Meta:
         verbose_name = '风控材料已认证'
         verbose_name_plural = verbose_name
         # 这里必须设置proxy=True，这样就不会再生成一张表，同时还具有Model的功能
         proxy = True
+
+

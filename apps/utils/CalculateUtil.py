@@ -92,7 +92,7 @@ class CalculatetUtil:
 # * /
     @classmethod
     def calMonthlyInterest(cls, returnType,  bidRequestAmount, yearRate, monthIndex, monthes2Return):
-        cls.cal_set()
+        # cls.cal_set()
 
         bidRequestAmount = Decimal(str(bidRequestAmount))
         yearRate = Decimal(str(yearRate))
@@ -100,7 +100,7 @@ class CalculatetUtil:
         monthlyRate = cls.getMonthlyRate(yearRate)
         if returnType == BidConst.GET_RETURN_TYPE_MONTH_INTEREST_PRINCIPAL(): #按月分期
             if monthes2Return == 1: #只借一个月
-                monthlyInterest = bidRequestAmount + (bidRequestAmount * monthlyRate)
+                monthlyInterest = bidRequestAmount * monthlyRate
             else:
                 temp1 = bidRequestAmount * monthlyRate
                 temp2 = pow(Decimal('1') + monthlyRate, monthes2Return)
@@ -114,7 +114,7 @@ class CalculatetUtil:
                 totalInterest = totalReturnMoney - bidRequestAmount
 
                 if monthIndex < monthes2Return:
-                    monthlyInterest = ((temp1 - monthToReturnMoney) / temp4)+monthToReturnMoney
+                    monthlyInterest = ((temp1 - monthToReturnMoney) * temp4)+monthToReturnMoney
 
                 elif monthIndex == monthes2Return:
                     temp6 = Decimal('0.0000')
@@ -154,7 +154,7 @@ class CalculatetUtil:
 # * /
     @classmethod
     def calMonthToReturnMoney(cls, returnType, bidRequestAmount,  yearRate, monthIndex, monthes2Return):
-        cls.cal_set()
+        # cls.cal_set()
 
         bidRequestAmount = Decimal(str(bidRequestAmount))
         yearRate = Decimal(str(yearRate))

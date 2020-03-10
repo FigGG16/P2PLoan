@@ -59,6 +59,9 @@ class UserProfile(AbstractUser):
     def isBindBankInfo(self):
         return BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_OP_BIND_BANKINFO())
 
+    def isMoneyWithoutProcess(self):
+        return BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_HAS_MONEYWITHDRAW_PROCESS())
+
     def getScore(self):
         return self.score
 
