@@ -1,11 +1,11 @@
 from django.db import models
 from utils.bitStatesUtils import BitStatesUtils
 from users.models import UserProfile
+from datetime import datetime
 # Create your models here.
 
 
 class BaseAudit(models.Model):
-
 
     CURRENT_STATE_CHOICE = (
         (BitStatesUtils.STATE_NORMAL(), '未审核'),
@@ -79,5 +79,21 @@ class UserFileAudit(UserFile):
         verbose_name_plural = verbose_name
         # 这里必须设置proxy=True，这样就不会再生成一张表，同时还具有Model的功能
         proxy = True
+
+
+class VerifyCode(models.Model):
+    """
+    短信验证码
+    """
+    code = models.CharField(max_length=10, verbose_name="验证码")
+    mobile = models.CharField(max_length=11, verbose_name="电话")
+    add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
+
+    class Meta:
+        verbose_name = "短信验证码"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.code
 
 

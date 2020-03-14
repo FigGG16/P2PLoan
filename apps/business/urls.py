@@ -1,6 +1,7 @@
 from django.conf.urls import url
 
-from .views import BidRequestView, BorrowTypeList, ApplyView, BorrowInfoView, RechargeView,BidView,BindUserBankInfoView
+
+from .views import BidRequestView, BorrowTypeList, ApplyView, BorrowInfoView, RechargeView,BidView, BindUserBankInfoView, MoneyWithdrawView,BidRequestListView
 from django.views.generic import TemplateView
 
 app_name = 'business'
@@ -8,7 +9,6 @@ app_name = 'business'
 
 
 urlpatterns = [
-
 
     # return data
     url(r'^borrow_type_list/$', BorrowTypeList.as_view(), name="borrow_type_list"),
@@ -24,7 +24,12 @@ urlpatterns = [
     url(r'^recharge/$', RechargeView.as_view(), name="recharge"),
 
     url(r'^bid/$', BidView.as_view(), name="bid"),
+
     url(r'^BindUserBankInfoView/$', BindUserBankInfoView.as_view(), name="BindUserBankInfo"),
+
+    url(r'^MoneyWithdrawView/$', MoneyWithdrawView.as_view(), name="MoneyWithdrawView"),
+
+    url(r'^bidRequestList/$', BidRequestListView.as_view(), name="bidRequestList"),
     # url(r'^real_auth_save/$', RealAuthView.as_view(), name="real_auth_info"),
     #风控材料上传文件执行
 

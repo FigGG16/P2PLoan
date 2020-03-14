@@ -192,6 +192,10 @@ CAPTCHA_TIMEOUT = 5   # 超时(minutes)
 CAPTCHA_FONT_SIZECAPT = '10'
 
 
+#手机号码正则表达式
+REGEX_MOBILE = "^1[358]\d{9}$|^147\d{8}$|^176\d{8}$"
+
+
 # CAPTCHA_OUTPUT_FORMAT = '%(image)s %(text_field)s %(hidden_field)s '
 # CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_null', # 没有样式
 #     # 'captcha.helpers.noise_arcs', # 线

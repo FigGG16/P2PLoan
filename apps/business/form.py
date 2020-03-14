@@ -1,4 +1,4 @@
-from .models import BidRequest,BidRequestAuditHistory, RechargeOffline,PlatformBankInfo,Bid, AccountFlow, UserBanknInfo
+from .models import BidRequest,BidRequestAuditHistory, RechargeOffline,PlatformBankInfo,Bid, AccountFlow,UserBanknInfo,MoneyWithdraw
 from django import forms
 from utils.BidConst import BidConst
 from utils.CalculateUtil import CalculatetUtil
@@ -100,3 +100,43 @@ class UserBanknInfoForm(forms.ModelForm):
         user_profile.save()
         user_bank_info.save()
         return user_bank_info
+
+
+class MoneyWithdrawViewForm(forms.ModelForm):
+    class Meta:
+        model = MoneyWithdraw
+        fields = ['moneyAmount']
+
+    def save(self,user_profile,account, commit=False):
+        money_with_draw = super(MoneyWithdrawViewForm, self).save(commit=False)
+        user_bank_info = UserBanknInfo.objects.get(userProfile=user_profile)
+        money_with_draw.charge = Decimal(BidConst.MONEY_WITHDRAW_CHARGEFEE())
+        money_with_draw.bankName = user_bank_info.bankForkName
+        money_with_draw.accountName = user_bank_info.accountName
+        money_with_draw.accountNumber = user_bank_info.accountNumber
+        money_with_draw.bankForkName = user_bank_info.bankForkName
+        money_with_draw.applier = user_profile
+        #用户添加状态码
+        user_profile.addState(BitStatesUtils.GET_HAS_MONEYWITHDRAW_PROCESS())
+        user_profile.save()
+
+        #生成提现流水
+        account.usableAmount = account.usableAmount - Decimal(self.cleaned_data.get('moneyAmount'))
+        account.freezedAmount = account.freezedAmount + Decimal(self.cleaned_data.get('moneyAmount'))
+        self.generateMoneyWithDrawApplyFlow(account=account,money_with_draw=money_with_draw)
+
+        account.save()
+        money_with_draw.save()
+        return money_with_draw
+
+    def generateMoneyWithDrawApplyFlow(self,account, money_with_draw):
+        flow=AccountFlow.objects.create(accountId=account)
+        flow.accountType =BidConst.GET_ACCOUNT_ACTIONTYPE_WITHDRAW_FREEZED()
+        flow.usableAmount = account.usableAmount
+        flow.freezedAmount = account.freezedAmount
+        flow.amount = money_with_draw.moneyAmount
+        flow.note = "提现申请,冻结金额:" +str(money_with_draw.moneyAmount)
+        flow.save()
+
+
+

@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load business_model %}
+{% block custom_js %}
+
+
+    <script  src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+
+    <script>
+
+
+
+    {#__BIDREQUEST_STATE_BIDDING = 1 #// 招标中#}
+    {#__BIDREQUEST_STATE_UNDO = 2 #// 已撤销#}
+    {#__BIDREQUEST_STATE_BIDDING_OVERDUE = 3 #// 流标#}
+    {#__BIDREQUEST_STATE_APPROVE_PENDING_1 = 4 #// 满标1审#}
+    {#__BIDREQUEST_STATE_APPROVE_PENDING_2 = 5 #// 满标2审#}
+    {#__BIDREQUEST_STATE_REJECTED = 6 #// 满标审核被拒绝#}
+    {#__BIDREQUEST_STATE_PAYING_BACK = 7 #// 还款中#}
+    {#__BIDREQUEST_STATE_COMPLETE_PAY_BACK = 8 #// 已还清#}
+
+
+
+
+
+    $(document).ready(function() {
+
+        function sendAjax(value) {
+
+
+        }
+
+
+
+                  //发送验证码
+        $(".filterButton").click(function () {
+          console.log("将来");
+
+            console.log("你好");
+
+            $.ajax({
+            cache: false,
+            type: 'get',
+            dataType:'json',
+            url:"{% relative_url 1 'filter' params %}",
+            data:'',
+            async: true,
+            beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(data) {
+
+                console.log("你好7777");
+                  $(".renewTable").html(data)
+            },
+            complete: function(XMLHttpRequest){
+
+              console.log("你好6666");
+                //删除重复创建div
+
+                             $(".renewTable").load(" .renewTable > *");
+
+            }
+        });
+        });
+
+});
+
+
+
+
+
+
+    </script>
+
+{% endblock %}
+{% block custom_css %}
+
+
+        <style type="text/css">
+
+    </style>
+
+ {% endblock %}
+
+{% block custome_content %}
+
+
+    	<div class="lend_list_main card">
+			<div class="card-header">
+<!--				<div class="lend_list_main_title_color">1</div>-->
+				<h1>我要借入</h1>
+			</div>
+
+			<div class="lend_list_box1 card-title">
+				<h5>借款条件筛选</h5>
+
+				<span>信用等级:</span>
+				<div class="lend_list_box1_bg">
+						请选择<span class="lend_list_box1_btn">
+							<span></span>
+						</span>
+					</div>
+				<span>我是否投过标：</span>
+				<input type="checkbox" name="" id="lend_list_box1_check1" value="" /><span class="lend_list_box1_information">否</span>
+
+				<span>优先计划：</span>
+				<input type="checkbox" name="" id="lend_list_box1_check2" value="" /><span>已加入</span><br />
+
+				<span>认证：</span>
+				<input type="checkbox" name="" id="lend_list_box1_check3" value="" /><span>户口认证</span>
+
+				<input type="checkbox" name="" id="lend_list_box1_check4" value="" /><span>视频认证</span>
+
+				<input type="checkbox" name="" id="lend_list_box1_check5" value="" /><span>手机实名认证</span>
+
+				<input type="checkbox" name="" id="lend_list_box1_check6" value="" /><span>学历认证</span>
+
+
+			</div>
+			<div class="lend_list_box2">
+				<ul class="lend_list_box2_header">
+					<div class="btn-group btn-group-toggle" data-toggle="buttons">
+{#                           {% with params=request.GET.urlencode %}#}
+						<label class="btn  btn-primary  btn-active" onclick="javascript:window.location.href='{% relative_url '0' 'filter' params %}'">
+							<input type="radio" name="options" id="option1" checked> 全部
+						</label>
+
+						<label class="btn btn-primary btn-active2" onclick="window.location.href='{% relative_url '1' 'filter' params %}'">
+                            <input type="radio"  name="options"  id="option2">招标中
+						</label>
+
+						<label class="btn btn-primary btn-active3" onclick="window.location.href='{% relative_url '4' 'filter' params %}'">
+							<input type="radio" name="options " id="option3"> 审核中
+						</label>
+
+						<label class="btn btn-primary btn-active4" onclick="window.location.href='{% relative_url '7' 'filter' params %}'">
+							<input type="radio" name="options" id="option4" > 还款中
+						</label>
+						<label class="btn btn-primary btn-active5" onclick="window.location.href='{% relative_url '8' 'filter' params %}'">
+							<input type="radio" name="options" id="option5" > 已完成
+						</label>
+{#                        {% endwith %}#}
+					</div>
+
+
+				</ul>
+
+				<table class="renewTable" id="lend_list_box2_table" border="" cellspacing="" cellpadding="">
+					<tr>
+						<th>标题/借款人</th>
+						<th>认证</th>
+						<th>金额</th>
+						<th>当前利率</th>
+						<th>期限</th>
+						<th>信用等级</th>
+						<th>进度/剩余时间</th>
+					</tr>
+
+                    {% for bidRequest in bidRequests %}
+					<tr>
+						<th>
+							<img class="rounded" style="height: 75px;width: 75px" src="{{ MEDIA_URL }}{{ bidRequest.createUser.userProfile.image.url}}"/>
+                            <h5 ><a href="{% url 'business:borrow_info' %}?bid={{ bidRequest.id }}">{{ bidRequest.title }}</a></h5><br />
+							<p class="">{{ bidRequest.createUser.userProfile.username }}</p>
+						</th>
+						<th><span class="lend_list_box2_pic"></span></th>
+						<th><span class="lend_list_box2_money">&yen;{{ bidRequest.bidRequestAmount }}</span></th>
+						<th><span class="lend_list_box2_interest_rate">{{ bidRequest.currentRate }}%</span></th>
+						<th>{{ bidRequest.monthes2Return }}个月</th>
+						<th><span class="lend_list_box2_pic2"></span></th>
+						<th>
+							<div class="progress mt-5" style="height: 25px;width: 150px">
+								<div class="progress-bar" role="progressbar" style="width: {{ bidRequest.getPersent }}%;" aria-valuenow="{{ bidRequest.getPersent }}" aria-valuemin="0" aria-valuemax="100">{{ bidRequest.getPersent }}%</div>
+							</div>
+<!--							<div class="lend_list_box2_schedule_bg">-->
+<!--								<div class="lend_list_box2_schedule"></div>-->
+<!--							</div>-->
+							<div>
+							103笔投标<br />
+							7天23时32分
+                            </div>
+						</th>
+					</tr>
+                    {% endfor %}
+
+
+				</table>
+
+
+			</div>
+
+
+            <div class="card-footer">
+                {% if is_paginated %}
+                 <ul class="pagination mt-3 justify-content-center">
+                   {% if page_obj.has_previous %}
+                             <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                   {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                    {% endif %}
+
+                    {% for i in paginator.page_range %}
+
+                        {% if page_obj.number == i %}
+                            <li class="page-item active" aria-current="page">
+                                  <span class="page-link">
+                {{ i }}
+                <span class="sr-only">(current)</span>
+              </span>
+                            </li>
+                             {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                            </li>
+                        {% else %}
+                        {% endif %}
+				</ul>
+            </div>
+             {% endif %}
+		</div>
+
+
+</div>
+
+                     <script>
+
+                                   function getQueryVariable(variable) {
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+}
+                                            function fun() {
+
+                                   console.log(getQueryVariable("filter"));
+                                    if(getQueryVariable("filter")==0 || getQueryVariable("filter")==false){
+
+                                $(".btn-active").addClass("active");
+                                    }
+
+                                    else if (getQueryVariable("filter")==1){
+                                        $(".btn-active2").addClass("active");
+                                    } else if (getQueryVariable("filter")==4){
+                                        $(".btn-active3").addClass("active");
+                                    } else if (getQueryVariable("filter")==7){
+                                        $(".btn-active4").addClass("active");
+                                    } else if (getQueryVariable("filter")==8){
+                                        $(".btn-active5").addClass("active");
+                                    }
+                                            }
+                                            window.onload=fun();
+                                        </script>
+{% endblock %}
+

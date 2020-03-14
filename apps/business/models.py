@@ -331,7 +331,6 @@ class PaymentScheduleDetail(models.Model):
         verbose_name = u"投资人的回款明细"
         verbose_name_plural = verbose_name
 
-
 class UserBanknInfo(models.Model):
     bankName = models.CharField(max_length=50,blank=True, null=True, verbose_name="银行名称") #// 银行名称
     accountName = models.CharField(max_length=50,blank=True, null=True, verbose_name="开户人姓名")# // 开户人姓名
@@ -339,12 +338,11 @@ class UserBanknInfo(models.Model):
     bankForkName = models.CharField(max_length=50,blank=True, null=True, verbose_name="开户支行") # // 开户支行I
     userProfile = models.ForeignKey(UserProfile,null=True, verbose_name=u"用户",related_name='userBanknInfos', on_delete=models.CASCADE)  # // 收款人(即投标人) toLogininfoId
     class Meta:
-        verbose_name = u"投资人的回款明细"
+        verbose_name = u"用户银行卡"
         verbose_name_plural = verbose_name
 
-
 class MoneyWithdraw(BaseAudit):
-    amount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+    moneyAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
                                         verbose_name="提现金额")# // 提现金额
     charge = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
                                         verbose_name="提现手续费") #// 提现手续费
@@ -355,3 +353,5 @@ class MoneyWithdraw(BaseAudit):
     class Meta:
         verbose_name = u"提现审核"
         verbose_name_plural = verbose_name
+
+

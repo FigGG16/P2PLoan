@@ -11,6 +11,7 @@ from utils.bitStatesUtils import BitStatesUtils
 class UserProfile(AbstractUser):
     is_investor = models.BooleanField(default=False)
     is_borrower = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
     trueName = models.CharField(max_length=50, verbose_name=u"真实昵称", default="")
     bornDate = models.DateField(verbose_name=u"生日", null=True, blank=True)
     gender = models.CharField(max_length=6, choices=(("male", u"男"), ("female", "女")), default="female")

@@ -3,6 +3,7 @@ from django import forms
 from django.core.files import File
 from .models import RealAuth, UserFile
 from django.db.models import Q
+from utils.bitStatesUtils import BitStatesUtils
 # 保存图片1
 class ReturnRealAuthImageForm(forms.ModelForm):
 
@@ -103,3 +104,5 @@ class UserFileTypeForm(forms.ModelForm):
                 user_file_obj.save()
 
         return user_file
+
+

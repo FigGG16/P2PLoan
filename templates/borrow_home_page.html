@@ -506,6 +506,82 @@ $(function () {
 });
 
 
+//提现列表
+   $(function(){
+
+
+   //添加父类监听事件解决重复上传无效问题
+            {#$(".refresh_bid_view").on('click','.bidBtn', function () {#}
+            $(".without-button").click(function () {
+              console.log("将来");
+                $('#WarnModal').modal('show');
+
+                var usableAmount=parseFloat($("#usableAmount").val());
+                console.log(usableAmount);
+                var minBidAmount=500;
+                var maxBidAmount=50000;
+
+                 var amount = parseFloat($("#moneyAmount").val());
+                 console.log(amount);
+                if(!amount){
+
+                    $("#alert-message").text("请输入提现金额！");
+
+                    return;
+                }
+                if (usableAmount <amount){
+                     $("#alert-message").text("提现金额已超过账户余额！");
+                    return;
+                }
+                if(minBidAmount > amount){
+                    $("#alert-message").text("提现金额低于最小提现金额");
+                    return;
+                }
+                if(maxBidAmount <amount){
+                     $("#alert-message").text("提现金额已超过最大提现金额");
+                    return;
+                }
+
+
+
+                $bankForm = $('#withoutForm')
+
+                $.ajax({
+                cache: false,
+                type: 'post',
+                dataType:'json',
+                url:"{% url 'business:MoneyWithdrawView' %}",
+                data:$bankForm.serialize(),
+                async: true,
+                beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function(data) {
+
+                        if(data.status == "success"){
+                                     {#提交数据成功，进行局部刷新#}
+                            console.log("success");
+                             {#$(".refresh_bid_view").load(location.href + " .refresh_bid_view");#}
+
+                            //删除重复创建div
+                             $(".money-without-main").load(" .money-without-main > *");
+                             $("#alert-message").text(data.message);
+
+
+
+                        }else if(data.status == "failure"){
+                            console.log("failure");
+                            $("#alert-message").text(data.message);
+                        }
+                },
+                complete: function(XMLHttpRequest){
+
+                }
+            });
+            });
+        });
+
+
 //绑定银行卡
    $(function(){
 
@@ -557,8 +633,6 @@ $(function () {
                              $(".bank-info-main").load(" .bank-info-main > *");
                              $("#alert-message").text(data.message);
 
-
-
                         }else if(data.status == "failure"){
                             console.log("failure");
                             $("#alert-message").text(data.message);
@@ -571,6 +645,124 @@ $(function () {
             });
         });
 
+//绑定手机号
+   $(function () {
+
+        var wait = 60;
+     function time(o) {
+        if (wait == 0) {
+        o.removeAttribute("disabled");
+           o.innerHTML = "发送";
+          wait = 60;
+      } else {
+         o.setAttribute("disabled", true);
+           o.innerHTML = "("+wait+")";
+         wait--;
+             setTimeout(function() {
+                 time(o)
+          }, 1000)
+      }
+    }
+          //发送验证码
+        $(".sendVerifyCode").click(function () {
+          console.log("将来");
+
+            var mobile = document.getElementById("varifyMobile").value;
+            console.log(mobile);
+
+            $.ajax({
+            cache: false,
+            type: 'post',
+            dataType:'json',
+            url:"{% url 'certification:send-verify-code' %}",
+            data:{'mobile': mobile},
+            async: true,
+            beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(data) {
+
+                    if(data.status == "success"){
+                                 {#提交数据成功，进行局部刷新#}
+                        console.log("success");
+                        console.log(document.getElementById("sendVerifyCode"));
+                        time(document.getElementById("sendVerifyCode"));
+
+                    }else if(data.status == "failure"){
+
+
+                        $("#showMessageForAuditPhone").attr("style","display:block;");
+                        $("#showMessageForAuditPhone").html(data.message);
+                        $("#showMessageForAuditPhone").attr("style","text-align:center;");
+
+
+                    }
+            },
+            complete: function(XMLHttpRequest){
+
+            }
+        });
+        });
+
+
+           //提交表单
+        $(".audit-phone-button").click(function () {
+          console.log("audit-phone-button");
+
+          $auditPhoneForm = $('#auditPhoneForm')
+
+            $.ajax({
+            cache: false,
+            type: 'post',
+            dataType:'json',
+            url:"{% url 'certification:AuditPhoneView' %}",
+            data:$auditPhoneForm.serialize(),
+            async: true,
+            beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(data) {
+
+                    if(data.status == "success"){
+                                 {#提交数据成功，进行局部刷新#}
+
+
+                        $("#bindMobilePhoneModel").modal("hide");
+                         $('#WarnModal').modal('show');
+                        $("#alert-message").text(data.message);
+
+
+                    }else if(data.status == "failure"){
+
+
+                    $("#showMessageForAuditPhone").attr("style","display:block;");
+                        $("#showMessageForAuditPhone").innerHTML = data.message;
+
+                        $("#showMessageForAuditPhone").attr("style","text-align:center;");
+
+
+                    }
+            },
+            complete: function(XMLHttpRequest){
+
+
+
+            }
+        });
+        });
+
+
+//显示手机验证界面
+$("#phoneModel").click(function() {
+   $("#bindMobilePhoneModel").modal("show");
+
+
+
+
+
+});
+
+})
 
     </script>
 
@@ -584,11 +776,64 @@ $(function () {
 
 {% block custome_content %}
 
-{#    <div id="test" class=" pt-5 h-100 w-100">#}
 
-{#  //你妹的。那么难做！！！！！！#}
-        {#                测试div#}
-{#      <h1 class="page-header">Album</h1>#}
+{#绑定手机号#}
+    {#//model#}
+<div class="modal" id="bindMobilePhoneModel">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="h4 text-primary">手机认证</p>
+
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="auditPhoneForm" method="post" action="" novalidate="novalidate">
+
+
+                        <div class="form-group row align-content-center ">
+                            <label class="col-lg-5  control-label  text-right ">用户名</label>
+
+                            <div class="col-sm-5">
+                                <p class="form-control-static">lent1</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group row align-content-center">
+                            <label class="col-lg-5   control-label text-right col-form-label" pattern=".{11}" for="idnumber">手机号码</label>
+                            <div class="col-lg-5 ">
+                                <input id="varifyMobile" class="form-control" name="mobile"  type="text" value="">
+                            </div>
+                        </div>
+                        <div class="form-group  row align-content-center">
+                            <label class="col-lg-5   control-label text-right col-form-label" for="bornDate">填写验证码</label>
+                            <div class="col-lg-5">
+                                <input id="birthDate"  class="form-control" name="code" type="text">
+                            </div>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary sendVerifyCode" id="sendVerifyCode" type="button">发送</button>
+                            </div>
+                        </div>
+
+                     <div class="form-group alert alert-warning row align-content-center justify-content-center" id="showMessageForAuditPhone" role="alert" style="display:none" >
+                                  This is a warning alert—check it out!
+                        </div>
+
+                        <div class="form-group row align-content-center justify-content-center col-lg-510" >
+                            <button type="button" class="btn btn-primary col-sm-offset-4 audit-phone-button"><i class="icon-ok"></i> 提交认证</button>
+                        </div>
+                    {% csrf_token %}
+                </form>
+            </div>
+            <div class="modal-footer">
+
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">退出</h4>
+            </div>
+        </div>
+    </div>
+</div>
 
 {#    加载进度条#}
       <div class="modal active  pt-5" id="modal-progress" data-backdrop="static" data-keyboard="false">
@@ -657,10 +902,6 @@ $(function () {
     </div>
 </div>
 
-</div>
-
-
-
 
 
 
@@ -726,7 +967,7 @@ $(function () {
 			<div class="Right_Main">
                 <div class="tab-content" id="v-pills-tabContent">
 				<!--借出首页-->
-                <div class="tab-pane fade show lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                <div class="tab-pane fade show active lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
 				<div id="RightPage" class="lend_home_page border" data-page="0">
 
 
@@ -801,7 +1042,7 @@ $(function () {
                                         <h6>手机认证</h6>
                                         <p>
                                             未认证
-                                            <a href="javascript:;" id="showBindPhoneModal">立刻绑定</a>
+                                            <a href="javascript:;"  id="phoneModel">立刻绑定</a>
                                         </p>
                                     </div>
                                     <div class="clearfix"></div>
@@ -1259,7 +1500,7 @@ $(function () {
                 {% endif %}
                  </div>
                   <!--提现-->
-                 <div class="tab-pane fade show active  money-without-main" id="money-without-main"  role="tabpanel" aria-labelledby="v-pills-moneyWithout-tab">
+                 <div class="tab-pane fade show  money-without-main" id="money-without-main"  role="tabpanel" aria-labelledby="v-pills-moneyWithout-tab">
 
 
                  {% if not request.user.isMoneyWithoutProcess %}
@@ -1277,7 +1518,8 @@ $(function () {
             </div>
                             <div style="margin: 10px 2px;" class="row h5">
                                 <div class="col-sm-5 text-right">
-                                    可提现金额：<span class="text-primary">{% formate_decimal_show account_obj.usableAmount %} 元</span>
+                                    可提现金额：<span id="" class="text-primary">{% formate_decimal_show account_obj.usableAmount %} 元</span>
+                                <input  id="usableAmount" autocomplete="off" value="{% formate_decimal_show account_obj.usableAmount %}" type="hidden"/>
                                 </div>
                                 <div class="col-sm-5 text-right">
                                     冻结金额：<span class="text-primary">{% formate_decimal_show account_obj.freezedAmount %}元</span>
@@ -1285,7 +1527,7 @@ $(function () {
                             </div>
                             <div>
 
-                                <form id="editForm" class="form-horizontal el-form" action="/moneyWithdraw_apply.do" method="post">
+                                <form id="withoutForm" class="form-horizontal el-form" method="post">
 
                                 {% get_user_bank_info request.user as bank_info %}
                                     <div class="form-group row align-content-center">
@@ -1315,14 +1557,13 @@ $(function () {
                                     <div class="form-group row align-content-center">
                                         <label class="col-sm-4 col-form-label text-right">提现金额</label>
                                         <div class="col-sm-5">
-                                            <input class="form-control " name="moneyAmount" />
+                                            <input class="form-control " name="moneyAmount" id="moneyAmount" />
                                         </div>
                                     </div>
                                     <div class="form-group row ml-5 align-content-center  justify-content-center">
-                                        <button type="submit" class="col-sm-offset-2 btn btn-primary col-sm-2 ">确认提交</button>
+                                        <button type="button" class="col-sm-offset-2 btn btn-primary col-sm-2 without-button">确认提交</button>
                                     </div>
                                 </form>
-
                             </div>
 
                                 {% else %}
@@ -1337,7 +1578,7 @@ $(function () {
                                  <!--  有提现进程在执行-->
                         <div>
                                     <div class="el-tip-info">
-                                        <p class="text-info">请先绑定银行卡，再申请提现；</p>
+                                        <p class="text-info">当前有提现申请未处理；</p>
                                     </div>
                                 </div>
 

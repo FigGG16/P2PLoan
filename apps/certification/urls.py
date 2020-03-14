@@ -1,6 +1,7 @@
 from django.conf.urls import url, include
 
-from .views import RealAuthImageView, RealAuthView, UserFileUploadView, UserFileTypeView
+from .views import RealAuthImageView, RealAuthView, UserFileUploadView, UserFileTypeView,SendVerifyCodeView,\
+    AuditPhoneView
 
 app_name = 'certification'
 
@@ -15,6 +16,11 @@ urlpatterns = [
 
     #风控材料分类
     url(r'^user-file-type/$', UserFileTypeView.as_view(), name='user-file-type'),
+
+    url(r'^send-verify-code/$', SendVerifyCodeView.as_view(), name='send-verify-code'),
+
+    url(r'^audit_phone/$', AuditPhoneView.as_view(), name='AuditPhoneView'),
+    # url(r'^BindUserBankInfoView/$', BindUserBankInfoView.as_view(), name="BindUserBankInfo"),
 
     # # 用户家庭信息保存
     # url(r'^family_info_Save/$', UserFamilyProfileView.as_view(), name="user_family_info"),

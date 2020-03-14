@@ -66,6 +66,7 @@ class BidConst:
     __SMALLEST_CURRENT_RATE = 5.0000 #// 系统最小借款利息
     __MAX_CURRENT_RATE = 20.0000 #// 系统最大借款利息
     __MIN_WITHDRAW_AMOUNT = 500.0000 #// 系统最小提现金额
+    __MAX_WITHDRAW_AMOUNT = 5000.0000  # // 系统最大提现金额
     __MONEY_WITHDRAW_CHARGEFEE = 2.0000 #// 系统提现手续费
 
  # == == == == == == == == == == == == == == =账户流水类型 == == == == == == == == == == == == == == == ==
@@ -331,6 +332,10 @@ class BidConst:
     @classmethod
     def MIN_WITHDRAW_AMOUNT(cls):
         return cls.__MIN_WITHDRAW_AMOUNT
+
+    @classmethod
+    def MAX_WITHDRAW_AMOUNT(cls):
+            return cls.__MAX_WITHDRAW_AMOUNT
 
     @classmethod
     def MONEY_WITHDRAW_CHARGEFEE(cls):

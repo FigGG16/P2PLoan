@@ -1,7 +1,7 @@
 from django import template
 from django.utils.safestring import mark_safe
 from utils.bitStatesUtils import BitStatesUtils
-# from certification.models import RealAuth, UserFile,BaseAudit
+from certification.models import RealAuth, UserFile,BaseAudit
 from business.models import PlatformBankInfo,UserBanknInfo
 
 
@@ -46,3 +46,13 @@ def get_bank_type(index):
     return all_bank_type_dict[int(index)]
 
 
+@register.simple_tag()
+def relative_url(value, field_name, urlencode=None):
+    url = '?{}={}'.format(field_name, value)
+    if urlencode:
+        querystring = urlencode.split('&')
+        filtered_querystring = filter(lambda p: p.split('=')[0] != field_name, querystring)
+        encoded_querystring = '&'.join(filtered_querystring)
+        url = '{}&{}'.format(url, encoded_querystring)
+
+    return url

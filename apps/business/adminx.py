@@ -1,6 +1,6 @@
 import xadmin
 from .models import BidRequestAuditHistory, FullAuditOne, FullAuditTwo, BidRequest, PlatformBankInfo, RechargeOffline,AccountFlow ,\
-    BidRequestAuditHistory,PublishBidAaudit,SystemAccount,SystemAccountFlow,PaymentSchedule, PaymentScheduleDetail
+    BidRequestAuditHistory,PublishBidAaudit,SystemAccount,SystemAccountFlow,PaymentSchedule, PaymentScheduleDetail,UserBanknInfo, MoneyWithdraw
 from django.utils import timezone
 from utils.BidConst import BidConst
 from utils.CalculateUtil import CalculatetUtil
@@ -11,6 +11,7 @@ from users.models import Account
 from decimal import *
 # from datetime import *
 from dateutil.relativedelta import *
+
 
 class BidRequestAdmin(object):
     list_display = ['createUser', 'applyTime', 'currentSum', 'returnType', 'minBidAmount', 'bidRequestState']
@@ -159,7 +160,6 @@ class FullAuditTwoAdmin(object):
             bid_audit.auditor = self.user.username
             bid_audit.audiTime = timezone.now()
             bid_request = bid_audit.bidRequestId
-            user_profile_obj = bid_audit.applier
             #如果审核成功
             if bid_audit.state == BitStatesUtils.STATE_AUDIT():
                 # // 1, 对借款要做什么事情?
@@ -254,8 +254,6 @@ class FullAuditTwoAdmin(object):
     # * /
 
     def createPaymentSchedules(self, br):
-        print("timezone.now():", timezone.now())
-        print("timezone.now()nextMonth:", timezone.now() + relativedelta(months=+1))
         now = timezone.now()
         # // 汇总利息和本金, 用于最后一个投标的用户的利息和本金计算
         totalInterest = Decimal('0')
@@ -489,6 +487,98 @@ class SystemAccountAdmin(object):
     list_display = ['usableAmount','freezedAmount']
 
 
+class UserBanknInfoAdmin(object):
+    list_display = ['bankName']
+
+class MoneyWithdrawAdmin(object):
+    list_display = ['accountName','accountNumber', 'bankForkName', 'bankName', 'charge', 'moneyAmount','state']
+
+    # //审核表，添加审核人
+    def save_models(self):
+        #获取保持对象
+        obj = self.new_obj
+        obj.save()
+        if obj is not None:
+            withdraw_audit = obj
+            withdraw_audit.auditor = self.user.username
+            withdraw_audit.audiTime = timezone.now()
+            account = Account.objects.get(userProfile=withdraw_audit.applier)
+            #如果审核成功
+            if withdraw_audit.state == BitStatesUtils.STATE_AUDIT():
+                # // 1, 对借款要做什么事情?
+                # // ** 1.1
+                # // 3, 如果审核通过
+                # // 1, 冻结金额减少(减少手续费), 增加提现支付手续费流水;
+                account.freezedAmount = account.freezedAmount - withdraw_audit.charge
+                self.generateWithDrawChargeFeeFlow(w=withdraw_audit, account=account)
+                # // 2, 系统账户增加可用余额, 增加收取提现手续费流水;
+                self.generateChargeWithdrawFeeFlow(w=withdraw_audit)
+
+                # // 3, 冻结金额减少(减少提现金额);增加提现成功流水;
+                realWithdrawFee = withdraw_audit.moneyAmount - withdraw_audit.charge
+                account.freezedAmount = account.freezedAmount - realWithdrawFee
+                self.generateWithDrawSuccessFlow(realWithdrawFee=realWithdrawFee,account=account)
+
+            elif withdraw_audit.state == BitStatesUtils.STATE_REJECT():
+                # // 4, 如果审核拒绝
+                # // 1, 取消冻结金额, 可用余额增加, 增加去掉冻结流水
+                account.freezedAmount = account.freezedAmount - withdraw_audit.moneyAmount
+                account.usableAmount = account.usableAmount + withdraw_audit.moneyAmount
+                self.generateWithDrawFailedFlow(w=withdraw_audit,account=account)
+
+            account.save()
+            # 去除用户的提现状态码
+            withdraw_audit.applier.removeState(BitStatesUtils.GET_HAS_MONEYWITHDRAW_PROCESS())
+            withdraw_audit.save()
+
+
+    def generateWithDrawFailedFlow(self,w, account):
+        account_flow = AccountFlow.objects.create(accountId=account)
+        account_flow.amount = w.moneyAmount
+        account_flow.tradeTime = timezone.now()
+        account_flow.accountType = BidConst.GET_ACCOUNT_ACTIONTYPE_WITHDRAW_MANAGE_CHARGE()
+        account_flow.usableAmount = account.usableAmount
+        account_flow.freezedAmount = account.freezedAmount
+        account_flow.note = '提现失败，增加余额' + str(w.moneyAmount)  # '借款成功，收到借款金额：' + str(all_amount)
+        account_flow.save()
+
+
+    def generateWithDrawSuccessFlow(self,realWithdrawFee,account):
+        account_flow = AccountFlow.objects.create(accountId=account)
+        account_flow.amount = realWithdrawFee
+        account_flow.tradeTime = timezone.now()
+        account_flow.accountType = BidConst.GET_ACCOUNT_ACTIONTYPE_WITHDRAW_MANAGE_CHARGE()
+        account_flow.usableAmount = account.usableAmount
+        account_flow.freezedAmount = account.freezedAmount
+        account_flow.note = '提现成功，提现金额：' + str(realWithdrawFee)  # '借款成功，收到借款金额：' + str(all_amount)
+        account_flow.save()
+
+    def generateChargeWithdrawFeeFlow(self,w):
+        # // 1, 得到当前系统账户;
+        system_account = SystemAccount.objects.first()
+        system_account.usableAmount = system_account.usableAmount + w.charge
+        system_account.save()
+        # //生成系统流水
+        account_flow = SystemAccountFlow.objects.create(systemAccountId=system_account)
+        account_flow.amount = w.moneyAmount
+        account_flow.tradeTime = timezone.now()
+        account_flow.accountType = BidConst.GET_ACCOUNT_ACTIONTYPE_WITHDRAW_MANAGE_CHARGE()
+        account_flow.usableAmount = system_account.usableAmount
+        account_flow.freezedAmount = system_account.freezedAmount
+        account_flow.note = '提现手续费充值成功，增加金额：' + str(w.charge)  # '借款成功，收到借款金额：' + str(all_amount)
+        account_flow.save()
+
+    def generateWithDrawChargeFeeFlow(self,w,account):
+        account_flow = AccountFlow.objects.create(accountId=account)
+        account_flow.amount = w.moneyAmount
+        account_flow.tradeTime = timezone.now()
+        account_flow.accountType = BidConst.GET_ACCOUNT_ACTIONTYPE_WITHDRAW_MANAGE_CHARGE()
+        account_flow.usableAmount = account.usableAmount
+        account_flow.freezedAmount = account.freezedAmount
+        account_flow.note = '支付提现手续费成功，扣除金额：' + str(w.charge)  # '借款成功，收到借款金额：' + str(all_amount)
+        account_flow.save()
+
+
 
 
 xadmin.site.register(BidRequestAuditHistory,BidRequestAuditHistoryAdmin)
@@ -500,3 +590,5 @@ xadmin.site.register(PlatformBankInfo,PlatformBankInfoAdmin)
 xadmin.site.register(RechargeOffline,RechargeOfflineAdmin)
 xadmin.site.register(AccountFlow,AccountFlowAdmin)
 xadmin.site.register(SystemAccount,SystemAccountAdmin)
+xadmin.site.register(UserBanknInfo,UserBanknInfoAdmin)
+xadmin.site.register(MoneyWithdraw,MoneyWithdrawAdmin)

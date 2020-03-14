@@ -1,14 +1,16 @@
 from django.shortcuts import render
 from django.views.generic.base import View
-from .models import BidRequest, PlatformBankInfo, BidRequestAuditHistory,UserBanknInfo
+from django.views.generic.list import ListView
+from .models import BidRequest, PlatformBankInfo, BidRequestAuditHistory, MoneyWithdraw
 from users.models import UserProfile, Account
 from utils.BidConst import BidConst
-from .form import BidRequestForm, RechargeOfflineForm, BidForm, AccountFlowForm,UserBanknInfoForm
+from .form import BidRequestForm, RechargeOfflineForm, BidForm, AccountFlowForm,UserBanknInfoForm,MoneyWithdrawViewForm
 from django.http import HttpResponse
 from certification.models import UserFile, RealAuth
 from django.db.models import Q
 from utils.bitStatesUtils import BitStatesUtils
 from decimal import *
+from users.forms import LoginRequiredMixin
 # Create your views here.
 
 
@@ -57,7 +59,7 @@ class ApplyView(View):
         return HttpResponse('{"status":"请求失败"}', content_type='application/json')
 
 
-class BorrowInfoView(View):
+class BorrowInfoView(LoginRequiredMixin,View):
     def get(self,request):
         #页面bid, 用户详情
         bid = request.GET.get('bid')
@@ -119,10 +121,6 @@ class BidView(View):
                      self.createBrAuditHistory(bid_request=bid_request)
 
                  print(bid_request.bids.all())
-
-
-
-
                  return HttpResponse('{"status":"success", "message":"投标成功"}', content_type='application/json')
 
          return HttpResponse('{"status":"failure", "message":"投标失败"}', content_type='application/json')
@@ -149,6 +147,7 @@ class RechargeView(View):
             return render(request, "succeed_bid.html", {'message': '提交成功'})
         return render(request, "index.html", )
 
+
 class BindUserBankInfoView(View):
     def post(self,request):
 
@@ -159,3 +158,37 @@ class BindUserBankInfoView(View):
                 #修改用户状态码
             return HttpResponse('{"status":"success", "message":"绑定成功"}', content_type='application/json')
         return HttpResponse('{"status":"failure", "message":"银行卡已经绑定"}', content_type='application/json')
+
+
+class MoneyWithdrawView(View):
+    def post(self,request):
+
+        account = Account.objects.get(userProfile=request.user)
+        without_amount = int(request.POST.get('moneyAmount'))
+        #最小提现 <提现金额<最大提现，  提现金额<可提现金额
+        if request.user.isBindBankInfo() and not request.user.isMoneyWithoutProcess() \
+                and without_amount <= int(account.usableAmount) \
+                and BidConst.MIN_WITHDRAW_AMOUNT() <= without_amount <= BidConst.MAX_WITHDRAW_AMOUNT():
+            form=MoneyWithdrawViewForm(request.POST)
+            if form.is_valid():
+                form.save(user_profile=request.user,account=account)
+                return HttpResponse('{"status":"success", "message":"提现申请成功"}', content_type='application/json')
+        return HttpResponse('{"status":"failure", "message":"提现失败"}', content_type='application/json')
+
+
+class BidRequestListView(ListView):
+
+    def get_queryset(self):
+        filter_val = self.request.GET.get('filter', None)
+        if filter_val == None or filter_val == '0':
+            return self.queryset
+        new_context =BidRequest.objects.filter(bidRequestState=int(filter_val))
+
+        return new_context
+
+
+    model = BidRequest
+    template_name = 'bid_list.html'  # Default: <app_label>/<model_name>_list.html
+    context_object_name = 'bidRequests'  # Default: object_list
+    paginate_by = 1
+    queryset = BidRequest.objects.all()

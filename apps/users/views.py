@@ -57,11 +57,14 @@ class LoginView(View):
             pass_word = request.POST.get("password", "")
             user = authenticate(username=user_name, password=pass_word)
             if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return HttpResponseRedirect(reverse("index"))
+                if not user.is_admin:
+                    if user.is_active:
+                        login(request, user)
+                        return HttpResponseRedirect(reverse("index"))
+                    else:
+                        return render(request, "login.html", {"msg":"用户未激活！", "login_form":login_form})
                 else:
-                    return render(request, "login.html", {"msg":"用户未激活！", "login_form":login_form})
+                    return render(request, "login.html", {"msg": "管理员不能登录", "login_form": login_form})
             else:
                 return render(request, "login.html", {"msg":"用户名或密码错误！", "login_form":login_form})
         else:
