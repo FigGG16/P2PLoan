@@ -12,7 +12,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from django.urls import reverse
 
-from .models import Banner, EmailVerifyRecord, UserProfile, Borrower, Investor, Picture, UsersFamilyAuthentication
+from .models import Banner, EmailVerifyRecord, UserProfile, Borrower, Investor, UsersFamilyAuthentication
 from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm, LoginRequiredMixin, UploadImageForm, \
     UserBasicProfile, UserEmploymentDetail, UserFamilyCondition, EmploymentDetail, UploadFamilyAuthenticationImageForm
 from apps.utils.email_send import send_register_email
@@ -25,6 +25,8 @@ from .response import JSONResponse, response_mimetype
 from certification.forms import ReturnRealAuthImageForm
 from utils.bitStatesUtils import BitStatesUtils
 from certification.models import UserFile
+
+from business.models import Bid,BidRequest,PaymentSchedule
 
 #实现邮箱账户都能够登录
 class CustomBackend(ModelBackend):
@@ -132,24 +134,7 @@ class RegisterView(View):
 
             send_register_email(user_email, "register")
 
-            # if user_borrower:
-            #     global user_profile
-            #     user_profile.is_borrower = True
-            #     borrower = Borrower.objects.create(userProfile=user_profile)
-            # else:
-            #     global user_profile
-            #     user_profile.is_investor = True
-            #     investor = Investor.objects.create(user_profile=user_profile)
 
-
-
-            # #写入欢迎注册消息
-            # user_message = UserMessage()
-            # user_message.user = user_profile.id
-            # user_message.message = "欢迎注册慕学在线网"
-            # user_message.save()
-
-            # send_register_email(user_name, "register")
             return render(request, "emailVerifyCode.html")
         else:
             return render(request, "register.html", {"register_form":register_form})
@@ -230,6 +215,63 @@ class PersonCenterView(View):
     def get(self, request):
         return render(request, "personal_center.html", )
 
+
+
+#分类
+def generic(request, extra_context=None, template=None, number=50):
+
+    def noneContext():
+        context = {
+            'bids': [],
+            'bidRequests': []
+        }
+        return  context
+
+    print(extra_context["page_template"]==None)
+    if request.user.is_authenticated:
+
+        #判断借出者还是借入者
+        # obj = 0;
+        if not request.user.is_investor:
+            obj = request.user.get_borrower()
+            ps = PaymentSchedule.objects.filter(borrower=request.user.get_borrower())
+
+            if extra_context["page_template"]==None:
+                template = 'borrow_home_page.html'
+            context = {
+                'bids': [],
+                'bidRequests': [],
+                'paymentSchedules': ps.order_by("id"),}
+        else:
+            obj = request.user.get_investor()
+            bids = Bid.objects.filter(bidUser=obj)
+            #
+            #汇总用户所投的标bids
+            if extra_context["page_template"]==None:
+                template = 'investor_home_page.html'
+            bid_request_ids = bids.values_list('bidRequestId')
+            # 取出所有投标对象requestID, 并去重
+            if bid_request_ids.exists():
+                bid_user_ids = list(set((list(zip(*bid_request_ids)))[0]))
+                context = {
+                    'bids': bids.order_by("id"),
+                    'bidRequests':BidRequest.objects.filter(id__in=bid_user_ids).order_by("id")
+                }
+            else:
+                context = noneContext()
+
+
+        if extra_context is not None:
+            context.update(extra_context)
+
+        #实名认证的两个按钮
+        form = ReturnRealAuthImageForm()
+        user_file_list = UserFile.objects.filter(applier=request.user)
+        context['form']=form
+        context['BitStatesUtils'] = BitStatesUtils
+        context['userFileObj'] = user_file_list
+
+        return render(request, template, context)
 
 
 class UserAccountView(LoginRequiredMixin, View):
@@ -373,67 +415,6 @@ class UserCompanyProfileView(LoginRequiredMixin, View):
 
 
 
-
-
-class UploadUserAuthenticationView(CreateView):
-    model = UsersFamilyAuthentication
-    fields = ['file']
-    template_name = "authentication.html"
-    def form_valid(self, form):
-        self.object = form.save(self.request)
-        # 保存用户外健
-        self.model.save_user_profile_id(self.object, self.request.user)
-        files = [serialize(self.object)]
-        data = {'files': files}
-        response = JSONResponse(data, mimetype=response_mimetype(self.request))
-        response['Content-Disposition'] = 'inline; filename=files.json'
-        return response
-
-    def form_invalid(self, form):
-        data = json.dumps(form.errors)
-        return HttpResponse(content=data, status=400, content_type='application/json')
-
-
-class PictureCreateView(CreateView):
-    model = Picture
-    fields = "__all__"
-    template_name = "authentication.html"
-    def form_valid(self, form):
-        self.object = form.save()
-        files = [serialize(self.object)]
-        data = {'files': files}
-        response = JSONResponse(data, mimetype=response_mimetype(self.request))
-        response['Content-Disposition'] = 'inline; filename=files.json'
-        return response
-
-    def form_invalid(self, form):
-        data = json.dumps(form.errors)
-        return HttpResponse(content=data, status=400, content_type='application/json')
-
-
-
-
-class UploadUserAuthenticationDeleteView(DeleteView):
-    model = UsersFamilyAuthentication
-
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object.delete()
-        response = JSONResponse(True, mimetype=response_mimetype(request))
-        response['Content-Disposition'] = 'inline; filename=files.json'
-        return response
-
-
-class UploadUserAuthenticationListView(ListView):
-    model = UsersFamilyAuthentication
-    def render_to_response(self, context, **response_kwargs):
-        files = [ serialize(p) for p in self.model.objects.filter(user_profile_id=self.request.user.id)]
-        print(files)
-        data = {'files': files}
-        print(data)
-        response = JSONResponse(data, mimetype=response_mimetype(self.request),)
-        response['Content-Disposition'] = 'inline; filename=files.json'
-        return response
 
 
 

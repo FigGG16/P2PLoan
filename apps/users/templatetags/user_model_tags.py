@@ -63,3 +63,12 @@ def get_user_account(user):
     user_account_obj = Account.objects.get(userProfile=user)
     return user_account_obj
 
+
+#获取用户账户
+@register.simple_tag()
+def is_exist_account(user):
+    user_account_obj = Account.objects.filter(userProfile=user)
+    if user_account_obj.exists():
+        return True
+    return False
+

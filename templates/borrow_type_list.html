@@ -30,7 +30,18 @@
             right: 100px;
         }
         .text-danger{text-align: center;}
+
+
+
+            {#        # 系统最小借款金额 <= 借款金额 <=剩余信用额度, #5<= 利息 <=20,  #最小投标金额>=系统最小投标金额#}
+            {#if int(account_obj.getRemainBorrowLimit()) >= int(request.POST.get("bidRequestAmount", "")) >= BidConst.SMALLEST_BID_AMOUNT()\#}
+            {#    and BidConst.MAX_CURRENT_RATE() >= int(request.POST.get("currentRate", "")) >= BidConst.SMALLEST_CURRENT_RATE() \#}
+            {#    and int(request.POST.get("minBidAmount", "")) >= BidConst.SMALLEST_BID_AMOUNT():#}
+
+
     </style>
+
+
 
  {% endblock %}
 
@@ -70,57 +81,57 @@
                     {% endif %}
 				</div>
 			</div>
-			<div class="el-borrow-item col-sm-4">
-				<div class="el-borrow-item-title bg-primary">车易贷</div>
-				<div class="el-borrow-item-content">
-					<p>
-						认证后可借金额 <i>¥ 10,000.00</i>
-					</p>
-					<a href="#" class="text-primary">申请条件</a>
-					<p class="help-block">仅限广州地区</p>
-					<ul>
-						<li>填写基本资料</li>
-						<li>身份认证</li>
-						<li>材料认证分数达到30分</li>
-						<li>提交车辆抵押相关资料</li>
-						<li>视频认证</li>
-					</ul>
-
-                    {% if request.user.is_authenticated %}
-                        <a href="{% url 'business:check_in_bid' %}" class="el-borrow-apply">
-						我要申请
-					</a>
-
-                    {% else %}
-                        <a href="{% url 'login' %}" class="el-borrow-apply">
-						登陆后申请
-					</a>
-                    {% endif %}
-
-
-				</div>
-			</div>
-			<div class="el-borrow-item col-sm-4">
-				<div class="el-borrow-item-title bg-primary" style="background-color: #2ca2ee;">
-					房易贷</div>
-				<div class="el-borrow-item-content">
-					<p>
-						可借金额 <i>¥ 10,0000.00</i>
-					</p>
-					<a href="#" class="text-primary">申请条件</a>
-					<p class="help-block">仅限广州地区</p>
-					<ul>
-						<li>填写基本资料</li>
-						<li>身份认证</li>
-						<li>材料认证分数达到50分</li>
-						<li>提交房屋抵押相关资料</li>
-						<li>视频认证</li>
-					</ul>
-					<a href="#" class="el-borrow-apply">
-						登陆后申请
-					</a>
-				</div>
-			</div>
+{#			<div class="el-borrow-item col-sm-4">#}
+{#				<div class="el-borrow-item-title bg-primary">车易贷</div>#}
+{#				<div class="el-borrow-item-content">#}
+{#					<p>#}
+{#						认证后可借金额 <i>¥ 10,000.00</i>#}
+{#					</p>#}
+{#					<a href="#" class="text-primary">申请条件</a>#}
+{#					<p class="help-block">仅限广州地区</p>#}
+{#					<ul>#}
+{#						<li>填写基本资料</li>#}
+{#						<li>身份认证</li>#}
+{#						<li>材料认证分数达到30分</li>#}
+{#						<li>提交车辆抵押相关资料</li>#}
+{#						<li>视频认证</li>#}
+{#					</ul>#}
+{##}
+{#                    {% if request.user.is_authenticated %}#}
+{#                        <a href="{% url 'business:check_in_bid' %}" class="el-borrow-apply">#}
+{#						我要申请#}
+{#					</a>#}
+{##}
+{#                    {% else %}#}
+{#                        <a href="{% url 'login' %}" class="el-borrow-apply">#}
+{#						登陆后申请#}
+{#					</a>#}
+{#                    {% endif %}#}
+{##}
+{##}
+{#				</div>#}
+{#			</div>#}
+{#			<div class="el-borrow-item col-sm-4">#}
+{#				<div class="el-borrow-item-title bg-primary" style="background-color: #2ca2ee;">#}
+{#					房易贷</div>#}
+{#				<div class="el-borrow-item-content">#}
+{#					<p>#}
+{#						可借金额 <i>¥ 10,0000.00</i>#}
+{#					</p>#}
+{#					<a href="#" class="text-primary">申请条件</a>#}
+{#					<p class="help-block">仅限广州地区</p>#}
+{#					<ul>#}
+{#						<li>填写基本资料</li>#}
+{#						<li>身份认证</li>#}
+{#						<li>材料认证分数达到50分</li>#}
+{#						<li>提交房屋抵押相关资料</li>#}
+{#						<li>视频认证</li>#}
+{#					</ul>#}
+{#					<a href="#" class="el-borrow-apply">#}
+{#						登陆后申请#}
+{#					</a>#}
+{#				</div>#}
+{#			</div>#}
 		</div>
 	</div>
 

@@ -1,0 +1,103 @@
+{% load el_pagination_tags %}
+{% load business_model %}
+
+
+{% lazy_paginate 3 bidRequests using "bidRequests-page" %}
+
+					<table class="blacklist_main_table  competitive_tender_table" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td>借入者</td>
+							<td>年利率</td>
+							<td>有效/投标金额</td>
+							<td>列表进度</td>
+							<td>状态</td>
+							<td>投标时间</td>
+							<td>最晚结束时间</td>
+						</tr>
+
+
+                        {% for bidRequest in bidRequests %}
+{#                            #排除还款中过得借款#}
+                            {% if bidRequest.bidRequestState != 7%}
+						<tr>
+							<th><span class="blacklist_main_table_sp1 competitive_tender_sp1">{{ bidRequest.title }}</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">{{ bidRequest.currentRate }}%</span></th>
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">&yen;{{ bidRequest.bidRequestAmount }}/&yen;{% get_allAvailableAmountOfinverstorToBidRequest bidRequest request.user %}</span></th>
+							<th style="">
+                                <div class="progress " style="height: 20px;width: 100px">
+                               <div class="progress-bar" role="progressbar" style="width: {{ bidRequest.getPersent }}%;" aria-valuenow="{{ bidRequest.getPersent }}" aria-valuemin="0" aria-valuemax="100">{{ bidRequest.getPersent }}%</div>
+                                </div>
+							</th>
+							<th>
+                                {% if  bidRequest.bidRequestState == 6 or  bidRequest.bidRequestState == 2%}
+                                <span class="blacklist_main_header_sp1"><span class="blacklist_main_header_sp2"></span>失败</span>
+                                    {% elif bidRequest.bidRequestState == 4 or bidRequest.bidRequestState == 5 %}
+                                    <span class="blacklist_main_header_sp5"><span class="blacklist_main_header_sp6"></span>审核中</span>
+
+                                    {% elif bidRequest.bidRequestState == 1 %}
+						            <span class="blacklist_main_header_sp3"><span class="blacklist_main_header_sp4"></span>进行中</span>
+                                {% endif %}
+
+                            {{ bidRequest.bidRequestState }}
+
+                            </th>
+							<th><span class="blacklist_main_table_sp4">2018/12/20<br />
+							14:30:31</span>
+							</th>
+							<th>2018/12/20<br />
+							14:30:31
+							</th>
+						</tr>
+                                {% else %}
+
+                            {% endif %}
+	                     {% endfor %}
+
+
+					</table>
+
+{#    __BIDREQUEST_STATE_PUBLISH_PENDING = 0 #// 待发布#}
+{#    __BIDREQUEST_STATE_BIDDING = 1 #// 招标中#}
+{#    __BIDREQUEST_STATE_UNDO = 2 #// 已撤销#}
+{#    __BIDREQUEST_STATE_BIDDING_OVERDUE = 3 #// 流标#}
+{#    __BIDREQUEST_STATE_APPROVE_PENDING_1 = 4 #// 满标1审#}
+{#    __BIDREQUEST_STATE_APPROVE_PENDING_2 = 5 #// 满标2审#}
+{#    __BIDREQUEST_STATE_REJECTED = 6 #// 满标审核被拒绝#}
+{#    __BIDREQUEST_STATE_PAYING_BACK = 7 #// 还款中#}
+{#    __BIDREQUEST_STATE_COMPLETE_PAY_BACK = 8 #// 已还清#}
+{#    __BIDREQUEST_STATE_PAY_BACK_OVERDUE = 9 #// 逾期#}
+{#    __BIDREQUEST_STATE_PUBLISH_REFUSE = 10 #// 发标审核拒绝状态#}
+
+
+{#    returnType = models.IntegerField(null=True, blank=True, choices=RETURN_TYPE_CHOICE, verbose_name="还款类型(等额本息)")#}
+{#    bidRequestType = models.IntegerField(null=True, blank=True, choices=BID_REQUEST_TYPE_CHOICE, verbose_name="借款类型(信用标)")#}
+{#    bidRequestState = models.IntegerField(null=True,choices=BID_REQUEST_STATE, default=BidConst.GET_BIDREQUEST_STATE_PUBLISH_PENDING(),blank=True, verbose_name="借款状态")#}
+{#    bidRequestAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),#}
+{#                                        verbose_name="借款总金额")#}
+{#    currentRate = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),#}
+{#                                        verbose_name="年化利率")#//#}
+{#    minBidAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),#}
+{#                                        verbose_name="最小借款金额") #// 最小借款金额#}
+{#    monthes2Return = models.IntegerField(null=True, blank=True, verbose_name="还款月数")#// 还款月数#}
+{#    bidCount = models.IntegerField(null=True, blank=True, verbose_name="已投标次数(冗余)",default=0) #//#}
+{#    totalRewardAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),#}
+{#                                        verbose_name="总回报金额(总利息)")#// 总回报金额(总利息)#}
+{#    currentSum = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),#}
+{#                                        verbose_name="当前已投标总金额") #// 当前已投标总金额#}
+{#    title = models.CharField(max_length=50,blank=True, null=True, verbose_name="借款标题")#// 借款标题#}
+{#    description = models.TextField(max_length=100, null=True, blank=True, verbose_name="借款描述")#// 借款描述#}
+{#    note = models.TextField(max_length=100, null=True, blank=True, verbose_name="风控意见")#// 风控意见#}
+{#    disableDate = models.DateTimeField(blank=True,null=True, verbose_name=u"招标截止日期") #// 招标截止日期#}
+{#    disableDays = models.IntegerField(null=True, blank=True, verbose_name="招标天数") #// 招标天数#}
+{#    createUser = models.ForeignKey(Borrower, verbose_name=u"借款人", on_delete=models.CASCADE)#// 借款人#}
+{#    ##}
+{#    # bids #// 针对该借款的投标#}
+{#    ##}
+{#    applyTime = models.DateTimeField(auto_now_add=True,null=True, verbose_name=u"这个标的申请时间")#// 申请时间#}
+{#    ##}
+{#    publishTime = models.DateTimeField(blank=True,null=True, verbose_name=u"发标时间")# #// 发标时间#}
+
+
+<div class="pagination pagination-centered  justify-content-center">
+  <div>{% show_pages %}</div>
+</div>

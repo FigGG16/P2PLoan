@@ -5,6 +5,7 @@ from utils.CalculateUtil import CalculatetUtil
 from utils.bitStatesUtils import BitStatesUtils
 from django.utils import timezone
 from decimal import *
+from  users.models import Account
 
 
 class BidRequestForm(forms.ModelForm):
@@ -99,6 +100,14 @@ class UserBanknInfoForm(forms.ModelForm):
         user_profile.addState(BitStatesUtils.GET_OP_BIND_BANKINFO())
         user_profile.save()
         user_bank_info.save()
+        #开通账户
+        account = Account.objects.create(userProfile=user_profile)
+        account.save()
+        #添加一万元授信
+        account.remainBorrowLimit=Decimal('10000.0000')
+        #最大授信额度
+        account.borrowLimit = Decimal('10000.0000')
+        account.save()
         return user_bank_info
 
 

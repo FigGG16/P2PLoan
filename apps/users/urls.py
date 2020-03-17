@@ -1,8 +1,7 @@
 from django.conf.urls import url, include
 from django.urls import path
 
-from .views import UploadImageView, UserBasicProfileView, UserFamilyProfileView, UserCompanyProfileView,PictureCreateView, UploadUserAuthenticationView, \
-    UploadUserAuthenticationDeleteView, UploadUserAuthenticationListView
+from .views import UploadImageView, UserBasicProfileView, UserFamilyProfileView, UserCompanyProfileView
 
 
 app_name = 'users'
@@ -21,17 +20,6 @@ urlpatterns = [
     # 用户头像上传
     url(r'^image/upload/$', UploadImageView.as_view(), name="image_upload"),
 
-    # 用户验证资料上传
-    url(r'^authentication/$', UploadUserAuthenticationView.as_view(), name="authentication_upload"),
-    # url(r'^authentication/$', PictureCreateView.as_view(), name="authentication_upload"),
-
-    # 用户材料删除
-    # url('delete/<int:pk>', UploadUserAuthenticationDeleteView.as_view(), name='upload-delete'),
-
-    path('delete/<int:pk>', UploadUserAuthenticationDeleteView.as_view(), name='upload-delete'),
-
-    #用户验证材料显示
-    url('view/', UploadUserAuthenticationListView.as_view(), name='upload-view'),
 
     # 用户验证资料上传
     # url(r'^authentication/$', PictureCreateView.as_view(), name="upload-new"),

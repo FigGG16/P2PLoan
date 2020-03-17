@@ -19,9 +19,11 @@ import xadmin
 from django.conf.urls import url, include
 from django.views.static import serve
 from django.views.generic import TemplateView #处理静态文件的
-from users.views import LoginView, RegisterView, AciveUserView, ForgetPwdView, ResetView, ModifyPwdView, LogoutView, PersonCenterView,  UserAccountView
+from users.views import LoginView, RegisterView, AciveUserView, ForgetPwdView, ResetView, ModifyPwdView, LogoutView, PersonCenterView,  UserAccountView,generic
 from P2PLoan.settings import MEDIA_ROOT
 from django.urls import include, path
+from el_pagination.decorators import page_template, page_templates
+
 
 from autocomplete import UserProfileAutocomplete
 
@@ -39,7 +41,11 @@ urlpatterns = [
     url(r'^reset/(?P<active_code>.*)/$', ResetView.as_view(), name="reset_pwd"),
     url(r'^modify_pwd/$', ModifyPwdView.as_view(), name="modify_pwd"),
     url(r'^person_centerView/$', PersonCenterView.as_view(), name="person_centerView"),
-    url(r'^userAccountView/$', UserAccountView.as_view(), name="UserAccountView"),
+    url(r'^userAccountView/$',page_templates({'query_history_bid.html':"bids-page",
+                                              'query_history_bidRequest.html':"bidRequests-page",
+                                              "query_payment_schedule.html":"paymentSchedules-page",})(generic),name="UserAccountView"),
+
+
 
     # 配置上传文件的访问处理函数
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),

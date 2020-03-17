@@ -272,7 +272,7 @@
 //						左侧选择
 						$(this).css("background-color","#FFFFFF").siblings("p").css("background-color","#F8F8F8");
 						$(this).append("<span style='color: #555555; float: right;'>&gt;</span>").siblings("p").find('span').empty();
-						$(".lend_follow_main_title").find("h1").html(TabName);
+						$(".lend_follow_main_titleNew").find("h4").html(TabName);
 						
 //						选项卡切换
 						$(".Right_Main").children("div").each(function(index,elem){
@@ -325,7 +325,7 @@
 						var page = index;
 						var Name = $(this).text();
 						var TabName = Name.substring(0,Name.length-1);
-						$(".upload_message_main_right_title > h1").html(TabName);
+						$(".upload_message_main_right_titleNew > h4").html(TabName);
 						
 						$(".Principal_protection_main").children("div").each(function(index,elem){
 							if (index == page) {

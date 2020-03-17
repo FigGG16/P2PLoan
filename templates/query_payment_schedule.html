@@ -1,0 +1,53 @@
+{% load el_pagination_tags %}
+
+{% lazy_paginate 6 paymentSchedules using "paymentSchedules-page" %}
+
+                   <div class="borrow_list2_table1">
+
+
+
+
+{% for ps in paymentSchedules %}
+
+    <table id="lend_follow_main_right_table" border="" cellspacing="" cellpadding="">
+								<tr>
+									<td rowspan="2">{{ ps.bidRequestId.title }}</td>
+									<th>借款金额：<span class="lend_follow_main_right_table_span2">&yen;{{ ps.bidRequestId.bidRequestAmount}}</span></th>
+									<th>年利率：<span class="lend_follow_main_right_table_span2">{{ ps.bidRequestId.currentRate}}%</span></th>
+									<th>应付本息：<span class="lend_follow_main_right_table_span2">&yen;{{ ps.totalAmount }}</span></th>
+									<th>本期利息：<span class="lend_follow_main_right_table_span2">&yen;{{ ps.interest }}</span></th>
+									<th><input type="button" name="borrow_list_btn" id="borrow_list_btn" value="还款" /></th>
+								</tr>
+
+								<tr>
+									<th>本期借款：<span class="lend_follow_main_right_table_span2">&yen;{{ ps.principal }}</span></th>
+									<th>借款期限：{{ ps.bidRequestId.monthes2Return }}个月</th>
+									<th>还款期数：<span class="lend_follow_main_right_table_span2">{{ ps.monthIndex }}期</span></th>
+									<th>还款期限：<span class="lend_follow_main_right_table_span1">{{ ps.deadLine }}</span></th>
+									<th><span class="lend_follow_main_right_table_span1">查看电子协议</span></th>
+								</tr>
+							</table>
+{% endfor %}
+
+			</div>
+
+<div class="pagination pagination-centered  justify-content-center">
+  <div>{% show_pages %}</div>
+</div>
+
+
+{#    bidRequestId = models.ForeignKey(BidRequest,related_name='PaymentSchedules',null=True, verbose_name=u"借款标", on_delete=models.CASCADE)#; // 对应借款#}
+{#    bidRequestTitle = models.CharField(max_length=50,blank=True, null=True, verbose_name="借款名称")# // 借款名称#}
+{#    borrower = models.ForeignKey(Borrower, verbose_name=u"还款人",null=True,related_name='PaymentSchedules', on_delete=models.CASCADE)#; // 还款人#}
+{#    deadLine = models.DateTimeField(null=True, verbose_name=u"本期还款截止期限") # // 本期还款截止期限#}
+{#    payDate = models.DateTimeField(null=True, verbose_name=u"还款时间") # // 还款时间#}
+{#    totalAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),#}
+{#                                        verbose_name="本期还款总金额")#// // 本期还款总金额，利息 + 本金#}
+{#    principal = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),#}
+{#                                        verbose_name="本期还款本金")#// 本期还款本金#}
+{#    interest = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),#}
+{#                                        verbose_name="本期还款总利息")# // 本期还款总利息#}
+{#    monthIndex = models.IntegerField(null=True, blank=True, verbose_name="第几期")#// 第几期(即第几个月)#}
+{#    state = BidConst.PAYMENT_STATE_NORMAL = models.IntegerField(null=True, blank=True,default=BidConst.GET_PAYMENT_STATE_NORMAL(),choices=STATE_CHOICE,verbose_name="本期还款状态")# // 本期还款状态（默认正常待还）#}
+{#    bidRequestType = models.IntegerField(null=True, blank=True, choices=BID_REQUEST_TYPE_CHOICE, verbose_name="借款类型(信用标)") #// 借款类型#}
+{#    returnType = models.IntegerField(null=True, blank=True, choices=RETURN_TYPE_CHOICE, verbose_name="还款方式")#// 还款方式，等同借款(BidRequest)#}

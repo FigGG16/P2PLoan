@@ -273,7 +273,7 @@
 // 						$(this).css("background-color","#FFFFFF").siblings("p").css("background-color","#F8F8F8");
 // 						$(this).append("<span style='color: #555555; float: right;'>&gt;</span>").siblings("p").find('span').empty();
 						//更改标签名
-						$(".lend_follow_main_title").find("h1").html(TabName);
+						$(".lend_follow_main_titleNew").find("h4").html(TabName);
 
 //						选项卡切换
 // 						$(".Right_Main").children("div").each(function(index,elem){

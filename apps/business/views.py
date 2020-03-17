@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic.base import View
 from django.views.generic.list import ListView
-from .models import BidRequest, PlatformBankInfo, BidRequestAuditHistory, MoneyWithdraw
+from .models import BidRequest, PlatformBankInfo, BidRequestAuditHistory, MoneyWithdraw, PaymentSchedule, PaymentScheduleDetail, AccountFlow, SystemAccount,SystemAccountFlow
 from users.models import UserProfile, Account
 from utils.BidConst import BidConst
 from .form import BidRequestForm, RechargeOfflineForm, BidForm, AccountFlowForm,UserBanknInfoForm,MoneyWithdrawViewForm
@@ -9,8 +9,10 @@ from django.http import HttpResponse
 from certification.models import UserFile, RealAuth
 from django.db.models import Q
 from utils.bitStatesUtils import BitStatesUtils
+from utils.CalculateUtil import CalculatetUtil
 from decimal import *
 from users.forms import LoginRequiredMixin
+from django.utils import timezone
 # Create your views here.
 
 
@@ -190,5 +192,143 @@ class BidRequestListView(ListView):
     model = BidRequest
     template_name = 'bid_list.html'  # Default: <app_label>/<model_name>_list.html
     context_object_name = 'bidRequests'  # Default: object_list
-    paginate_by = 1
+    paginate_by = 4
     queryset = BidRequest.objects.all()
+
+#还款
+class DoReturnMoney(View):
+
+
+    def post(self,request):
+        # 获取PaymentSchedule #根据前端传进来的PaymentSchedulesID索引出还款进度
+        ps = PaymentSchedule.objects.get(borrower=request.user.get_investor())
+        #获取借款者账户
+        borrowAccount = Account.objects.get(userProfile=request.user)
+    # // 得到paymentschedule判断;
+    # // ** *1, 还款对象的状态处于待还状态;
+    # // ** *2, 还款的金额 <= 账户余额;
+        if ps.state == BidConst.GET_PAYMENT_STATE_NORMAL() and borrowAccount.usableAmount >= ps.totalAmount:
+            # // 1, 针对还款对象;
+            # // ** *1.1, 修改还款对象状态;设置属性;
+            ps.payDate = timezone.now()
+            ps.state = BidConst.GET_PAYMENT_STATE_DONE()
+            # // 2, 针对还款人;
+            # // ** *2.1, 可用余额减少;生产还款流水;
+            borrowAccount.usableAmount = borrowAccount.usableAmount - ps.totalAmount
+            self.doReturnMoneyFlow(ps=ps, borrowAccount=borrowAccount)
+            # // ** *2.2, 待还总金额减少;
+            borrowAccount.unReturnAmount = borrowAccount.unReturnAmount - ps.totalAmount
+            # // ** *2.2, 剩余信用额度增加;
+            borrowAccount.remainBorrowLimit = borrowAccount.remainBorrowLimit + ps.principal
+            # // 3, 针对收款人;
+            # // ** *3.1, 遍历paymentscheduledetail;
+            psds = ps.PaymentScheduleDetails.all()
+            for psd in psds:
+            #获取每个投资者账户
+                investorAccount = Account.objects.get(userProfile=psd.investor.userProfile)
+                # // ** *3.2, 投资人可用余额增加;生成收款流水;
+                investorAccount.usableAmount = investorAccount.usableAmount + psd.totalAmount
+                self.receiveMoneyFlow(psd=psd,account=investorAccount)
+                # // ** *3.3, 减少待收利息和待收本金;
+                investorAccount.unReceiveInterest = investorAccount.unReceiveInterest-psd.interest
+                investorAccount.unReceivePrincipal = investorAccount.unReceivePrincipal-psd.principal
+                # // ** *3.4, 支付利息管理费;生成支付流水;
+                interestChargeFee = CalculatetUtil.calInterestManagerCharge(psd.interest)
+                investorAccount.usableAmount = investorAccount.usableAmount - interestChargeFee
+                self.interestChargeFeeFlow(psd=psd,account=investorAccount,interestChargeFee=interestChargeFee)
+                # // ** *3.5, 系统账户收到利息管理费, 生成收款流水;
+                self.chargeInterestFeeForSystem(psd=psd,interestChargeFee=interestChargeFee)
+                psd.payDate = timezone.now()
+                investorAccount.save()
+                psd.save()
+            ps.save()
+            borrowAccount.save()
+            # // 如果当前还款之后, 该借款所有还款已经全部换完
+            # 遍历是否所有期都已经还清(是否为仍然为PAYMENT_STATE_NORMAL状态)，不是则表示所有还清，然后更改标的状态，否者不必理会
+            currentBidRequest = ps.bidRequestId
+            #如何有一个标为逾期或者还款状态，则不更新标的状态
+            result = currentBidRequest.PaymentSchedules.filter(Q(state=BidConst.GET_PAYMENT_STATE_NORMAL()) | Q(state=BidConst.GET_PAYMENT_STATE_OVERDUE()))
+            if not result.exists():
+                currentBidRequest.bidRequestState = BidConst.GET_BIDREQUEST_STATE_COMPLETE_PAY_BACK()
+                currentBidRequest.save()
+
+
+
+
+
+
+
+
+    def createBaseFlow(self,account):
+        flow = AccountFlow.objects.create(accountId=account)
+        flow.tradeTime = timezone.now()
+        flow.usableAmount = account.usableAmount
+        flow.freezedAmount = account.freezedAmount
+        return  flow
+
+    def doReturnMoneyFlow(self,ps,borrowAccount):
+        flow = self.createBaseFlow(borrowAccount)
+        flow.accountType = BidConst.GET_ACCOUNT_ACTIONTYPE_RETURN_MONEY()
+        flow.amount = ps.totalAmount
+        flow.note = "还款成功，还款金额：" + str(ps.totalAmount)
+        flow.save()
+
+    def receiveMoneyFlow(self,psd, account):
+        flow = self.createBaseFlow(account=account)
+        flow.accountType = BidConst.GET_ACCOUNT_ACTIONTYPE_CALLBACK_MONEY()
+        flow.amount = psd.totalAmount
+        flow.note = "回款成功，还款金额：" + str(psd.totalAmount)
+        flow.save()
+
+    def interestChargeFeeFlow(self,psd,interestChargeFee,account):
+        flow = self.createBaseFlow(account=account)
+        flow.accountType = BidConst.GET_ACCOUNT_ACTIONTYPE_INTEREST_SHARE()
+        flow.amount = interestChargeFee
+        flow.note = "回款成功，还款金额：" + str(psd.totalAmount) + ",支付利息管理费："+ str(interestChargeFee)
+        flow.save()
+
+    def chargeInterestFeeForSystem(self,psd, interestChargeFee):
+        # // 1, 得到当前系统账户;
+        systemAccount = SystemAccount.objects.first()
+        # // 2, 修改账户余额;
+        systemAccount.usableAmount = systemAccount.usableAmount + interestChargeFee
+        # // 3, 生成收款流水
+        flow = SystemAccountFlow.objects.create(systemAccountId=systemAccount)
+        flow.accountActionType = BidConst.GET_SYSTEM_ACCOUNT_ACTIONTYPE_INTREST_MANAGE_CHARGE()
+        flow.amount = interestChargeFee
+        flow.usableAmount = systemAccount.usableAmount
+        flow.createdTime = timezone.now()
+        flow.freezedAmount = systemAccount.freezedAmount
+        flow.note = "用户收款" + str(psd.getTotalAmount()) + "成功,收取利息管理费:" + str(interestChargeFee)
+        flow.save()
+
+
+    # RETURN_TYPE_CHOICE =(
+    #     (0, "按月分期还款"),
+    #     (1, "按月到期还款")
+    # )
+    # STATE_CHOICE= (
+    #     (0, "正常待还"),
+    #     (1, "已还"),
+    #     (2, "逾期")
+    # )
+    # BID_REQUEST_TYPE_CHOICE = (
+    #     (0, "普通信用标"),
+    #     (1, "普通信用标")
+    # )
+    # bidRequestId = models.ForeignKey(BidRequest,related_name='PaymentSchedules',null=True, verbose_name=u"借款标", on_delete=models.CASCADE)#; // 对应借款
+    # bidRequestTitle = models.CharField(max_length=50,blank=True, null=True, verbose_name="借款名称")# // 借款名称
+    # borrower = models.ForeignKey(Borrower, verbose_name=u"还款人",null=True,related_name='PaymentSchedules', on_delete=models.CASCADE)#; // 还款人
+    # deadLine = models.DateTimeField(null=True, verbose_name=u"本期还款截止期限") # // 本期还款截止期限
+    # payDate = models.DateTimeField(null=True, verbose_name=u"还款时间") # // 还款时间
+    # totalAmount = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+    #                                     verbose_name="本期还款总金额")#// // 本期还款总金额，利息 + 本金
+    # principal = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+    #                                     verbose_name="本期还款本金")#// 本期还款本金
+    # interest = models.DecimalField(max_digits=18, decimal_places=BidConst.STORE_SCALE(), default=BidConst.ZERO(),
+    #                                     verbose_name="本期还款总利息")# // 本期还款总利息
+    # monthIndex = models.IntegerField(null=True, blank=True, verbose_name="第几期")#// 第几期(即第几个月)
+    # state = BidConst.PAYMENT_STATE_NORMAL = models.IntegerField(null=True, blank=True,default=BidConst.GET_PAYMENT_STATE_NORMAL(),choices=STATE_CHOICE,verbose_name="本期还款状态")# // 本期还款状态（默认正常待还）
+    # bidRequestType = models.IntegerField(null=True, blank=True, choices=BID_REQUEST_TYPE_CHOICE, verbose_name="借款类型(信用标)") #// 借款类型
+    # returnType = models.IntegerField(null=True, blank=True, choices=RETURN_TYPE_CHOICE, verbose_name="还款方式")#// 还款方式，等同借款(BidRequest)
+

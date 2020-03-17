@@ -3437,7 +3437,7 @@
 
 .lend_follow_main_left_icon1{
 	width: 16px;
-	height: 16px;
+	height: 20px;
 	background-position: -128px -183px;
 }
 
@@ -3475,10 +3475,10 @@
 }
 
 .lend_follow_main_right_header{
-	width: 100%;
-	height: 30px;
+	/*width: 100%;*/
+	height: 37px;
 	border-bottom: 1px solid #000000;
-	margin-top: 20px;
+	/*margin-top: 20px;*/
 }
 
 .lend_follow_main_right_header p{

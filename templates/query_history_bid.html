@@ -1,0 +1,28 @@
+{% load el_pagination_tags %}
+
+
+<table class="tender_historical_records_main_table" border="" cellspacing="" cellpadding="">
+						<tr>
+							<td>标题</td>
+							<td>年利率</td>
+							<td>有效金额</td>
+							<td>状态</td>
+							<td>投标时间</td>
+						</tr>
+
+{% lazy_paginate 3 bids using "bids-page" %}
+{% for bid in bids %}
+						<tr>
+							<th><span class="tender_historical_records_main_table_sp1 ">{{ bid.bidRequestTitle }}</span></th>
+							<th><span class="tender_historical_records_main_table_sp2 ml-lg-5" style="" >{{ bid.actualRate }}%</span></th>
+							<th><span class="tender_historical_records_main_table_sp2">&yen;{{ bid.availableAmount }}</span></th>
+							<th><span class="tender_historical_records_header_sp3"><span class="tender_historical_records_header_sp4"></span>成功</span></th>
+							<th>{{ bid.bidTime }}</th>
+						</tr>
+{% endfor %}
+					</table>
+
+
+<div class="pagination pagination-centered  justify-content-center">
+  <div>{% show_pages %}</div>
+</div>

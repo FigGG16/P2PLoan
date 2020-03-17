@@ -135,8 +135,6 @@ class Account(models.Model):
 
 
 
-
-
 class Investor(models.Model):
     userProfile = models.OneToOneField(UserProfile, on_delete=models.CASCADE, primary_key=True)
     # id = models.AutoField(primary_key=True, default=1, verbose_name="用户ID")
@@ -265,40 +263,6 @@ class Banner(models.Model):
         verbose_name_plural = verbose_name
 
 
-# 存储地
-class Picture(models.Model):
-    """This is a small demo using just two fields. The slug field is really not
-    necessary, but makes the code simpler. ImageField depends on PIL or
-    pillow (where Pillow is easily installable in a virtualenv. If you have
-    problems installing pillow, use a more generic FileField instead.
-
-    """
-    file = models.ImageField(upload_to="pictures")
-    slug = models.SlugField(max_length=50, blank=True)
-
-    def __str__(self):
-        return self.file.name
-
-    # @models.permalink
-    def get_absolute_url(self):
-        return ('authentication_upload', )
-
-    def save(self, *args, **kwargs):
-        self.slug = self.file.name
-        super(Picture, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        """delete -- Remove to leave file."""
-        self.file.delete(False)
-        super(Picture, self).delete(*args, **kwargs)
-
-# class UserDataAuthentication(models.Model):
-#     family_authentication_image
-#     education_authentication_centent
-#     phone_authentication
-#     video_authentication
-#     upload_message
-
 
 class UsersFamilyAuthentication(models.Model):
     user_profile = models.ForeignKey(UserProfile, verbose_name=u"家庭验证", on_delete=models.CASCADE, null=True)
@@ -324,9 +288,3 @@ class UsersFamilyAuthentication(models.Model):
         self.file.delete(False)
         super(UsersFamilyAuthentication, self).delete(*args, **kwargs)
 
-
-class UserVideoAuthentication(models.Model):
-    user_profile = models.ForeignKey(UserProfile, verbose_name=u"视频验证", on_delete=models.CASCADE)
-    is_authenticated = models.BooleanField(default=False)
-    name = models.CharField(max_length=100, verbose_name=u"视频名")
-    slug = models.SlugField(max_length=50, blank=True, null=True)

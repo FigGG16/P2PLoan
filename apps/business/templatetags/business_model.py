@@ -3,7 +3,7 @@ from django.utils.safestring import mark_safe
 from utils.bitStatesUtils import BitStatesUtils
 from certification.models import RealAuth, UserFile,BaseAudit
 from business.models import PlatformBankInfo,UserBanknInfo
-
+from django.db.models import Q, Sum
 
 from business.models import BidRequest
 from utils.BidConst import BidConst
@@ -54,5 +54,17 @@ def relative_url(value, field_name, urlencode=None):
         filtered_querystring = filter(lambda p: p.split('=')[0] != field_name, querystring)
         encoded_querystring = '&'.join(filtered_querystring)
         url = '{}&{}'.format(url, encoded_querystring)
-
     return url
+
+
+@register.simple_tag()
+def get_allAvailableAmountOfinverstorToBidRequest(bidRequest,user):
+    # 获取该投资人投该标的数量
+    bids_temp_query = bidRequest.bids.filter(bidUser=user.get_investor())
+
+    #汇总金额
+    available_amount_total =  bids_temp_query.aggregate(Sum('availableAmount'))
+
+    return available_amount_total['availableAmount__sum']
+
+
