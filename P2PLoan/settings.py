@@ -57,8 +57,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'crispy_forms',
-
-
     'xadmin',
     'captcha',
     'certification',
@@ -66,6 +64,8 @@ INSTALLED_APPS = [
     'users.templatetags',
     'business',
     'el_pagination',
+    'webnews',
+    'DjangoUeditor',
 
 ]
 

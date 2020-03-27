@@ -341,6 +341,9 @@ $(function() {
     $('#jsFindPwdForm .captcha').click({'form_id':'jsFindPwdForm'},refresh_captcha);
     $('#jsChangePhoneForm .captcha').click({'form_id':'jsChangePhoneForm'},refresh_captcha);
 
+    //
+    $('#login_form .captcha').click({'form_id':'login_form'},refresh_captcha);
+
     // //登录
     // $('#jsLoginBtn').on('click',function(){
     //     login_form_submit();

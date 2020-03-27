@@ -2649,7 +2649,7 @@
 
 .changes_in_account_funds_main3{
 	height: 247px;
-	margin-bottom: 165px;
+	margin-bottom: 30px;
 }
 
 .profit_account_main2{
@@ -2684,7 +2684,8 @@
 
 .changes_in_account_funds_main3 th:nth-of-type(1){
 	padding-left: 11px;
-	width: 11.8421%;
+	padding-right: 11px;
+	width: 15%;
 }
 
 .changes_in_account_funds_main3 tr:nth-of-type(2) th:nth-of-type(1){
@@ -2733,7 +2734,7 @@
 
 .entry_main{
 	width: 388px;
-	height: 420px;
+	height: 390px;
 	background: #FFFFFF;
 	position: absolute;
 	right: 20px;

@@ -1,0 +1,240 @@
+{% extends 'xadmin/base_site.html' %}
+{#{% extends 'base.html' %}#}
+
+{% load staticfiles %}
+
+
+{% block content %}
+<script  src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js'></script>
+
+<script>
+var endpoint ='{% url 'api-chart' %}';
+console.log(endpoint);
+var defaultData = [];
+var labels = [];
+$.ajax({
+    method: "GET",
+    url: endpoint,
+    success: function(data){
+        months_labels = data.months_labels;
+        user_items = data.user_items;
+        business_total_amount =data.business_total_amount;
+        manage_yield_rate = data.manage_yield_rate;
+        current_investor_nums = data.current_investor_nums;
+        current_borrower_nums = data.current_borrower_nums;
+
+        setChart()
+    },
+    error: function(error_data){
+        console.log("error")
+        console.log(error_data)
+    }
+});
+
+function setChart(){
+    var ctx = document.getElementById("myChart");
+    var ctx2 = document.getElementById("myChart2");
+    var ctx3 = document.getElementById("myChart3");
+    var ctx4 = document.getElementById("myChart4");
+
+    {#ctx.style.backgroundColor = 'rgba(255,0,0,255)';#}
+    var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: months_labels,
+        datasets: [{
+            label: '2019年新增用户统计 数量/月份',
+            data: user_items,
+            pointBackgroundColor:[ "#6970d5"],
+            borderColor: ["#62d5ce",
+            ],
+            fill:false,
+            borderWidth: 3
+        }]
+    },
+    options: {
+        responsive: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:false
+                }
+            }]
+        }
+    }
+});
+    var myChart = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: months_labels,
+        datasets: [{
+            label: '2020年月份交易总额',
+            data: business_total_amount,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                 'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+    var myChart = new Chart(ctx3, {
+    type: 'line',
+    data: {
+        labels: months_labels,
+        datasets: [{
+            label: '2020年月份系统收益总额',
+            data: manage_yield_rate,
+            backgroundColor: [
+                'rgb(255,128,183)',
+            ],
+            borderColor: [
+               'rgb(255,128,183)',
+            ],
+            borderWidth: 3
+        }]
+    },
+    options: {
+        responsive: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+    var myChart = new Chart(ctx4, {
+    type: 'line',
+    data: {
+        labels: months_labels,
+
+        datasets: [
+            {
+            label: '当前借款人数量',
+            data: current_investor_nums,
+            pointBackgroundColor:[ "#8a56d5"],
+            borderColor: ["#8a56d5",
+            ],
+            fill:false,
+            borderWidth: 3
+        },
+           {
+            label: '当前投资人数据',
+            data: current_borrower_nums,
+            pointBackgroundColor:[ "#d50b20"],
+            borderColor: ["#d50e1b",
+            ],
+            fill:false,
+            borderWidth: 3
+        },
+
+        ]
+    },
+    options: {
+        responsive: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+}
+
+
+
+</script>
+
+        <link rel="stylesheet" href="{% static 'css/core.css' %}" type="text/css" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/account.css' %}" />
+
+        <style type="text/css">
+        body {
+            font: 14px/1.5 "Verdana", "微软雅黑", YaHei, tahoma, arial, Hiragino Sans GB, "宋体";
+        }
+        .el-borrow-form{
+            position: relative;
+        }
+        .el-borrow-form-tip{
+            width: 300px;
+            border-radius: 3px;
+            border:1px solid #ddd;
+            box-shadow: 1px 1px 20px #ddd;
+            padding:20px 30px;
+            position: absolute;
+            top:10px;
+            right: 100px;
+        }
+        .text-danger{text-align: center;}
+    </style>
+
+
+    {% block content-nav %}
+
+    {% endblock %}
+
+
+<div class="container">
+
+<div class="row " style="margin-bottom: 30px" >
+                        <div class="col-md-6" style="width: 550px">
+                            <canvas id="myChart" width="500" height="350"></canvas>
+                        </div>
+
+                        <div class="col-md-6">
+                            <canvas id="myChart2" width="500" height="350"></canvas>
+                        </div>
+
+</div >
+<div class="row" style="">
+                        <div class="col-md-6" style="width: 550px">
+                            <canvas id="myChart3" width="500" height="350"></canvas>
+                        </div>
+
+                        <div class="col-md-6">
+                            <canvas id="myChart4" width="500" height="350"></canvas>
+                        </div>
+
+</div>
+
+
+</div>
+
+
+
+
+
+{% endblock %}

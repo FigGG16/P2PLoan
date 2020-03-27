@@ -1,14 +1,17 @@
 from django.conf.urls import url, include
 from django.urls import path
 
-from .views import UploadImageView, UserBasicProfileView, UserFamilyProfileView, UserCompanyProfileView
+from .views import UploadImageView, UserBasicProfileView, UserFamilyProfileView, UserCompanyProfileView,InvestorBasicProfileView
 
 
 app_name = 'users'
 
 urlpatterns = [
 
-    # 用户基本信息保存
+    # 投资基本信息保存
+    url(r'^investor_info_Save/$', InvestorBasicProfileView.as_view(), name="investor_info"),
+
+    # 借款者用户基本信息保存
     url(r'^basic_info_Save/$', UserBasicProfileView.as_view(), name="user_info"),
 
     # 用户家庭信息保存

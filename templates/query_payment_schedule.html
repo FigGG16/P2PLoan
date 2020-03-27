@@ -16,7 +16,14 @@
 									<th>年利率：<span class="lend_follow_main_right_table_span2">{{ ps.bidRequestId.currentRate}}%</span></th>
 									<th>应付本息：<span class="lend_follow_main_right_table_span2">&yen;{{ ps.totalAmount }}</span></th>
 									<th>本期利息：<span class="lend_follow_main_right_table_span2">&yen;{{ ps.interest }}</span></th>
-									<th><input type="button" name="borrow_list_btn" id="borrow_list_btn" value="还款" /></th>
+                                    {% if ps.state == 0 %}
+									 <th><input type="button" name="borrow_list_btn" id="{{ ps.id }}" class="btn-sm btn-primary col-lg-10 pt-0 pb-0 return-money-btn" id="" value="还款"></th>
+                                    {% elif ps.state == 1 %}
+                                    <th><input type="button" name="borrow_list_btn" class="btn-sm btn-success  col-lg-10 pt-0 pb-0  disabled active" id="" value="已还款"></th>
+                                {% else %}
+                                        <th><input type="button" name="borrow_list_btn" class="btn-sm btn-success  col-lg-10 pt-0 pb-0  disabled active" id="" value="逾期"></th>
+                                {% endif %}
+
 								</tr>
 
 								<tr>

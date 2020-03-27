@@ -223,7 +223,7 @@ class CalculatetUtil:
     @classmethod
     def calInterestManagerCharge(cls, interest):
         interest =Decimal(str(interest))
-        return DecimalFormatUtil(interest * cls.__INTEREST_MANAGER_CHARGE_RATE, BidConst.STORE_SCALE())
+        return DecimalFormatUtil.formatBigDecimal(interest * cls.__INTEREST_MANAGER_CHARGE_RATE, BidConst.STORE_SCALE())
 
 
 # / **

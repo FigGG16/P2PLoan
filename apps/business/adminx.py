@@ -13,6 +13,7 @@ from decimal import *
 from dateutil.relativedelta import *
 
 
+
 class BidRequestAdmin(object):
     list_display = ['createUser', 'applyTime', 'currentSum', 'returnType', 'minBidAmount', 'bidRequestState']
 
@@ -189,6 +190,7 @@ class FullAuditTwoAdmin(object):
                 manage_charge_fee = CalculatetUtil.calAccountManagementCharge(bid_request.bidRequestAmount)
                 # // ** *2.3.1可用余额减少
                 borrow_account.usableAmount = borrow_account.usableAmount - manage_charge_fee
+                borrow_account.save()
                 # // ** *2.3.2生成支付借款手续费流水;
                 self.generateBorrowChargeFeeFlow(borrow_account=borrow_account,br=bid_request,manageChargeFee=manage_charge_fee)
                 # // ** *2.3.3平台收取借款手续费;
@@ -467,7 +469,7 @@ class RechargeOfflineAdmin(object):
             #如果审核成功
             if charge_obj.state == BitStatesUtils.STATE_AUDIT():
                 #得到申请人的账户对象
-                user_account = Account.objects.get(user_profile=charge_obj.applier)
+                user_account = Account.objects.get(userProfile=charge_obj.applier)
                 #增加账户可用余额
                 user_account.usableAmount = user_account.usableAmount + charge_obj.amount
                 user_account.save()
@@ -556,7 +558,7 @@ class MoneyWithdrawAdmin(object):
     def generateChargeWithdrawFeeFlow(self,w):
         # // 1, 得到当前系统账户;
         system_account = SystemAccount.objects.first()
-        system_account.usableAmount = system_account.usableAmount + w.charge
+        system_account.usableAmount = system_account.usableAmount + CalculatetUtil.calAccountManagementCharge(w.charge)
         system_account.save()
         # //生成系统流水
         account_flow = SystemAccountFlow.objects.create(systemAccountId=system_account)

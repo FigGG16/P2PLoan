@@ -5,28 +5,36 @@ from P2PLoan.settings import BASE_DIR
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
-from django.db.models import Q
+from django.db.models import Q,Sum
 from django.views.generic.base import View
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse, HttpResponseRedirect
 
 from django.urls import reverse
 
-from .models import Banner, EmailVerifyRecord, UserProfile, Borrower, Investor, UsersFamilyAuthentication
+from .models import EmailVerifyRecord, UserProfile, Borrower, Investor, Account
 from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm, LoginRequiredMixin, UploadImageForm, \
-    UserBasicProfile, UserEmploymentDetail, UserFamilyCondition, EmploymentDetail, UploadFamilyAuthenticationImageForm
+    UserBasicProfile, UserEmploymentDetail, UserFamilyCondition, EmploymentDetail, UpdateInvestorBasicProfileForm
 from apps.utils.email_send import send_register_email
 
-from django.views.generic import ListView, CreateView, DeleteView
-from .serialize import serialize
-from .response import JSONResponse, response_mimetype
 # Create your views here.
 
 from certification.forms import ReturnRealAuthImageForm
 from utils.bitStatesUtils import BitStatesUtils
 from certification.models import UserFile
+from business.models import Bid,BidRequest,PaymentSchedule,AccountFlow,SystemAccountFlow
+from webnews.models import Banner,News
 
-from business.models import Bid,BidRequest,PaymentSchedule
+
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from utils.BidConst import BidConst
+
+
+User = get_user_model()
 
 #实现邮箱账户都能够登录
 class CustomBackend(ModelBackend):
@@ -50,7 +58,8 @@ class LogoutView(View):
 
 class LoginView(View):
     def get(self, request):
-        return render(request, "login.html", {})
+        login_form = RegisterForm()
+        return render(request, "login.html", {'login_form':login_form})
 
     def post(self, request):
         login_form = LoginForm(request.POST)
@@ -226,10 +235,13 @@ def generic(request, extra_context=None, template=None, number=50):
             'bidRequests': []
         }
         return  context
-
-    print(extra_context["page_template"]==None)
     if request.user.is_authenticated:
 
+        account = Account.objects.filter(userProfile=request.user)
+        if account.exists():
+            accountFlow = AccountFlow.objects.filter(accountId_id=account.first()).order_by("-tradeTime")
+        else:
+            accountFlow = []
         #判断借出者还是借入者
         # obj = 0;
         if not request.user.is_investor:
@@ -241,7 +253,8 @@ def generic(request, extra_context=None, template=None, number=50):
             context = {
                 'bids': [],
                 'bidRequests': [],
-                'paymentSchedules': ps.order_by("id"),}
+                'paymentSchedules': ps.order_by("id"),
+                'accountflows':accountFlow}
         else:
             obj = request.user.get_investor()
             bids = Bid.objects.filter(bidUser=obj)
@@ -255,7 +268,8 @@ def generic(request, extra_context=None, template=None, number=50):
                 bid_user_ids = list(set((list(zip(*bid_request_ids)))[0]))
                 context = {
                     'bids': bids.order_by("id"),
-                    'bidRequests':BidRequest.objects.filter(id__in=bid_user_ids).order_by("id")
+                    'bidRequests':BidRequest.objects.filter(id__in=bid_user_ids).order_by("id"),
+                    'accountflows': accountFlow
                 }
             else:
                 context = noneContext()
@@ -270,9 +284,9 @@ def generic(request, extra_context=None, template=None, number=50):
         context['form']=form
         context['BitStatesUtils'] = BitStatesUtils
         context['userFileObj'] = user_file_list
-
         return render(request, template, context)
 
+    return render(request, 'login.html', {})
 
 class UserAccountView(LoginRequiredMixin, View):
     def get(self, request):
@@ -299,6 +313,20 @@ class UploadImageView(LoginRequiredMixin, View):
             return HttpResponse('{"status":"fail"}', content_type='application/json')
 
 
+# 异步保存投资者的详细信息
+class InvestorBasicProfileView(LoginRequiredMixin, View):
+    """
+    用户基本个人信息
+    """
+    def post(self, request):
+        user_info_form = UpdateInvestorBasicProfileForm(request.POST, instance=request.user)
+        if user_info_form.is_valid():
+            user_info_form.save()
+            return HttpResponse('{"status":"success", "message":"保存成功"}', content_type='application/json')
+        else:
+            return HttpResponse('{"status":"failure", "message":"保存失败"}', content_type='application/json')
+
+
 # 异步保存用户的详细信息
 class UserBasicProfileView(LoginRequiredMixin, View):
     """
@@ -315,10 +343,11 @@ class UserBasicProfileView(LoginRequiredMixin, View):
             user_profile = UserProfile.objects.get(id=request.user.id)
             user_profile.contact_number = request.POST.get("contact_number", "")
             user_profile.qq = request.POST.get("qq", "")
+            user_profile.identity_number = request.POST.get("identity_number", "")
             user_profile.save()
-            return HttpResponse('{"status":"success"}', content_type='application/json')
+            return HttpResponse('{"status":"success", "message":"保存成功"}', content_type='application/json')
         else:
-            return HttpResponse(json.dumps(user_info_form.errors), content_type='application/json')
+            return HttpResponse('{"status":"failure", "message":"保存失败"}', content_type='application/json')
 
 
 # 异步保存用户的家庭详细信息
@@ -346,9 +375,9 @@ class UserFamilyProfileView(LoginRequiredMixin, View):
             borrower.save()
             json_data.close()
             user_family_form.save()
-            return HttpResponse('{"status":"success"}', content_type='application/json')
+            return HttpResponse('{"status":"success", "message":"保存家庭详细信息成功"}', content_type='application/json')
         else:
-            return HttpResponse(json.dumps(user_family_form.errors), content_type='application/json')
+            return HttpResponse('{"status":"success", "message":"保存家庭详细信息成功"}', content_type='application/json')
 
 
 # 异步保存公司详细信息
@@ -360,7 +389,10 @@ class UserCompanyProfileView(LoginRequiredMixin, View):
         return render(request, 'borrow_home_page.html')
 
     def post(self, request):
-        employment_detail = EmploymentDetail.objects.get(borrower_id=request.user.id)
+        if EmploymentDetail.objects.filter(borrower_id=request.user.id).exists():
+            employment_detail = EmploymentDetail.objects.get(borrower_id=request.user.id)
+        else:
+            employment_detail = EmploymentDetail.objects.create(borrower_id=request.user.id)
         user_employment_form = UserEmploymentDetail(request.POST, instance=employment_detail)
 
         if user_employment_form.is_valid():
@@ -379,44 +411,107 @@ class UserCompanyProfileView(LoginRequiredMixin, View):
 
 
             user_employment_form.save()
-            return HttpResponse('{"status":"success"}', content_type='application/json')
+            return HttpResponse('{"status":"success", "message":"保存公司信息成功"}', content_type='application/json')
         else:
-            return HttpResponse(json.dumps(user_employment_form.errors), content_type='application/json')
+            return HttpResponse('{"status":"success", "message":"保存公司信息失败"}', content_type='application/json')
+
+
+class IndexView(View):
+    #P2P在线网 首页
+    def get(self, request):
+        #取出轮播图
+        all_banners = Banner.objects.all().order_by('index')
+        last_bids = Bid.objects.all().order_by("-bidTime")[:4]
+        last_request_bids = BidRequest.objects.all().order_by("-publishTime")[:4]
+        last_news = News.objects.all().order_by("-publishTime")[:10]
+        return render(request, 'index.html', {
+            'all_banners':all_banners,
+            'last_bids':last_bids,
+            'last_request_bids':last_request_bids,
+            'last_news':last_news
+        })
+
+
+from xadmin.views import CommAdminView
+
+
+class Chart(CommAdminView):
+    def get(self, request):
+        context = super().get_context()  # 这一步是关键，必须super一下继承CommAdminView里面的context，不然侧栏没有对应数据，我在这里卡了好久
+        title = "统计"  # 定义面包屑变量
+        context["breadcrumbs"].append({'url': '/cwyadmin/', 'title': title})  # 把面包屑变量添加到context里面
+        context["title"] = title  # 把面包屑变量添加到context里面
+
+        # 下面你可以接着写你自己的东西了，写完记得添加到context里面就可以了
+        return render(request, 'charts.html', context)
 
 
 
-# class UploadUserAuthenticationView(View):
-#     """
-#     上传用户基本信息
-#     """
-#     def get(self, request):
-#         return render(request, 'authentication.html')
-#
-#     def post(self, request):
-#
-#         family_authentication_object = UsersFamilyAuthentication.objects.filter(user_profile_id=request.user.id)
-#         if len(family_authentication_object) > 0:
-#             user_authentication_image_form = UploadFamilyAuthenticationImageForm(request.POST, request.FILES, instance=family_authentication_object.first())
-#         else:
-#             family_authentication_object = UsersFamilyAuthentication.objects.create(user_profile_id=request.user.id)
-#             user_authentication_image_form = UploadFamilyAuthenticationImageForm(request.POST, request.FILES,
-#                                                                                  instance=family_authentication_object)
-#         if user_authentication_image_form.is_valid():
-#             family_authentication_form_model = user_authentication_image_form.save()
-#             files = [serialize(family_authentication_form_model)]
-#             data = {'files': files}
-#             response = JSONResponse(data, mimetype=response_mimetype(self.request))
-#             response['Content-Disposition'] = 'inline; filename=files.json'
-#             return response
-#
-#         data = json.dumps(user_authentication_image_form.errors)
-#         return HttpResponse(content=data, status=400, content_type='application/json')
+class ChartData(APIView):
+    authentication_classes = []
+    permission_classes = []
+    def get(self, request, format=None):
+        queryset = User.objects.filter(date_joined__month='2019')  # 按月查询
+        # print(queryset)
+        qs_count = User.objects.all().count()
+        months_labels = [str(x)+'月' for x in range(1,13)]
+        user_items = [User.objects.filter(Q(date_joined__month = str(x))&Q( date_joined__year = '2019')).count() for x in range(1,13)]
 
+        business_total_amount = [float(self.getavailable_amount_total(year='2020',month=str(x))) for x in range(1,13)]
+        manage_yield_rate = [float(self.getSystemAccountFlow_amount_total(year='2020', month=str(x))) for x in range(1, 13)]
 
+        current_investor_nums = [self.get_investor_nums(year='2020', month=str(x)) for x in range(1, 13)]
+        current_borrower_nums = [self.get_borrower_nums(year='2020', month=str(x)) for x in range(1, 13)]
 
+        data = {
+                "months_labels": months_labels,
+                "user_items": user_items,
+                "business_total_amount":business_total_amount,
+                "manage_yield_rate":manage_yield_rate,
+                "current_investor_nums":current_investor_nums,
+                "current_borrower_nums":current_borrower_nums,
+        }
+        return Response(data)
 
+    def getavailable_amount_total(self,year,month):
+        # 统计投资金额
+        bid_request_query = BidRequest.objects.filter(Q(bidRequestState = BidConst.GET_BIDREQUEST_STATE_PAYING_BACK()) & Q(applyTime__month=month) & Q(applyTime__year=year))
+        if bid_request_query.exists():
+            available_amount_total = bid_request_query.aggregate(Sum('bidRequestAmount'))
+            return available_amount_total['bidRequestAmount__sum']
+        else:
+            return 0
+    def getSystemAccountFlow_amount_total(self,year,month):
+        systemAccountFlowRuery = SystemAccountFlow.objects.filter(Q(createdTime__month=month) & Q(createdTime__year=year))
+        if systemAccountFlowRuery.exists():
+            available_amount_total = systemAccountFlowRuery.aggregate(Sum('amount'))
+            return available_amount_total['amount__sum']
+        else:
+            return 0
 
+    def get_investor_nums(self,year,month):
+        # 统计借款人数
+        bid_request_query = BidRequest.objects.filter((Q(bidRequestState = BidConst.GET_BIDREQUEST_STATE_PAYING_BACK())| Q(bidRequestState = BidConst.GET_BIDREQUEST_STATE_BIDDING())) & Q(applyTime__month=month) & Q(applyTime__year=year))
+        if bid_request_query.exists():
+            return bid_request_query.count()
+        else:
+            return 0
 
+    def get_borrower_nums(self,year,month):
+        # 统计投资人数
+        bid_request_query = BidRequest.objects.filter(Q(bidRequestState = BidConst.GET_BIDREQUEST_STATE_PAYING_BACK()) & Q(applyTime__month=month) & Q(applyTime__year=year))
 
+        if bid_request_query.exists():
+            list_id = []
+            for br in bid_request_query:
+                bids = br.bids.values_list('bidUser')
+                # 取出所有投标用户id, 并去重
+                bid_user_ids = list(set((list(zip(*bids)))[0]))
+                list_id.extend(bid_user_ids)
+            list_id = list(set(list_id))
+
+            return len(list_id)
+        else:
+            return 0
 
 

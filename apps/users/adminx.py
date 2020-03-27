@@ -1,15 +1,13 @@
 import xadmin
 
-from .models import EmailVerifyRecord, Banner, Borrower, Investor, UserProfile, BorrowerUserProfile, ManagerProfile, \
-    EmploymentDetail, UsersFamilyAuthentication, Account
+from .models import EmailVerifyRecord,  Borrower, Investor, UserProfile, BorrowerUserProfile, ManagerProfile, \
+    EmploymentDetail,  Account
 from xadmin import views
 from django.db.models import Q
 
 from django.utils.safestring import mark_safe
 
-class UsersFamilyAuthenticationInline(object):
-    model = UsersFamilyAuthentication
-    extra = 0
+
 
 class AccountInline(object):
     model = Account
@@ -34,7 +32,7 @@ class BorrowerInlines(object):
 #投资者
 class UserProfileAdmin(object):
     search_fields = ['username']
-    inlines = [InvestorInlines, UsersFamilyAuthenticationInline, AccountInline]
+    inlines = [InvestorInlines, AccountInline]
     list_display = ['username', 'nickname', 'trueName', 'email', 'is_active', 'is_superuser']
     readonly_fields = ['email', 'image']
 
@@ -51,7 +49,7 @@ class UserProfileAdmin(object):
 
 
 class BorrowerUserProfileAdmin(object):
-    inlines = [BorrowerInlines, UsersFamilyAuthenticationInline, AccountInline]
+    inlines = [BorrowerInlines, AccountInline]
     list_display = ['username', 'nickname', 'trueName', 'email', 'is_active', ]
     search_fields =['username']
     autocomplete_fields =['username']
@@ -126,6 +124,25 @@ class GlobalSetting(object):
     site_footer = "P2P小额网贷网"
     menu_style = "accordion"
 
+    def get_site_menu(self):  #名称不能改
+        return [
+            {
+                'title': '数据统计',
+                'icon': 'fa fa-bar-chart-o',
+                'menus': (
+                    {
+                        'title': '首页',    #这里是你菜单的名称
+                        'url': '/xadmin/chart',     #这里填写你将要跳转url
+                        'icon': 'fa fa-cny'     #这里是bootstrap的icon类名，要换icon只要登录bootstrap官网找到icon的对应类名换上即可
+                    },
+
+                )
+            }
+        ]
+
+from .views import Chart
+xadmin.site.register_view(r'^chart/$', Chart, name='chart')
+# url(r'^chart/$', Chart.as_view(), name='chart'),
 
 # xadmin.site.register(Borrower, BorrowerAdmin)
 xadmin.site.unregister(UserProfile)
@@ -133,7 +150,6 @@ xadmin.site.register(ManagerProfile, ManagerProfileAdmin)
 xadmin.site.register(BorrowerUserProfile, BorrowerUserProfileAdmin)
 xadmin.site.register(UserProfile, UserProfileAdmin)
 xadmin.site.register(EmailVerifyRecord, EmailVerifyRecordAdmin)
-xadmin.site.register(Banner, BannerAdmin)
 xadmin.site.register(views.BaseAdminView, BaseSetting)
 xadmin.site.register(views.CommAdminView, GlobalSetting)
 xadmin.site.register(EmploymentDetail, EmploymentDetailAdmin)

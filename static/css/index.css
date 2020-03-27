@@ -311,15 +311,15 @@ input, textarea{
 }
 
 .main_title p, .main_title input{
-	float: left;
+	/*float: left;*/
 }
 
 
 
 .main_title p{
-	line-height: 104px;
-	color: #000000;
-	font-size: 16px;
+	/*line-height: 104px;*/
+	/*color: #000000;*/
+	/*font-size: 16px;*/
 }
 
 .index-MainTitle-p1{
@@ -520,6 +520,7 @@ input, textarea{
 	float: right;
 	font-size: 12px;
 	color: #cacaca;
+
 }
 
 .main_story_p1{

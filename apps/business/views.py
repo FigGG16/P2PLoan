@@ -198,10 +198,9 @@ class BidRequestListView(ListView):
 #还款
 class DoReturnMoney(View):
 
-
     def post(self,request):
         # 获取PaymentSchedule #根据前端传进来的PaymentSchedulesID索引出还款进度
-        ps = PaymentSchedule.objects.get(borrower=request.user.get_investor())
+        ps = PaymentSchedule.objects.get(id=request.POST.get('PaymentSchedulesID'))
         #获取借款者账户
         borrowAccount = Account.objects.get(userProfile=request.user)
     # // 得到paymentschedule判断;
@@ -252,12 +251,9 @@ class DoReturnMoney(View):
                 currentBidRequest.bidRequestState = BidConst.GET_BIDREQUEST_STATE_COMPLETE_PAY_BACK()
                 currentBidRequest.save()
 
+            return HttpResponse('{"status":"success", "message":"还款成功"}', content_type='application/json')
 
-
-
-
-
-
+        return HttpResponse('{"status":"failure", "message":"余额不足"}', content_type='application/json')
 
     def createBaseFlow(self,account):
         flow = AccountFlow.objects.create(accountId=account)
@@ -299,7 +295,7 @@ class DoReturnMoney(View):
         flow.usableAmount = systemAccount.usableAmount
         flow.createdTime = timezone.now()
         flow.freezedAmount = systemAccount.freezedAmount
-        flow.note = "用户收款" + str(psd.getTotalAmount()) + "成功,收取利息管理费:" + str(interestChargeFee)
+        flow.note = "用户收款" + str(psd.totalAmount) + "成功,收取利息管理费:" + str(interestChargeFee)
         flow.save()
 
 

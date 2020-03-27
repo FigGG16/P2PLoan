@@ -5,7 +5,7 @@ from certification.models import RealAuth, UserFile,BaseAudit
 from business.models import PlatformBankInfo,UserBanknInfo
 from django.db.models import Q, Sum
 
-from business.models import BidRequest
+from business.models import BidRequest,AccountFlow
 from utils.BidConst import BidConst
 from utils.DecimalFormatUtil import DecimalFormatUtil
 from django.db.models import Q
@@ -68,3 +68,7 @@ def get_allAvailableAmountOfinverstorToBidRequest(bidRequest,user):
     return available_amount_total['availableAmount__sum']
 
 
+@register.simple_tag()
+def get_account_flow_type(index):
+    all_account_flow_type_dict = dict(AccountFlow.ACCOUNT_TYPE)
+    return all_account_flow_type_dict[int(index)]

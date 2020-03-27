@@ -640,6 +640,51 @@ $(function () {
             });
         });
 
+
+   //还款
+
+    $(function (){
+
+   //添加父类监听事件解决重复上传无效问题
+            {#$(".refresh_bid_view").on('click','.bidBtn', function returnMoneyBtn(payId){#}
+            $(".return-money-btn").click(function (){
+
+                console.log(this.id);
+              console.log("将来");
+                $.ajax({
+                cache: false,
+                type: 'post',
+                dataType:'json',
+                url:"{% url 'business:DoReturnMoney' %}",
+                data:{'PaymentSchedulesID':this.id},
+                async: true,
+                beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function(data) {
+
+                        if(data.status == "success"){
+                                     {#提交数据成功，进行局部刷新#}
+                            console.log("success");
+                             $(".query_payment_schedule").load(location.href + " .query_payment_schedule");
+
+                            //删除重复创建div
+                            $('#WarnModal').modal('show');
+                             $("#alert-message").text(data.message);
+
+                        }else if(data.status == "failure"){
+                            console.log("failure");
+                            $('#WarnModal').modal('show');
+                            $("#alert-message").text(data.message);
+                        }
+                },
+                complete: function(XMLHttpRequest){
+
+                }
+            });
+            });
+        });
+
 //绑定手机号
    $(function () {
 
@@ -730,9 +775,8 @@ $(function () {
                     }else if(data.status == "failure"){
 
 
-                    $("#showMessageForAuditPhone").attr("style","display:block;");
+                        $("#showMessageForAuditPhone").attr("style","display:block;");
                         $("#showMessageForAuditPhone").innerHTML = data.message;
-
                         $("#showMessageForAuditPhone").attr("style","text-align:center;");
 
 
@@ -762,73 +806,10 @@ $("#phoneModel").click(function() {
 
 
 
-// 异步用户基本信息提交
-$(function(){
-verify(
-    [
-        {id: '#mobile', tips: Dml.Msg.epPhone, require: true}
-    ]
-);
-//保存个人资料
-$('#jsEditUserBasicProfileBtn').on('click', function(){
-
-    $form = $('#jsEditUserBasicProfileForm');
-    console.log("成功");
-    $.ajax({
-        cache: false,
-        type: 'post',
-        dataType:'json',
-        url:"{% url 'users:user_info' %}",
-        data:$form.serialize(),
-        async: true,
-        beforeSend:function(xhr, settings){
-                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-            },
-        success: function(data) {
-
-                    if(data.status == "success"){
-                                 {#提交数据成功，进行局部刷新#}
-                        console.log("success");
-
-                    }else if(data.status == "failure"){
 
 
-                        $("#showMessageForAuditPhone").attr("style","display:block;");
-                        $("#showMessageForAuditPhone").html(data.message);
-                        $("#showMessageForAuditPhone").attr("style","text-align:center;");
-
-                    }
-            },
-        complete: function(XMLHttpRequest){
-
-            }
 
 
-        {#beforeSend:function(XMLHttpRequest){#}
-        {#    _self.val("保存中...");#}
-        {#    _self.attr('disabled',true);#}
-      //  {#},#}
-        {#success: function(data) {#}
-        {#   if(data.status == "failure"){#}
-        {#         Dml.fun.showTipsDialog({#}
-        {#            title: '保存失败',#}
-        {#            h2: data.msg#}
-        {#        });#}
-        {#    }else if(data.status == "success"){#}
-        {#        Dml.fun.showTipsDialog({#}
-        {#            title: '保存成功',#}
-        {#            h2: '个人信息修改成功！'#}
-        {#        });#}
-        {#        // setTimeout(function(){window.location.href = window.location.href;},1500);#}
-        {#    }#}
-     //   {#},#}
-        {#complete: function(XMLHttpRequest){#}
-        {#    _self.val("保存");#}
-        {#    _self.removeAttr("disabled");#}
-     //   {#}#}
-    });
-});
-});
 
 
 </script>
@@ -1033,7 +1014,7 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                 <div class="tab-content" id="v-pills-tabContent">
 
 				<!--借出首页-->
-                <div class="tab-pane fade show  lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                <div class="tab-pane fade show active lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
 				<div id="RightPage" class="lend_home_page border" data-page="0">
 
 
@@ -1079,7 +1060,7 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                             待收本金：<span class="text-primary">{% formate_decimal_show account_obj.unReceivePrincipal %}元</span>
                         </div>
                         <div class="col-sm-4">
-                            待还本息：<span class="text-primary">{% formate_decimal_show account_obj.getTotalAmount %}元</span>
+                            待还本息：<span class="text-primary">{% formate_decimal_show account_obj.unReturnAmount %}元</span>
                         </div>
                     </div>
                     {% else %}
@@ -1168,7 +1149,7 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
 				</div>
                 </div>
                <!--我的借款列表-->
-                <div class="tab-pane fade show active  borrow_list" id="borrow_list" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                <div class="tab-pane fade show   borrow_list" id="borrow_list" role="tabpanel" aria-labelledby="v-pills-profile-tab">
                 <div id="RightPage" class="borrow_list_main" data-page="1">
                      <div role="tabpanel " class="lend_follow_main_right_header">
 
@@ -1185,12 +1166,32 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                             </ul>
 
                                  <div class="tab-content">
-                                     <div  class="tab-pane active" id="focus-lends">
+                                     <div  class="tab-pane active query_payment_schedule" id="focus-lends">
                                            <!--page1-->
 
-                                                       <div class="endless_page_template">
+                                                       <div class="endless_page_template " >
                                                            {% include 'query_payment_schedule.html' %}
                                                        </div>
+{#                                         <table id="lend_follow_main_right_table" border="" cellspacing="" cellpadding="">#}
+{#								<tbody><tr>#}
+{#									<td rowspan="2">我要买车</td>#}
+{#									<th>借款金额：<span class="lend_follow_main_right_table_span2">¥2000.0000</span></th>#}
+{#									<th>年利率：<span class="lend_follow_main_right_table_span2">10.0000%</span></th>#}
+{#									<th>应付本息：<span class="lend_follow_main_right_table_span2">¥343.1228</span></th>#}
+{#									<th>本期利息：<span class="lend_follow_main_right_table_span2">¥16.6667</span></th>#}
+{#                                    <th><input type="button" name="borrow_list_btn" class="btn-sm btn-primary col-lg-10 return-money-btn" id="" value="还款"></th>#}
+{#                                    <th><input type="button" name="borrow_list_btn" class="btn-sm btn-success  col-lg-10 disabled active" id="" value="已还款"></th>#}
+{#                                    <input class="hidden" id="PaymentSchedulesID" value="" />#}
+{#								</tr>#}
+{##}
+{#								<tr>#}
+{#									<th>本期借款：<span class="lend_follow_main_right_table_span2">¥326.4561</span></th>#}
+{#									<th>借款期限：6个月</th>#}
+{#									<th>还款期数：<span class="lend_follow_main_right_table_span2">1期</span></th>#}
+{#									<th>还款期限：<span class="lend_follow_main_right_table_span1">2020年4月15日 19:40</span></th>#}
+{#									<th><span class="lend_follow_main_right_table_span1">查看电子协议</span></th>#}
+{#								</tr>#}
+{#							</tbody></table>#}
 
                                      </div>
 
@@ -2157,16 +2158,16 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
 
 
                             <div class="card mb-2">
-                                <div class="card-header">Website <i class="fa fa-link fa-1x"></i></div>
+                                <div class="card-header">个人站点<i class="fa fa-link fa-1x"></i></div>
                                 <div class="card-body"><a href="http://bootnipets.com">bootnipets.com</a></div>
                             </div>
 
                             <ul class="list-group mb-2">
-                                <li class="list-group-item text-muted">Activity <i class="fa fa-dashboard fa-1x"></i></li>
-                                <li class="list-group-item text-left"><span class=""><strong>Shares</strong></span> 125</li>
-                                <li class="list-group-item text-left"><span class="pull-left"><strong>Likes</strong></span> 13</li>
-                                <li class="list-group-item text-left"><span class="pull-left"><strong>Posts</strong></span> 37</li>
-                                <li class="list-group-item text-left"><span class="pull-left"><strong>Followers</strong></span> 78</li>
+                                <li class="list-group-item text-muted">活动<i class="fa fa-dashboard fa-1x"></i></li>
+                                <li class="list-group-item text-left"><span class=""><strong>分享</strong></span> 125</li>
+                                <li class="list-group-item text-left"><span class="pull-left"><strong>喜欢</strong></span> 13</li>
+                                <li class="list-group-item text-left"><span class="pull-left"><strong>提交</strong></span> 37</li>
+
                             </ul>
 
 
@@ -2180,7 +2181,7 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
 
                                <!--个人资料编辑列表-->
                             <div class="tab-content">
-                                <div class="tab-pane fade show active" id="people-basic-profile">
+                                <div class="tab-pane fade show active people-basic-profile" id="people-basic-profile">
                                     <hr>
                                     <form class="form" id="jsEditUserBasicProfileForm" autocomplete="off">
                                          <!--个人资料编辑第一列-->
@@ -2264,16 +2265,15 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                                          <!--个人资料编辑第四列-->
                                             <div class="form-group">
                                                   <label for="inputIdenticalCard">身份证号码</label>
-{#                                                {{ request.user.get_borrower.identity_number|default:""  }}#}
-                                                <input type="text" name="identity_number" id="identity_number" value="" class="form-control" placeholder="请输入身份证号码" required>
+                                                <input type="text" name="identity_number" id="identity_number" value="{{ request.user.identity_number|default:""  }}" class="form-control" placeholder="请输入身份证号码" required>
                                             </div>
 
 
                                          <div class="form-group">
                                             <div class="col-xs-12">
                                                 <br>
-                                                <button class="btn btn-lg btn-primary" id="jsEditUserBasicProfileBtn">Save</button>
-                                                <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Reset</button>
+                                                <input type="button" class="btn btn-lg btn-primary" id="jsEditUserBasicProfileBtn" value="保存"/>
+                                                <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i>重置</button>
                                             </div>
                                         </div>
                                         {% csrf_token %}
@@ -2284,7 +2284,7 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                                 </div>
 
                                 <!--家庭信息-->
-                                <div class="tab-pane" id="family-profile">
+                                <div class="tab-pane family-profile" id="family-profile">
                                     <hr>
                                     <form class="form" id="jsEditUserFamilyProfileForm" autocomplete="off">
                                            <!--家庭情况第一列-->
@@ -2397,8 +2397,8 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                                          <div class="form-group">
                                             <div class="col-xs-12">
                                                 <br>
-                                                <button class="btn btn-lg btn-primary" id="jsEditUserFamlityProfileBtn">Save</button>
-                                                <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Reset</button>
+                                                <input type="button" class="btn btn-lg btn-primary" id="jsEditUserFamlityProfileBtn" value="保存"/>
+                                                <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> 重置</button>
                                             </div>
                                         </div>
                                         {% csrf_token %}
@@ -2407,7 +2407,7 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                                 </div><!--/tab-pane-->
 
                                 <!--公司详情-->
-                                <div class="tab-pane" id="company-profile"  >
+                                <div class="tab-pane company-profile" id="company-profile"  >
                                     <hr>
                                     <form class="form" id="jsEditUserCompanyProfileForm" autocomplete="off">
                                          <!--公司信息第一列-->
@@ -2529,8 +2529,9 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                                                                  <div class="form-group">
                                             <div class="col-xs-12">
                                                 <br>
-                                                <button class="btn btn-lg btn-primary" id="jsEditUserCompanyProfileBtn">Save</button>
-                                                <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Reset</button>
+                                                 <input type="button" class="btn btn-lg btn-primary" id="jsEditUserCompanyProfileBtn" value="保存"/>
+                                                <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> 重置</button>
+
                                             </div>
                                         </div>
                                      {% csrf_token %}
@@ -2714,11 +2715,10 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
 
 
 				<!--账户资金变动-->
-                  <div class="tab-pane fade changes_in_account_funds_main" id="changes-in-account-funds-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                   <div class="tab-pane fade changes_in_account_funds_main" id="changes-in-account-funds-main" role="tabpanel" aria-labelledby="v-pills-profile-tab">
 
 					<div class="changes_in_account_funds_main1">
 						<p class="changes_in_account_funds_main1_p1">资金类型：</p>
-
 						<div class="changes_in_account_funds_main1_content_bg1">
 						借出者投标成功<span class="changes_in_account_funds_main1_content_btn1">
 							<span></span>
@@ -2737,82 +2737,25 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
 
 					</div>
 
-					<table class="changes_in_account_funds_main2" border="" cellspacing="" cellpadding="">
-						<tr>
-							<td colspan="2">资金统计</td>
-						</tr>
 
-						<tr>
-							<th>账户余额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
-							<th>可用余额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
-						</tr>
+                     <div class="endless_page_template">
 
-						<tr>
-							<th>冻结金额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span><span class="changes_in_account_funds_main_sp2">[正在竞标的借款]</span></th>
-							<th>待收金额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span><span class="changes_in_account_funds_main_sp2">[待收的借款]</span></th>
-						</tr>
+                         {% include "query_account_flow.html" %}
+                     </div>
 
-						<tr>
-							<th>净赚利息：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
-							<th>待还金额：<span class="changes_in_account_funds_main_sp1">&yen;83.21</span></th>
-						</tr>
 
-					</table>
 
-					<table class="changes_in_account_funds_main3" border="" cellspacing="" cellpadding="">
-						<tr>
-							<td colspan="6">资金流水记录</td>
-						</tr>
-
-						<tr>
-							<th>日期</th>
-							<th>类型</th>
-							<th>支出</th>
-							<th>存入</th>
-							<th>余额</th>
-							<th>说明</th>
-						</tr>
-
-						<tr>
-							<th>2013-08-10<br />22:00</th>
-							<th>充值手续费</th>
-							<th>&yen;83.21</th>
-							<th>&yen;83.21</th>
-							<th>&yen;83.21</th>
-							<th>说明文字说明文字说明文字说<br />明文字说明文字说明文字说明</th>
-						</tr>
-
-						<tr>
-							<th>2013-08-10<br />22:00</th>
-							<th>充值手续费</th>
-							<th>&yen;83.21</th>
-							<th>&yen;83.21</th>
-							<th>&yen;83.21</th>
-							<th>说明文字说明文字说明文字说<br />明文字说明文字说明文字说明</th>
-						</tr>
-
-						<tr>
-							<th>2013-08-10<br />22:00</th>
-							<th>充值手续费</th>
-							<th>&yen;83.21</th>
-							<th>&yen;83.21</th>
-							<th>&yen;83.21</th>
-							<th>说明文字说明文字说明文字说<br />明文字说明文字说明文字说明</th>
-						</tr>
-
-					</table>
 
 				</div>
+
+
                 </div>
 			</div>
 
 
 		</div>
 		</div>
-
             </div>
-
-
 
 
 {% endblock %}

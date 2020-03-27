@@ -69,158 +69,189 @@
                 $('.yearselect').yearselect();
             });
 
-// // 异步用户基本信息提交
-//     $(function(){
-//    verify(
-//         [
-//             {id: '#mobile', tips: Dml.Msg.epPhone, require: true}
-//         ]
-//     );
-//     //保存个人资料
-//     $('#jsEditUserBasicProfileBtn').on('click', function(){
-//         var _self = $(this),
-//             $jsEditUserBasicProfileForm = $('#jsEditUserBasicProfileForm');
-//             verify = verifySubmit(
-//             [
-//                 {id: '#mobile', tips: Dml.Msg.epPhone, require: true}
-//             ]
-//         );
-//         if(!verify){
-//            return;
-//         }
-//         $.ajax({
-//             cache: false,
-//             type: 'post',
-//             dataType:'json',
-//             url:"/userAccountView/basic_info_Save/",
-//             data:$jsEditUserBasicProfileForm.serialize(),
-//             async: true,
-//             beforeSend:function(XMLHttpRequest){
-//                 _self.val("保存中...");
-//                 _self.attr('disabled',true);
-//             },
-//             success: function(data) {
-//                if(data.status == "failure"){
-//                      Dml.fun.showTipsDialog({
-//                         title: '保存失败',
-//                         h2: data.msg
-//                     });
-//                 }else if(data.status == "success"){
-//                     Dml.fun.showTipsDialog({
-//                         title: '保存成功',
-//                         h2: '个人信息修改成功！'
-//                     });
-//                     // setTimeout(function(){window.location.href = window.location.href;},1500);
-//                 }
-//             },
-//             complete: function(XMLHttpRequest){
-//                 _self.val("保存");
-//                 _self.removeAttr("disabled");
-//             }
-//         });
-//     });
-// });
 
-// 异步用户家庭信息提交
-    $(function(){
-   verify(
-        [
-            {id: '#mobile', tips: Dml.Msg.epPhone, require: true}
-        ]
-    );
-    //保存个人资料
-    $('#jsEditUserFamlityProfileBtn').on('click', function(){
-        var _self = $(this),
-            $jsEditUserFamilyProfileForm = $('#jsEditUserFamilyProfileForm')
-            verify = verifySubmit(
-            [
-                {id: '#mobile', tips: Dml.Msg.epPhone, require: true}
-            ]
-        );
-        if(!verify){
-           return;
-        }
-        $.ajax({
-            cache: false,
-            type: 'post',
-            dataType:'json',
-            url:"/userAccountView/family_info_Save/",
-            data:$jsEditUserFamilyProfileForm.serialize(),
-            async: true,
-            beforeSend:function(XMLHttpRequest){
-                _self.val("保存中...");
-                _self.attr('disabled',true);
+
+// 异步用户基本信息提交
+$(function(){
+verify(
+    [
+        {id: '#mobile', tips: Dml.Msg.epPhone, require: true}
+    ]
+);
+//保存个人资料
+$('#jsEditUserBasicProfileBtn').on('click', function(){
+
+    $form = $('#jsEditUserBasicProfileForm');
+
+    $.ajax({
+        cache: false,
+        type: 'post',
+        dataType:'json',
+        url:'/userAccountView/user/basic_info_Save/',
+        data:$form.serialize(),
+        async: true,
+        beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
             },
-            success: function(data) {
-               if(data.status == "failure"){
-                     Dml.fun.showTipsDialog({
-                        title: '保存失败',
-                        h2: data.msg
-                    });
-                }else if(data.status == "success"){
-                    Dml.fun.showTipsDialog({
-                        title: '保存成功',
-                        h2: '个人信息修改成功！'
-                    });
-                    // setTimeout(function(){window.location.href = window.location.href;},1500);
-                }
+        success: function(data) {
+
+                    if(data.status == "success"){
+                                // {#提交数据成功，进行局部刷新#}
+                        $(".people-basic-profile").load(" .people-basic-profile > *");
+
+                        console.log("保存数据成功");
+
+                        $('#WarnModal').modal('show');
+                        $("#alert-message").text(data.message);
+
+
+                    }else if(data.status == "failure"){
+
+                         $('#WarnModal').modal('show');
+                        $("#alert-message").text(data.message);
+
+                    }
             },
-            complete: function(XMLHttpRequest){
-                _self.val("保存");
-                _self.removeAttr("disabled");
+        complete: function(XMLHttpRequest){
+
+
             }
-        });
     });
 });
+});
 
-// 异步用户公司信息提交
-    $(function(){
-   verify(
-        [
-            {id: '#mobile', tips: Dml.Msg.epPhone, require: true}
-        ]
-    );
-    //保存个人资料
-    $('#jsEditUserCompanyProfileBtn').on('click', function(){
-        var _self = $(this),
-            $jsEditUserCompanyProfileForm = $('#jsEditUserCompanyProfileForm')
-            verify = verifySubmit(
-            [
-                {id: '#mobile', tips: Dml.Msg.epPhone, require: true}
-            ]
-        );
-        if(!verify){
-           return;
-        }
-        $.ajax({
-            cache: false,
-            type: 'post',
-            dataType:'json',
-            url:"/userAccountView/company_info_Save/",
-            data:$jsEditUserCompanyProfileForm.serialize(),
-            async: true,
-            beforeSend:function(XMLHttpRequest){
-                _self.val("保存中...");
-                _self.attr('disabled',true);
+
+// 异步用户家庭信息提交
+$(function(){
+
+//保存个人资料
+$('#jsEditUserFamlityProfileBtn').on('click', function(){
+
+    $form = $('#jsEditUserFamilyProfileForm');
+
+    $.ajax({
+        cache: false,
+        type: 'post',
+        dataType:'json',
+        url:"/userAccountView/user/family_info_Save/",
+        data:$form.serialize(),
+        async: true,
+        beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
             },
-            success: function(data) {
-               if(data.status == "failure"){
-                     Dml.fun.showTipsDialog({
-                        title: '保存失败',
-                        h2: data.msg
-                    });
-                }else if(data.status == "success"){
-                    Dml.fun.showTipsDialog({
-                        title: '保存成功',
-                        h2: '个人信息修改成功！'
-                    });
-                    // setTimeout(function(){window.location.href = window.location.href;},1500);
-                }
+        success: function(data) {
+
+                    if(data.status == "success"){
+                               //  {#提交数据成功，进行局部刷新#}
+                        $(".family-profile").load(" .family-profile > *");
+
+                        console.log("保存数据成功");
+
+                        $('#WarnModal').modal('show');
+                        $("#alert-message").text(data.message);
+
+
+                    }else if(data.status == "failure"){
+
+                         $('#WarnModal').modal('show');
+                        $("#alert-message").text(data.message);
+
+                    }
             },
-            complete: function(XMLHttpRequest){
-                _self.val("保存");
-                _self.removeAttr("disabled");
+        complete: function(XMLHttpRequest){
+
+
             }
-        });
     });
+});
+});
+
+
+// 异步保存家庭信息提交
+$(function(){
+
+//保存个人资料
+$('#jsEditUserCompanyProfileBtn').on('click', function(){
+
+    $form = $('#jsEditUserCompanyProfileForm');
+
+    $.ajax({
+        cache: false,
+        type: 'post',
+        dataType:'json',
+        url:"/userAccountView/user/company_info_Save/",
+        data:$form.serialize(),
+        async: true,
+        beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+        success: function(data) {
+
+                    if(data.status == "success"){
+                            //     {#提交数据成功，进行局部刷新#}
+                        $(".company-profile").load(" .company-profile > *");
+
+                        console.log("保存数据成功");
+
+                        $('#WarnModal').modal('show');
+                        $("#alert-message").text(data.message);
+
+
+                    }else if(data.status == "failure"){
+
+                         $('#WarnModal').modal('show');
+                        $("#alert-message").text(data.message);
+
+                    }
+            },
+        complete: function(XMLHttpRequest){
+
+
+            }
+    });
+});
+});
+
+
+//投资者信息保存jsEditInvestorBasicProfileForm
+    $(function(){
+$('#jsEditInvestorBasicProfileBtn').on('click', function(){
+
+    $form = $('#jsEditInvestorBasicProfileForm');
+
+    $.ajax({
+        cache: false,
+        type: 'post',
+        dataType:'json',
+        url:'/userAccountView/user/investor_info_Save/',
+        data:$form.serialize(),
+        async: true,
+        beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+        success: function(data) {
+
+                    if(data.status == "success"){
+                                // {#提交数据成功，进行局部刷新#}
+                        $(".people-basic-profile").load(" .people-basic-profile > *");
+
+                        console.log("保存数据成功");
+
+                        $('#WarnModal').modal('show');
+                        $("#alert-message").text(data.message);
+
+
+                    }else if(data.status == "failure"){
+
+                         $('#WarnModal').modal('show');
+                        $("#alert-message").text(data.message);
+
+                    }
+            },
+        complete: function(XMLHttpRequest){
+
+
+            }
+    });
+});
 });

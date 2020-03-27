@@ -121,6 +121,9 @@ class Account(models.Model):
     def getTotalAmount(self):
         return self.usableAmount+self.freezedAmount+self.unReceivePrincipal
 
+    def getUnReturnAmount(self):
+        return self.unReturnAmount
+
     class Meta:
         verbose_name = "用户账户"
         verbose_name_plural = verbose_name
@@ -131,8 +134,6 @@ class Account(models.Model):
 
     def _check_password(self, password):
         return check_password(password, self.password)
-
-
 
 
 class Investor(models.Model):
@@ -251,40 +252,5 @@ class EmailVerifyRecord(models.Model):
         return '{0}({1})'.format(self.code, self.email)
 
 
-class Banner(models.Model):
-    title = models.CharField(max_length=100, verbose_name=u"标题")
-    image = models.ImageField(upload_to="banner/%Y/%m", verbose_name=u"轮播图", max_length=100)
-    url = models.URLField(max_length=200, verbose_name=u"访问地址")
-    index = models.IntegerField(default=100, verbose_name=u"顺序")
-    add_time = models.DateTimeField(default=datetime.now, verbose_name=u"添加时间")
 
-    class Meta:
-        verbose_name = u"轮播图"
-        verbose_name_plural = verbose_name
-
-
-
-class UsersFamilyAuthentication(models.Model):
-    user_profile = models.ForeignKey(UserProfile, verbose_name=u"家庭验证", on_delete=models.CASCADE, null=True)
-    is_authenticated = models.BooleanField(default=False)
-    file = models.ImageField(upload_to="user_authentication_data/%Y", null=True, max_length=100)
-    slug = models.SlugField(max_length=50, blank=True, null=True)
-
-    # @models.permalink
-    def get_absolute_url(self):
-        return ('authentication_upload', )
-
-
-    def save(self, *args, **kwargs):
-        self.slug = self.file.name
-        super(UsersFamilyAuthentication, self).save(*args, **kwargs)
-
-    def save_user_profile_id(self, user):
-        self.user_profile = user
-        super(UsersFamilyAuthentication, self).save()
-
-    def delete(self, *args, **kwargs):
-        """delete -- Remove to leave file."""
-        self.file.delete(False)
-        super(UsersFamilyAuthentication, self).delete(*args, **kwargs)
 

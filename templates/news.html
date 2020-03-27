@@ -1,0 +1,108 @@
+
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block custom_js %}
+
+
+{% endblock %}
+{% block custom_css %}
+         <link rel="stylesheet" href="{% static 'css/core.css' %}" type="text/css" />
+        <link type="text/css" rel="stylesheet" href="{% static 'css/account.css' %}" />
+
+        <style type="text/css">
+        body {
+            font: 14px/1.5 "Verdana", "微软雅黑", YaHei, tahoma, arial, Hiragino Sans GB, "宋体";
+        }
+        .el-borrow-form{
+            position: relative;
+        }
+        .el-borrow-form-tip{
+            width: 300px;
+            border-radius: 3px;
+            border:1px solid #ddd;
+            box-shadow: 1px 1px 20px #ddd;
+            padding:20px 30px;
+            position: absolute;
+            top:10px;
+            right: 100px;
+        }
+        .text-danger{text-align: center;}
+    </style>
+
+ {% endblock %}
+
+{% block custome_content %}
+
+
+		<div class="news_main">
+			<div class="card-header card-title border-bottom mb-0 border-primary">
+				<!--				<div class="lend_list_main_title_color">1</div>-->
+				<h1 class="text-primary">网站公告</h1>
+			</div>
+
+
+			<div class="news_content">
+			<div class="list-group">
+                {% for new in news %}
+				<a href="{% url 'webnews:news_detail' %}?nid={{ new.id }}" class="list-group-item list-group-item-action ">
+					<div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ new.name }}</h5>
+						<small>{{ new.publishTime }}</small>
+					</div>
+{#					<p class="mb-1">{% autoescape off %} {{ new.detail }}.... {% endautoescape %}</p>#}
+					<small class="float-right">{{ new.author }}</small>
+				</a>
+
+                {% endfor %}
+
+			</div>
+                {% if is_paginated %}
+                 <ul class="pagination mt-3 justify-content-center">
+                   {% if page_obj.has_previous %}
+                             <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                   {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                    {% endif %}
+
+                    {% for i in paginator.page_range %}
+
+                        {% if page_obj.number == i %}
+                            <li class="page-item active" aria-current="page">
+                                  <span class="page-link">
+                {{ i }}
+                <span class="sr-only">(current)</span>
+              </span>
+                            </li>
+                             {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                            </li>
+                        {% else %}
+                        {% endif %}
+				</ul>
+                {% endif %}
+			</div>
+
+
+
+		</div>
+
+
+
+</div>
+
+
+
+{% endblock %}
+
+
+
+

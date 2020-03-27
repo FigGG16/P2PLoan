@@ -4,7 +4,7 @@ from captcha.fields import CaptchaField
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from .models import UserProfile, Borrower, EmploymentDetail, UsersFamilyAuthentication
+from .models import UserProfile, Borrower, EmploymentDetail
 
 
 class ModifyPwdForm(forms.Form):
@@ -20,6 +20,7 @@ class ForgetForm(forms.Form):
 class LoginForm(forms.Form):
     username = forms.CharField(required=True)
     password = forms.CharField(required=True, min_length=5)
+    captcha = CaptchaField(error_messages={"invalid": u"验证码错误"})
 
 
 class RegisterForm(forms.Form):
@@ -38,10 +39,6 @@ class LoginRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
-class UploadFamilyAuthenticationImageForm(forms.ModelForm):
-    class Meta:
-        model = UsersFamilyAuthentication
-        fields = ['file']
 
 class UploadImageForm(forms.ModelForm):
     class Meta:
@@ -69,4 +66,11 @@ class UserBasicProfile(forms.ModelForm):
         model = Borrower
         # fields = ['contact_number', 'qq']
         fields = ['highest_qualification', 'university_name', 'pass_out_year']
+
+
+class UpdateInvestorBasicProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        # fields = ['contact_number', 'qq']
+        fields = ['contact_number', 'qq', 'identity_number']
 

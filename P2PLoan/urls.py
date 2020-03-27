@@ -19,7 +19,8 @@ import xadmin
 from django.conf.urls import url, include
 from django.views.static import serve
 from django.views.generic import TemplateView #处理静态文件的
-from users.views import LoginView, RegisterView, AciveUserView, ForgetPwdView, ResetView, ModifyPwdView, LogoutView, PersonCenterView,  UserAccountView,generic
+from users.views import LoginView, RegisterView, AciveUserView, ForgetPwdView, ResetView, ModifyPwdView, \
+    LogoutView, PersonCenterView, generic,IndexView, ChartData,Chart
 from P2PLoan.settings import MEDIA_ROOT
 from django.urls import include, path
 from el_pagination.decorators import page_template, page_templates
@@ -29,7 +30,7 @@ from autocomplete import UserProfileAutocomplete
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
-    url('^$', TemplateView.as_view(template_name="index.html"), name="index"),
+    url('^$', IndexView.as_view(), name="index"),
     # url('^login/$', LoginView, name="login"),
     url('^login/$', LoginView.as_view(), name="login"),
     url('^logout/$', LogoutView.as_view(), name="logout"),
@@ -43,15 +44,18 @@ urlpatterns = [
     url(r'^person_centerView/$', PersonCenterView.as_view(), name="person_centerView"),
     url(r'^userAccountView/$',page_templates({'query_history_bid.html':"bids-page",
                                               'query_history_bidRequest.html':"bidRequests-page",
-                                              "query_payment_schedule.html":"paymentSchedules-page",})(generic),name="UserAccountView"),
+                                              "query_payment_schedule.html":"paymentSchedules-page",
+                                              "query_account_flow.html":"accountflows-page",})(generic),name="UserAccountView"),
 
+    # 富文本相关url
+    url(r'^ueditor/', include('DjangoUeditor.urls')),
 
 
     # 配置上传文件的访问处理函数
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 
     # 用户信息相关url配置
-    url(r'^userAccountView0/', include('users.urls', namespace="users")),
+    url(r'^userAccountView/user/', include('users.urls', namespace="users")),
 
     # 用户资料认证url配置
     url(r'^userAccountView1/', include('certification.urls', namespace="certification")),
@@ -59,6 +63,12 @@ urlpatterns = [
     # 用户招标与借标url配置
     url(r'^', include('business.urls', namespace="business")),
 
-    url(r'^category-autocomplete/$', UserProfileAutocomplete.as_view(), name='category-autocomplete'),
+    # 用户资料认证url配置
+    url(r'^news/', include('webnews.urls', namespace="webnews")),
+
+    #chart.js
+    # url(r'^chart/$', Chart.as_view(),name='chart'),
+    url(r'^api/chart/data/$', ChartData.as_view(),name='api-chart'),
+
 
 ]
