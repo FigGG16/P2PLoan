@@ -75,6 +75,8 @@ class BorrowerUserProfileAdmin(object):
         return obj.profile.nickname  # 自定义字段显示信息
 
 
+
+
 class ManagerProfileAdmin(object):
     list_display = ['username', 'is_superuser']
     # 只读
@@ -83,6 +85,10 @@ class ManagerProfileAdmin(object):
         qs = super(ManagerProfileAdmin, self).queryset()
         qs = qs.filter(is_staff=True)
         return qs
+
+
+
+
 
 
 class EmploymentDetailAdmin(object):

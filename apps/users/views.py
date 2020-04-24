@@ -46,7 +46,6 @@ class CustomBackend(ModelBackend):
         except Exception as e:
             return None
 
-
 class LogoutView(View):
     """
     用户登出
@@ -54,7 +53,6 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return HttpResponseRedirect(reverse("index"))
-
 
 class LoginView(View):
     def get(self, request):
@@ -81,8 +79,6 @@ class LoginView(View):
         else:
             return render(request, "login.html", {"login_form":login_form})
 
-
-
 class AciveUserView(View):
     def get(self, request, active_code):
         all_records = EmailVerifyRecord.objects.filter(code=active_code)
@@ -95,9 +91,6 @@ class AciveUserView(View):
         else:
             return render(request, "emailActiveFail.html")
         return render(request, "login.html")
-
-
-
 
 class RegisterView(View):
     def get(self, request):
@@ -219,74 +212,9 @@ class ModifyPwdView(View):
             email = request.POST.get("email", "")
             return render(request, "reSetPassward.html", {"email": email, "modify_form": modify_form})
 
-
 class PersonCenterView(View):
     def get(self, request):
         return render(request, "personal_center.html", )
-
-
-
-#分类
-def generic(request, extra_context=None, template=None, number=50):
-
-    def noneContext():
-        context = {
-            'bids': [],
-            'bidRequests': []
-        }
-        return  context
-    if request.user.is_authenticated:
-
-        account = Account.objects.filter(userProfile=request.user)
-        if account.exists():
-            accountFlow = AccountFlow.objects.filter(accountId_id=account.first()).order_by("-tradeTime")
-        else:
-            accountFlow = []
-        #判断借出者还是借入者
-        # obj = 0;
-        if not request.user.is_investor:
-            obj = request.user.get_borrower()
-            ps = PaymentSchedule.objects.filter(borrower=request.user.get_borrower())
-
-            if extra_context["page_template"]==None:
-                template = 'borrow_home_page.html'
-            context = {
-                'bids': [],
-                'bidRequests': [],
-                'paymentSchedules': ps.order_by("id"),
-                'accountflows':accountFlow}
-        else:
-            obj = request.user.get_investor()
-            bids = Bid.objects.filter(bidUser=obj)
-            #
-            #汇总用户所投的标bids
-            if extra_context["page_template"]==None:
-                template = 'investor_home_page.html'
-            bid_request_ids = bids.values_list('bidRequestId')
-            # 取出所有投标对象requestID, 并去重
-            if bid_request_ids.exists():
-                bid_user_ids = list(set((list(zip(*bid_request_ids)))[0]))
-                context = {
-                    'bids': bids.order_by("id"),
-                    'bidRequests':BidRequest.objects.filter(id__in=bid_user_ids).order_by("id"),
-                    'accountflows': accountFlow
-                }
-            else:
-                context = noneContext()
-
-
-        if extra_context is not None:
-            context.update(extra_context)
-
-        #实名认证的两个按钮
-        form = ReturnRealAuthImageForm()
-        user_file_list = UserFile.objects.filter(applier=request.user)
-        context['form']=form
-        context['BitStatesUtils'] = BitStatesUtils
-        context['userFileObj'] = user_file_list
-        return render(request, template, context)
-
-    return render(request, 'login.html', {})
 
 class UserAccountView(LoginRequiredMixin, View):
     def get(self, request):
@@ -297,8 +225,6 @@ class UserAccountView(LoginRequiredMixin, View):
 
     def post(self, request):
         return render({'form': 'nihaho'})
-
-
 
 class UploadImageView(LoginRequiredMixin, View):
     """
@@ -312,6 +238,20 @@ class UploadImageView(LoginRequiredMixin, View):
         else:
             return HttpResponse('{"status":"fail"}', content_type='application/json')
 
+class IndexView(View):
+    #P2P在线网 首页
+    def get(self, request):
+        #取出轮播图
+        all_banners = Banner.objects.all().order_by('index')
+        last_bids = Bid.objects.all().order_by("-bidTime")[:4]
+        last_request_bids = BidRequest.objects.all().order_by("-publishTime")[:4]
+        last_news = News.objects.all().order_by("-publishTime")[:10]
+        return render(request, 'index.html', {
+            'all_banners':all_banners,
+            'last_bids':last_bids,
+            'last_request_bids':last_request_bids,
+            'last_news':last_news
+        })
 
 # 异步保存投资者的详细信息
 class InvestorBasicProfileView(LoginRequiredMixin, View):
@@ -325,7 +265,6 @@ class InvestorBasicProfileView(LoginRequiredMixin, View):
             return HttpResponse('{"status":"success", "message":"保存成功"}', content_type='application/json')
         else:
             return HttpResponse('{"status":"failure", "message":"保存失败"}', content_type='application/json')
-
 
 # 异步保存用户的详细信息
 class UserBasicProfileView(LoginRequiredMixin, View):
@@ -344,11 +283,11 @@ class UserBasicProfileView(LoginRequiredMixin, View):
             user_profile.contact_number = request.POST.get("contact_number", "")
             user_profile.qq = request.POST.get("qq", "")
             user_profile.identity_number = request.POST.get("identity_number", "")
+            user_profile.addState(BitStatesUtils.GET_OP_BASIC_INFO()) #填写基本信息状态
             user_profile.save()
             return HttpResponse('{"status":"success", "message":"保存成功"}', content_type='application/json')
         else:
             return HttpResponse('{"status":"failure", "message":"保存失败"}', content_type='application/json')
-
 
 # 异步保存用户的家庭详细信息
 class UserFamilyProfileView(LoginRequiredMixin, View):
@@ -378,7 +317,6 @@ class UserFamilyProfileView(LoginRequiredMixin, View):
             return HttpResponse('{"status":"success", "message":"保存家庭详细信息成功"}', content_type='application/json')
         else:
             return HttpResponse('{"status":"success", "message":"保存家庭详细信息成功"}', content_type='application/json')
-
 
 # 异步保存公司详细信息
 class UserCompanyProfileView(LoginRequiredMixin, View):
@@ -416,24 +354,80 @@ class UserCompanyProfileView(LoginRequiredMixin, View):
             return HttpResponse('{"status":"success", "message":"保存公司信息失败"}', content_type='application/json')
 
 
-class IndexView(View):
-    #P2P在线网 首页
-    def get(self, request):
-        #取出轮播图
-        all_banners = Banner.objects.all().order_by('index')
-        last_bids = Bid.objects.all().order_by("-bidTime")[:4]
-        last_request_bids = BidRequest.objects.all().order_by("-publishTime")[:4]
-        last_news = News.objects.all().order_by("-publishTime")[:10]
-        return render(request, 'index.html', {
-            'all_banners':all_banners,
-            'last_bids':last_bids,
-            'last_request_bids':last_request_bids,
-            'last_news':last_news
-        })
 
 
+
+
+
+#之定义URL分发
+#分类
+def generic(request, extra_context=None, template=None, number=50):
+
+    def noneContext():
+        context = {
+            'bids': [],
+            'bidRequests': []
+        }
+        return  context
+    if request.user.is_authenticated:
+
+        account = Account.objects.filter(userProfile=request.user)
+        if account.exists():
+            accountFlow = AccountFlow.objects.filter(accountId_id=account.first()).order_by("-tradeTime")
+        else:
+            accountFlow = []
+        #判断借出者还是借入者
+        # obj = 0;
+        if not request.user.is_investor:
+            obj = request.user.get_borrower()
+            ps = PaymentSchedule.objects.filter(borrower=request.user.get_borrower())
+
+            if extra_context["page_template"]==None:
+                template = 'borrow_home_page.html'
+            context = {
+                'bids': [],
+                'bidRequests': BidRequest.objects.filter(Q(createUser=request.user.get_borrower())& Q(bidRequestState=BidConst.GET_BIDREQUEST_STATE_BIDDING())),
+                'paymentSchedules': ps.order_by("id"),
+                'accountflows':accountFlow
+            }
+        else:
+            obj = request.user.get_investor()
+            bids = Bid.objects.filter(bidUser=obj)
+            context = {
+                'bids': bids.order_by("id"),
+                'paymentSchedules': [],
+                'accountflows': accountFlow,
+
+            }
+
+            #汇总用户所投的标bids
+            if extra_context["page_template"]==None:
+                template = 'investor_home_page.html'
+            bid_request_ids = bids.values_list('bidRequestId')
+            # 取出所有投标对象requestID, 并去重
+            if bid_request_ids.exists():
+                bid_user_ids = list(set((list(zip(*bid_request_ids)))[0]))
+                context['bidRequests'] = BidRequest.objects.filter(id__in=bid_user_ids).order_by("id")[0],
+            else:
+                context['bidRequests'] = []
+
+        if extra_context is not None:
+            context.update(extra_context)
+
+        #实名认证的两个按钮
+        form = ReturnRealAuthImageForm()
+        user_file_list = UserFile.objects.filter(applier=request.user)
+        context['form']=form
+        context['BitStatesUtils'] = BitStatesUtils
+        context['userFileObj'] = user_file_list
+        return render(request, template, context)
+
+    login_form = RegisterForm()
+    return render(request, "login.html", {'login_form': login_form})
+
+
+#xadmin自定义后台界面
 from xadmin.views import CommAdminView
-
 
 class Chart(CommAdminView):
     def get(self, request):
@@ -444,8 +438,6 @@ class Chart(CommAdminView):
 
         # 下面你可以接着写你自己的东西了，写完记得添加到context里面就可以了
         return render(request, 'charts.html', context)
-
-
 
 class ChartData(APIView):
     authentication_classes = []

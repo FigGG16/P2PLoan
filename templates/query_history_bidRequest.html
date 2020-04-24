@@ -8,7 +8,11 @@
 						<tr>
 							<td>借入者</td>
 							<td>年利率</td>
+                            {% if  request.user.is_investor %}
 							<td>有效/投标金额</td>
+                                {% else %}
+                                <td>总借款</td>
+                            {% endif %}
 							<td>列表进度</td>
 							<td>状态</td>
 							<td>投标时间</td>
@@ -22,8 +26,12 @@
 						<tr>
 							<th><span class="blacklist_main_table_sp1 competitive_tender_sp1">{{ bidRequest.title }}</span></th>
 							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">{{ bidRequest.currentRate }}%</span></th>
-							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">&yen;{{ bidRequest.bidRequestAmount }}/&yen;{% get_allAvailableAmountOfinverstorToBidRequest bidRequest request.user %}</span></th>
-							<th style="">
+                             {% if  request.user.is_investor %}
+							<th><span class="blacklist_main_table_sp2 competitive_tender_sp1">&yen;{{ bidRequest.bidRequestAmount }}/&yen; {% get_allAvailableAmountOfinverstorToBidRequest bidRequest request.user %}</span></th>
+							{% else %}
+                                 <th><span class="blacklist_main_table_sp2 competitive_tender_sp1">&yen;{{ bidRequest.bidRequestAmount }}</span></th>
+                             {% endif %}
+                            <th style="">
                                 <div class="progress " style="height: 20px;width: 100px">
                                <div class="progress-bar" role="progressbar" style="width: {{ bidRequest.getPersent }}%;" aria-valuenow="{{ bidRequest.getPersent }}" aria-valuemin="0" aria-valuemax="100">{{ bidRequest.getPersent }}%</div>
                                 </div>
@@ -32,14 +40,13 @@
                                 {% if  bidRequest.bidRequestState == 6 or  bidRequest.bidRequestState == 2%}
                                 <span class="blacklist_main_header_sp1"><span class="blacklist_main_header_sp2"></span>失败</span>
                                     {% elif bidRequest.bidRequestState == 4 or bidRequest.bidRequestState == 5 %}
-                                    <span class="blacklist_main_header_sp5"><span class="blacklist_main_header_sp6"></span>审核中</span>
 
+                                    <span class="blacklist_main_header_sp5"><span class="blacklist_main_header_sp6">
+
+                                    </span>审核中</span>
                                     {% elif bidRequest.bidRequestState == 1 %}
 						            <span class="blacklist_main_header_sp3"><span class="blacklist_main_header_sp4"></span>进行中</span>
                                 {% endif %}
-
-                            {{ bidRequest.bidRequestState }}
-
                             </th>
 							<th><span class="blacklist_main_table_sp4">2018/12/20<br />
 							14:30:31</span>

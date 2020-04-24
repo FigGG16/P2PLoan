@@ -37,7 +37,8 @@
       <script src="{% static "el-pagination/js/el-pagination.js" %}"></script>
         <link href="{% static "css/pagination.css" %}" rel="stylesheet">
 
-
+{#<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>#}
+    <script  src="{% static 'js/plugins/parsley.min.js' %}"></script>
 {#    -----#}
 
     <style type="text/css">
@@ -106,21 +107,13 @@
 
 
 
-{#    //上传认证信息逻辑#}
-    <script>
-
-
-
-
-
-    </script>
-
-{#    //上传身份证逻辑#}
+{# //上传身份证逻辑#}
     <script>
 
       $('#fileParent').on('change','#file', function () {
       //上传操作
       //上传成功后清空file元素中的内容，否则选择同一文件无法触发change事件
+          console.log("清空");
       $("#file").val("");
   });
 
@@ -200,6 +193,56 @@
       //});
 
     });
+
+
+       {##实名认证加在线表单格式规范#}
+        $(document).ready(function(){ // After document is completly loaded
+          //提交数据校验
+         $("#formUpload").parsley({
+             errorClass: 'is-invalid text-danger',
+             successClass: 'is-valid', // Comment this option if you don't want the field to become green when valid. Recommended in Google material design to prevent too many hints for user experience. Only report when a field is wrong.
+             errorsWrapper: '<span class="form-text text-danger"></span>',
+             errorTemplate: '<span></span>',
+             required:true,
+             trigger: 'change',
+             excluded: 'input[type=file], [disabled], :hidden',
+         }).on('form:submit', function (formInstance) {
+// if you want to prevent submit in any condition after validation success -> return it false
+
+
+             if ($("#uploadImg1").length >0 && $("#uploadImg2").length >0)
+             {
+                   $.ajax({
+            cache: false,
+            type: 'post',
+            dataType:'json',
+            url:"{% url 'certification:real_auth_info' %}",
+            data:$("#formUpload").serialize(),
+            async: true,
+            success: function(data) {
+
+                    if(data.status == "success"){
+
+
+                    }else if(data.status == "failure"){
+
+                    }
+            },
+            complete: function(XMLHttpRequest){
+                console.log("完成刷新啊？");
+                {#提交数据成功，进行局部刷新#}
+                 $(".real-auth-main").load(location.href + " .real-auth-main");
+            }
+        });
+
+             }
+             else {
+                 alert("请上传图片");
+             }
+return false;
+});
+        });
+
     // 异步提交form
     $(function(){
         //////
@@ -221,7 +264,6 @@
         {#    $formUpload = $('#formUpload')#}
         {#解决不能上传文件问题#}
         var formdata=new FormData($('#formUpload')[0]);
-
 
         {#不必上传不需要的图片#}
         if($('#inputFileDiv2').html() == '')  //inputFileDiv2 已经不存在
@@ -292,11 +334,13 @@
                      $('.inputImage1').prop("required", false);
                                   //图片已经选择
                      $('.inputImage2').prop("required", false);
+
                        }
                  }
             },
             complete: function(XMLHttpRequest){
                console.log("完成");
+
             }
         });
 
@@ -321,37 +365,6 @@
     });
 
 
-    {##提交实名认证图片#}
-     $(".submit-real-auth-data").on('click', function(){
-
-        console.log("dianji");
-
-        $.ajax({
-        cache: false,
-        type: 'post',
-        dataType:'json',
-        url:"{% url 'certification:real_auth_info' %}",
-        data:$('#formUpload').serialize(),
-        async: true,
-        success: function(data) {
-
-                if(data.status == "success"){
-
-
-                }else if(data.status == "failure"){
-
-
-                }
-
-        },
-        complete: function(XMLHttpRequest){
-            console.log("完成刷新啊？");
-            {#提交数据成功，进行局部刷新#}
-             $(".real-auth-main").load(location.href + " .real-auth-main");
-        }
-    });
-
-    });
 
 
      $(document).on("click","#btn_uploadUserFiles",function(e){
@@ -404,7 +417,16 @@ function createImgLabelAndAddToFaNode(src, id, fatherNode) {
  {#监听input点击#}
 function file1Click() {
 
+
     document.getElementById("inputFileDiv2").innerHTML = "";
+
+            {#    if ( $("#id_file1").length > 0 ) {#}
+                {#$("#ID").text("hi");#}
+            {#     document.getElementById("inputFileDiv2").firstElementChild.setAttribute("id", "id_file");#}
+            {#    }else {#}
+            {##}
+            {#    document.getElementById("inputFileDiv1").firstElementChild.setAttribute("id", "id_file");#}
+          //  }
 
 }
 
@@ -426,7 +448,7 @@ function HTMLDecode(text) {
 
 function recoverInputFileDive1(){
 
-            var zhuanyi = " &lt;input type=&quot;file&quot; name=&quot;file&quot; accept=&quot;image/*&quot; required=&quot;&quot; id=&quot;id_file&quot; " +
+            var zhuanyi = " &lt;input type=&quot;file&quot; name=&quot;file&quot; accept=&quot;image/*&quot;id=&quot;id_file&quot; " +
                 "class=&quot;inputImage1&quot; onclick=&quot;file1Click();&quot;&gt;&lt;input type=&quot;hidden&quot; name=&quot;x&quot; id=&quot;id_x&quot;&g" +
                 "t;&lt;input type=&quot;hidden&quot; name=&quot;y&quot; id=&quot;id_y&quot;&gt;&lt;input type=&quot;hidden&quot; " +
                 "name=&quot;width&quot; id=&quot;id_width&quot;&gt;&lt;input type=&quot;hidden&quot; name=&quot;height&quot; id=&quot;id_height&quot;&gt;";
@@ -436,7 +458,7 @@ function recoverInputFileDive1(){
 }
 function recoverInputFileDive2(){
 
-            var zhuanyi = "&lt;input type=&quot;file&quot; name=&quot;file&quot; accept=&quot;image/*&quot; required=&quot;&quot; " +
+            var zhuanyi = "&lt;input type=&quot;file&quot; name=&quot;file&quot; accept=&quot;image/*&quot; " +
                 "id=&quot;id_file&quot; class=&quot;inputImage2&quot; onclick=&quot;file2Click();&quot;&gt;&lt;input type=&quot;hidden&quot; " +
                 "name=&quot;x&quot; id=&quot;id_x&quot;&gt;&lt;input type=&quot;hidden&quot; name=&quot;y&quot; id=&quot;id_y&quot;&gt;&lt;input type=&quot;hidden&quot; " +
                 "name=&quot;width&quot; id=&quot;id_width&quot;&gt;&lt;input type=&quot;hidden&quot; name=&quot;height&quot; id=&quot;id_height&quot;&gt;";
@@ -451,8 +473,6 @@ function recoverInputFileDive2(){
 
 
   </script>
-
-
 
 {#综合异步Jeury请求#}
     <script>
@@ -640,51 +660,6 @@ $(function () {
             });
         });
 
-
-   //还款
-
-    $(function (){
-
-   //添加父类监听事件解决重复上传无效问题
-            {#$(".refresh_bid_view").on('click','.bidBtn', function returnMoneyBtn(payId){#}
-            $(".return-money-btn").click(function (){
-
-                console.log(this.id);
-              console.log("将来");
-                $.ajax({
-                cache: false,
-                type: 'post',
-                dataType:'json',
-                url:"{% url 'business:DoReturnMoney' %}",
-                data:{'PaymentSchedulesID':this.id},
-                async: true,
-                beforeSend:function(xhr, settings){
-                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-                },
-                success: function(data) {
-
-                        if(data.status == "success"){
-                                     {#提交数据成功，进行局部刷新#}
-                            console.log("success");
-                             $(".query_payment_schedule").load(location.href + " .query_payment_schedule");
-
-                            //删除重复创建div
-                            $('#WarnModal').modal('show');
-                             $("#alert-message").text(data.message);
-
-                        }else if(data.status == "failure"){
-                            console.log("failure");
-                            $('#WarnModal').modal('show');
-                            $("#alert-message").text(data.message);
-                        }
-                },
-                complete: function(XMLHttpRequest){
-
-                }
-            });
-            });
-        });
-
 //绑定手机号
    $(function () {
 
@@ -775,8 +750,9 @@ $(function () {
                     }else if(data.status == "failure"){
 
 
-                        $("#showMessageForAuditPhone").attr("style","display:block;");
+                    $("#showMessageForAuditPhone").attr("style","display:block;");
                         $("#showMessageForAuditPhone").innerHTML = data.message;
+
                         $("#showMessageForAuditPhone").attr("style","text-align:center;");
 
 
@@ -804,11 +780,73 @@ $("#phoneModel").click(function() {
 })
 
 
+// 异步用户基本信息提交
+$(function(){
+verify(
+    [
+        {id: '#mobile', tips: Dml.Msg.epPhone, require: true}
+    ]
+);
+//保存个人资料
+$('#jsEditUserBasicProfileBtn').on('click', function(){
+
+    $form = $('#jsEditUserBasicProfileForm');
+    console.log("成功");
+    $.ajax({
+        cache: false,
+        type: 'post',
+        dataType:'json',
+        url:"{% url 'users:user_info' %}",
+        data:$form.serialize(),
+        async: true,
+        beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+        success: function(data) {
+
+                    if(data.status == "success"){
+                                 {#提交数据成功，进行局部刷新#}
+                        console.log("success");
+
+                    }else if(data.status == "failure"){
 
 
+                        $("#showMessageForAuditPhone").attr("style","display:block;");
+                        $("#showMessageForAuditPhone").html(data.message);
+                        $("#showMessageForAuditPhone").attr("style","text-align:center;");
+
+                    }
+            },
+        complete: function(XMLHttpRequest){
+
+            }
 
 
-
+        {#beforeSend:function(XMLHttpRequest){#}
+        {#    _self.val("保存中...");#}
+        {#    _self.attr('disabled',true);#}
+      //  {#},#}
+        {#success: function(data) {#}
+        {#   if(data.status == "failure"){#}
+        {#         Dml.fun.showTipsDialog({#}
+        {#            title: '保存失败',#}
+        {#            h2: data.msg#}
+        {#        });#}
+        {#    }else if(data.status == "success"){#}
+        {#        Dml.fun.showTipsDialog({#}
+        {#            title: '保存成功',#}
+        {#            h2: '个人信息修改成功！'#}
+        {#        });#}
+        {#        // setTimeout(function(){window.location.href = window.location.href;},1500);#}
+        {#    }#}
+     //   {#},#}
+        {#complete: function(XMLHttpRequest){#}
+        {#    _self.val("保存");#}
+        {#    _self.removeAttr("disabled");#}
+     //   {#}#}
+    });
+});
+});
 
 
 
@@ -1014,7 +1052,7 @@ $("#phoneModel").click(function() {
                 <div class="tab-content" id="v-pills-tabContent">
 
 				<!--借出首页-->
-                <div class="tab-pane fade show active lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                <div class="tab-pane fade active show  lend_home_page" id="lend-home-page" role="tabpanel" aria-labelledby="v-pills-home-tab">
 				<div id="RightPage" class="lend_home_page border" data-page="0">
 
 
@@ -1161,7 +1199,6 @@ $("#phoneModel").click(function() {
 
                            <ul class="nav nav-pills nav-fill p-0">
                                 <li class="nav-item p-0"><a data-toggle="tab" class="nav-link active p-0" href="#focus-lends">待还的借款</a></li>
-                                <li class="nav-item py-0"><a data-toggle="tab" class="nav-link p-0" href="#published-lends">已发布的列表</a></li>
                                <li class="nav-item py-0"><a data-toggle="tab" class="nav-link p-0" href="#end-lends">已结束的列表</a></li>
                             </ul>
 
@@ -1172,175 +1209,9 @@ $("#phoneModel").click(function() {
                                                        <div class="endless_page_template " >
                                                            {% include 'query_payment_schedule.html' %}
                                                        </div>
-{#                                         <table id="lend_follow_main_right_table" border="" cellspacing="" cellpadding="">#}
-{#								<tbody><tr>#}
-{#									<td rowspan="2">我要买车</td>#}
-{#									<th>借款金额：<span class="lend_follow_main_right_table_span2">¥2000.0000</span></th>#}
-{#									<th>年利率：<span class="lend_follow_main_right_table_span2">10.0000%</span></th>#}
-{#									<th>应付本息：<span class="lend_follow_main_right_table_span2">¥343.1228</span></th>#}
-{#									<th>本期利息：<span class="lend_follow_main_right_table_span2">¥16.6667</span></th>#}
-{#                                    <th><input type="button" name="borrow_list_btn" class="btn-sm btn-primary col-lg-10 return-money-btn" id="" value="还款"></th>#}
-{#                                    <th><input type="button" name="borrow_list_btn" class="btn-sm btn-success  col-lg-10 disabled active" id="" value="已还款"></th>#}
-{#                                    <input class="hidden" id="PaymentSchedulesID" value="" />#}
-{#								</tr>#}
-{##}
-{#								<tr>#}
-{#									<th>本期借款：<span class="lend_follow_main_right_table_span2">¥326.4561</span></th>#}
-{#									<th>借款期限：6个月</th>#}
-{#									<th>还款期数：<span class="lend_follow_main_right_table_span2">1期</span></th>#}
-{#									<th>还款期限：<span class="lend_follow_main_right_table_span1">2020年4月15日 19:40</span></th>#}
-{#									<th><span class="lend_follow_main_right_table_span1">查看电子协议</span></th>#}
-{#								</tr>#}
-{#							</tbody></table>#}
 
                                      </div>
 
-
-
-
-                                     <div class="tab-pane " id="published-lends">
-                                         <!--page2-->
-						                <table id="lend_follow_main_right_table"  class="borrow_list2_table2" cellspacing="" cellpadding="">
-
-							<tr>
-								<th>标题</th>
-								<th>担保</th>
-								<th>金额</th>
-								<th>年利率</th>
-								<th>期限</th>
-								<th>进度/投标数</th>
-								<th>创建时间/状态</th>
-								<th>动作</th>
-							</tr>
-
-							<tr>
-								<td>优质商家信用借贷</td>
-								<th></th>
-								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
-								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
-								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
-								<th>
-									进度：<div class="lend_follow_main_right_table_schedule_bg">
-										<div class="lend_follow_main_right_table_schedule"></div>
-									</div><br />
-									36.00%已完成<br />
-									103笔投标
-								</th>
-								<th>2013/01/01<br />
-								14:30:31<br />
-								正在进行中
-								</th>
-								<th >
-									<a href="#">查看</a><br />
-									<a href="#">撤回</a>
-								</th>
-							</tr>
-
-							<tr>
-								<td>优质商家信用借贷</td>
-								<th></th>
-								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
-								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
-								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
-								<th>
-									进度：<div class="lend_follow_main_right_table_schedule_bg">
-										<div class="lend_follow_main_right_table_schedule"></div>
-									</div><br />
-									36.00%已完成<br />
-									103笔投标
-								</th>
-								<th>2013/01/01<br />
-								14:30:31<br />
-								正在进行中
-								</th>
-								<th >
-									<a href="#">查看</a><br />
-									<a href="#">撤回</a>
-								</th>
-							</tr>
-
-							<tr>
-								<td>优质商家信用借贷</td>
-								<th></th>
-								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
-								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
-								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
-								<th>
-									进度：<div class="lend_follow_main_right_table_schedule_bg">
-										<div class="lend_follow_main_right_table_schedule"></div>
-									</div><br />
-									36.00%已完成<br />
-									103笔投标
-								</th>
-								<th>2013/01/01<br />
-								14:30:31<br />
-								正在进行中
-								</th>
-								<th >
-									<a href="#">查看</a><br />
-									<a href="#">撤回</a>
-								</th>
-							</tr>
-
-							<tr>
-								<td>优质商家信用借贷</td>
-								<th></th>
-								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
-								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
-								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
-								<th>
-									进度：<div class="lend_follow_main_right_table_schedule_bg">
-										<div class="lend_follow_main_right_table_schedule"></div>
-									</div><br />
-									36.00%已完成<br />
-									103笔投标
-								</th>
-								<th>2013/01/01<br />
-								14:30:31<br />
-								正在进行中
-								</th>
-								<th >
-									<a href="#">查看</a><br />
-									<a href="#">撤回</a>
-								</th>
-							</tr>
-
-							<tr>
-								<td>优质商家信用借贷</td>
-								<th></th>
-								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
-								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
-								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
-								<th>
-									进度：<div class="lend_follow_main_right_table_schedule_bg">
-										<div class="lend_follow_main_right_table_schedule"></div>
-									</div><br />
-									36.00%已完成<br />
-									103笔投标
-								</th>
-								<th>2013/01/01<br />
-								14:30:31<br />
-								正在进行中
-								</th>
-								<th >
-									<a href="#">查看</a><br />
-									<a href="#">撤回</a>
-								</th>
-							</tr>
-
-						</table>
-                                        <div class="message_main_page lend_follow_main_right_page">
-							<ul>
-								<li class="message_page">1</li>
-								<li>2</li>
-								<li>3</li>
-								<li>4</li>
-								<li>下一页<span></span></li>
-
-							</ul>
-						</div>
-
-                                     </div>
 
                                      <div class="tab-pane " id="end-lends">
 
@@ -1349,7 +1220,6 @@ $("#phoneModel").click(function() {
 
 							<tr>
 								<th>标题</th>
-								<th>担保</th>
 								<th>金额</th>
 								<th>年利率</th>
 								<th>期限</th>
@@ -1358,22 +1228,21 @@ $("#phoneModel").click(function() {
 								<th>动作</th>
 							</tr>
 
+                                {% return_bid_request_history request.user.get_borrower as brs %}
+                               {% for br in brs %}
+							        <tr>
 
-							<tr>
-								<td>优质商家信用借贷</td>
-								<th></th>
-								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
-								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
-								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
-								<th>
-									进度：<div class="lend_follow_main_right_table_schedule_bg">
+								<td>{{ br.title }}</td>
+								<th><span class="lend_follow_main_right_table_span2">&yen;{{ br.bidRequestAmount }}</span></th>
+								<th><span class="lend_follow_main_right_table_span2">{{ br.currentRate }}%</span></th>
+								<th><span class="lend_follow_main_right_table_span1">{{ br.monthes2Return }}个月</span></th>
+								<th><div class="lend_follow_main_right_table_schedule_bg">
 										<div class="lend_follow_main_right_table_schedule1"></div>
 									</div><br />
-									36.00%已完成<br />
-									103笔投标
+									{{ br.getPersent}}%已完成<br />
+									{{ br.get_bided_count}}笔投标
 								</th>
-								<th>2013/01/01<br />
-								14:30:31<br />
+								<th>{{ br.applyTime }}<br />
 								已还完
 								</th>
 								<th >
@@ -1382,109 +1251,15 @@ $("#phoneModel").click(function() {
 								</th>
 							</tr>
 
-							<tr>
-								<td>优质商家信用借贷</td>
-								<th></th>
-								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
-								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
-								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
-								<th>
-									进度：<div class="lend_follow_main_right_table_schedule_bg">
-										<div class="lend_follow_main_right_table_schedule1"></div>
-									</div><br />
-									36.00%已完成<br />
-									103笔投标
-								</th>
-								<th>2013/01/01<br />
-								14:30:31<br />
-								已还完
-								</th>
-								<th >
-									<a href="#">查看</a><br />
-									<a href="#">撤回</a>
-								</th>
-							</tr>
+                                {% endfor%}
 
-							<tr>
-								<td>优质商家信用借贷</td>
-								<th></th>
-								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
-								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
-								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
-								<th>
-									进度：<div class="lend_follow_main_right_table_schedule_bg">
-										<div class="lend_follow_main_right_table_schedule1"></div>
-									</div><br />
-									36.00%已完成<br />
-									103笔投标
-								</th>
-								<th>2013/01/01<br />
-								14:30:31<br />
-								已还完
-								</th>
-								<th >
-									<a href="#">查看</a><br />
-									<a href="#">撤回</a>
-								</th>
-							</tr>
 
-							<tr>
-								<td>优质商家信用借贷</td>
-								<th></th>
-								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
-								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
-								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
-								<th>
-									进度：<div class="lend_follow_main_right_table_schedule_bg">
-										<div class="lend_follow_main_right_table_schedule1"></div>
-									</div><br />
-									36.00%已完成<br />
-									103笔投标
-								</th>
-								<th>2013/01/01<br />
-								14:30:31<br />
-								已还完
-								</th>
-								<th >
-									<a href="#">查看</a><br />
-									<a href="#">撤回</a>
-								</th>
-							</tr>
 
-							<tr>
-								<td>优质商家信用借贷</td>
-								<th></th>
-								<th><span class="lend_follow_main_right_table_span2">&yen;500,000</span></th>
-								<th><span class="lend_follow_main_right_table_span2">20%</span></th>
-								<th>期限：<span class="lend_follow_main_right_table_span1">12个月</span></th>
-								<th>
-									进度：<div class="lend_follow_main_right_table_schedule_bg">
-										<div class="lend_follow_main_right_table_schedule1"></div>
-									</div><br />
-									100%已完成<br />
-									103笔投标
-								</th>
-								<th>2013/01/01<br />
-								14:30:31<br />
-								已还完
-								</th>
-								<th >
-									<a href="#">查看</a><br />
-									<a href="#">撤回</a>
-								</th>
-							</tr>
+
+
+
 
 						</table>
-                                         <div class="message_main_page lend_follow_main_right_page">
-							<ul>
-								<li class="message_page">1</li>
-								<li>2</li>
-								<li>3</li>
-								<li>4</li>
-								<li>下一页<span></span></li>
-
-							</ul>
-						</div>
                                      </div>
                                  </div>
 
@@ -1517,7 +1292,7 @@ $("#phoneModel").click(function() {
 				</div>
 
 		        <!--实名认证-->
-                 <div class="tab-pane fade show  real-auth-main" id="real-auth-main" role="tabpanel" aria-labelledby="v-pills-realAuth-tab">
+                 <div class="tab-pane fade show   real-auth-main" id="real-auth-main" role="tabpanel" aria-labelledby="v-pills-realAuth-tab">
 
                  {% is_real_audited request.user as result %}
 
@@ -1542,6 +1317,8 @@ $("#phoneModel").click(function() {
                                             </table>
                                         </div>
                                     </div>
+
+                         <form  method="post"  enctype="multipart/form-data" id="formUpload" ></form>
                       {% else %}
 
 
@@ -1573,7 +1350,8 @@ $("#phoneModel").click(function() {
                         <div class="form-group row align-content-center">
                             <label class="col-sm-4 control-label col-form-label text-right " for="realName">姓名</label>
                             <div class="col-sm-4">
-                                <input type="text" id="realName" name="realName" class="form-control" type="text" value="">
+                                <input type="text" id="realName" name="realName" class="form-control"   data-parsley-required-message="不能为空"  required/>
+{#                                <input id="address" class="form-control" name="address"  type="text" style="max-width: 100%;width:500px;" required/>#}
                             </div>
                         </div>
 
@@ -1581,28 +1359,28 @@ $("#phoneModel").click(function() {
                         <div class="form-group row align-content-center">
                             <label class="col-sm-4  control-label col-form-label text-right" for="sex">性别</label>
                             <div class="col-sm-4">
-                                <select id="sex" class="form-control" name="gender" size="1">
+                                <select id="sex" class="form-control" name="gender" size="1" data-parsley-required-message="不能为空" required>
                                     <option value="male">男</option>
                                     <option value="female">女</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row align-content-center">
-                            <label class="col-sm-4  control-label text-right col-form-label" for="idnumber" >证件号码</label>
+                            <label class="col-sm-4  control-label text-right col-form-label" for="idnumber" minlenght="10">证件号码</label>
                             <div class="col-sm-4">
-                                <input id="idNumber" class="form-control" name="idNumber"  type="text" value="" required/>
+                                <input id="idNumber" class=" form-control idNumber" pattern="^(15)[0-9]{2}" name="idNumber"  type="text"  data-parsley-required-message="身份证不能为空" data-parsley-pattern-message="身份证必须15开头，长度为4" required/>
                             </div>
                         </div>
                         <div class="form-group row align-content-center">
                             <label class="col-sm-4  control-label text-right col-form-label" for="bornDate" >出生日期</label>
                             <div class="col-sm-4">
-                                <input  id="birthDate"  class="form-control" name="bornDate" type="date">
+                                <input  id="birthDate"  class="form-control" name="bornDate" type="date" data-parsley-required-message="不能为空"  required/>
                             </div>
                         </div>
                         <div class="form-group row align-content-center">
                             <label class="col-sm-4  control-label text-right col-form-label" for="address">证件地址</label>
                             <div class="col-sm-8">
-                                <input id="address" class="form-control" name="address"  type="text" style="max-width: 100%;width:500px;" required/>
+                                <input id="address" class="form-control" name="address"  type="text" style="max-width: 100%;width:500px;" data-parsley-required-message="不能为空" required/>
                             </div>
                         </div>
 
@@ -1629,11 +1407,14 @@ $("#phoneModel").click(function() {
                             </div>
                         </div>
                         <div class="form-group row align-content-center justify-content-center">
-                            <button type="button"  id = "submitRealAuthData1" class="submit-real-auth-data btn btn-primary col-sm-offset-4"><i class="icon-ok"></i> 提交认证</button>
+                            <button type="submit"  id = "submit-real-auth-data" class="submit-real-auth-data btn btn-primary col-sm-offset-4"><i class="icon-ok"></i> 提交认证</button>
+
                         </div>
                     </fieldset>
                                            {% csrf_token %}
                 </form>
+
+
                             </div>
 
 
@@ -1802,6 +1583,7 @@ $("#phoneModel").click(function() {
                             </fieldset>
                         {% csrf_token %}
                         </form>
+
                     </div>
                         {% endif %}
                 {% else %}
@@ -1847,7 +1629,7 @@ $("#phoneModel").click(function() {
                                     <div class="form-group row align-content-center">
                                         <label class="col-sm-4 col-form-label text-right">开户行</label>
                                         <div class="col-sm-5">
-                                            <label class="form-control">{{ bank_info.accountName }}</label>
+                                            <label class="form-control">{% get_bank_type bank_info.bankName %}</label>
                                         </div>
                                     </div>
                                     <div class="form-group row align-content-center">
@@ -2737,12 +2519,15 @@ $("#phoneModel").click(function() {
 
 					</div>
 
-
+                    {% if accountflows != False %}
                      <div class="endless_page_template">
 
                          {% include "query_account_flow.html" %}
                      </div>
 
+                        {% else %}
+
+                    {% endif %}
 
 
 

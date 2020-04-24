@@ -58,7 +58,8 @@
 
                         }else if(data.status == "failure"){
                             console.log("failure");
-                            $("#alert-message").text(data.message);
+                            {#$("#alert-message").text(data.message);#}
+                            $("#alert-message").text("投资失败");
                         }
                 },
                 complete: function(XMLHttpRequest){
@@ -95,7 +96,7 @@
 
 {% block custome_content %}
 
-<div class="container pt-5">
+<div class="container pt-5 borrow_info_view">
 
 {#//model#}
 <div class="modal fade" id="WarnModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -121,7 +122,7 @@
     <div class="row">
         <div class="col-sm-3">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header bg-primary text-white">
                     借款人
                 </div>
                 <div class="card-body">
@@ -207,7 +208,7 @@
             <table style="height:110px;width:230px;">
                 <tr>
                     <td  class="muted">投标总数</td><td class="text-info" style="padding-left: 10px;">
-                    2
+                    {{ bid_request.get_bided_count }}
                 </td>
                 </tr>
                 <tr>
@@ -221,7 +222,8 @@
                 <tr>
                     <td colspan="2">
                         <div style="margin-bottom: 10px;" class="progress">
-                            <div style="width: 100px" class="progress-bar progress-bar-info progress-bar-striped"></div>
+{#                            <div style="width: 100px" aria-valuenow="100" class="progress-bar progress-bar-info progress-bar-striped"></div>#}
+                             <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
                         </div>
                     </td>
                 </tr>
@@ -262,6 +264,8 @@
             <input id="minBidAmount" autocomplete="off" value="{{ bid_request.minBidAmount }}" type="hidden">
             <input id="maxBidAmount" autocomplete="off" value="{{ bid_request.getRemainAmount }}" type="hidden">
 
+
+            {% if request.user.is_investor %}
             <table style="height:100px;width:180px;">
                 <tbody><tr>
                     <td class="muted">可用余额</td>
@@ -293,11 +297,14 @@
                     </td>
                 </tr>
                 </tbody></table>
-
             <button style="height:40px;width:250px;" id="bidBtn" type="button"  class="bidBtn btn btn-danger  btn-block">
                 马上投标
             </button>
-                    {% endif %}
+
+             {% else %}
+                 <p class="h2 text-warning">想要投资？<button class="btn btn-primary">转换身份</button></p>
+            {% endif %}
+              {% endif %}
 
         </div>
 
@@ -315,15 +322,15 @@
                 <tr>
                     <td class="muted text-right" width="140px;">出生时间</td>
                     <td width="150px;" style="padding-left: 10px;" class="text-info">
-                        1988-1-1
+                       {{ user_profile.bornDate }}
                     </td>
                     <td class="muted text-right" width="140px;">借款额度</td>
                     <td width="150px;" style="padding-left: 10px;" class="text-info">
-                        5,000
+                        {{ loan_user_account.borrowLimit }}
                     </td>
                     <td class="muted text-right" width="140px;">性别</td>
                     <td width="150px;" style="padding-left: 10px;" class="text-info">
-                        男
+{#                        {{ user_profile.gender}}#}男
                     </td>
                     <td class="muted text-right" width="140px;">住房条件</td>
                     <td width="150px;" style="padding-left: 10px;" class="text-info">
@@ -366,30 +373,14 @@
                 </tr>
                 </thead>
                 <tbody>
+                {% for file in user_files %}
+
                 <tr style="cursor: pointer;" lid="2101" st="1" class="more">
-                    <th>房产证正面</th>
+                    <th>{% get_user_file_type file.fileType %}</th>
                     <td>1</td>
                 </tr>
-                <tr style="cursor: pointer;" lid="2101" st="1" class="more">
-                    <th>房产证反面</th>
-                    <td>1</td>
-                </tr>
-                <tr style="cursor: pointer;" lid="2101" st="1" class="more">
-                    <th>户口本</th>
-                    <td>1</td>
-                </tr>
-                <tr style="cursor: pointer;" lid="2101" st="1" class="more">
-                    <th>结婚证</th>
-                    <td>1</td>
-                </tr>
-                <tr style="cursor: pointer;" lid="2101" st="1" class="more">
-                    <th>银行流水证明</th>
-                    <td>1</td>
-                </tr>
-                <tr style="cursor: pointer;" lid="2101" st="1" class="more">
-                    <th>银行流水证明</th>
-                    <td>1</td>
-                </tr>
+                {% endfor %}
+
                 </tbody>
             </table>
         </div>
@@ -464,32 +455,26 @@
                 </tr>
                 </thead>
                 <tbody>
+                {% for bid in bids %}
+
                 <tr>
-                    <td>test1</td>
+                    <td>{{ bid.bidUser.userProfile.username }}</td>
                     <td>
-                        12%
+                        {{ bid.actualRate }}%
                     </td>
                     <td style="padding-right:60px;" class="text-info">
-                        2,000
+                        {{ bid.availableAmount }}
                     </td>
                     <td>
-                        2019-09-05 01:59:55
+                        {{ bid.bidTime }}
                     </td>
                     <td>手动投标</td>
                 </tr>
-                <tr>
-                    <td>test2</td>
-                    <td>
-                        12%
-                    </td>
-                    <td style="padding-right:60px;" class="text-info">
-                        3,000
-                    </td>
-                    <td>
-                        2019-09-05 02:02:04
-                    </td>
-                    <td>手动投标</td>
-                </tr>
+
+                {% endfor %}
+
+
+
                 </tbody>
             </table>
         </div>

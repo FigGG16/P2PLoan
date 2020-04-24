@@ -16,3 +16,8 @@ def add(x,y):
     return x+y
 
 print(8==True)
+
+a = []
+
+for x in a:
+    print()

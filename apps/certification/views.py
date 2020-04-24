@@ -1,15 +1,11 @@
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, redirect
 from django.views.generic.base import View
-from .models import RealAuth, UserFile
+from .models import RealAuth
 from .forms import ReturnRealAuthImageForm, RealAuthForm, UserFileForm, UserFileTypeForm
-from users.models import UserProfile
-from .Serializers import RealAuthSerializer, UserFileSerializer
-from rest_framework.response import Response
+from .Serializers import RealAuthSerializer
 from random import choice
 import re
 from .models import VerifyCode
-from django.db.models import Q
 from P2PLoan.settings import REGEX_MOBILE
 from django.contrib.auth import get_user_model
 from datetime import datetime,timedelta

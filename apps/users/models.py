@@ -19,11 +19,11 @@ class UserProfile(AbstractUser):
     contact_number = models.CharField(max_length=20, null=True, blank=True, verbose_name=u"电话号码")
     kyc_complete = models.CharField(max_length=1, null=True, blank=True, verbose_name=u"验证程度")
     escrow_account_number = models.CharField(max_length=1, null=True, blank=True, verbose_name=u"银行存管账号")
-    qq = models.CharField(max_length=10, null=True, blank=True, verbose_name=u"QQ号码")
+    qq = models.CharField(max_length=20, null=True, blank=True, verbose_name=u"QQ号码")
     bitState = models.BigIntegerField(null=True,blank=True, default=0, verbose_name=u"用户状态码")
     real_auth_id = models.IntegerField(null=True, blank=True, verbose_name=u"实名认证表")
     identity_number = models.CharField(max_length=25, null=True, blank=True, verbose_name=u"身份证号码")
-    score = models.IntegerField(blank=True,null=True, verbose_name="风控累计分数")
+    score = models.IntegerField(blank=True,default=0, verbose_name="风控累计分数")
 
     def get_is_borrower(self):
         field_value = getattr(self, 'is_borrower')
@@ -62,6 +62,11 @@ class UserProfile(AbstractUser):
 
     def isMoneyWithoutProcess(self):
         return BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_HAS_MONEYWITHDRAW_PROCESS())
+
+    def is_content_borrow_condition(self):
+        return BitStatesUtils.hasState(self.bitState,BitStatesUtils.GET_OP_REAL_AUTH()) & BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_OP_BASIC_INFO()) \
+               & BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_OP_VEDIO_AUTH()) \
+               &(self.score >= 30)
 
     def getScore(self):
         return self.score
@@ -138,10 +143,7 @@ class Account(models.Model):
 
 class Investor(models.Model):
     userProfile = models.OneToOneField(UserProfile, on_delete=models.CASCADE, primary_key=True)
-    # id = models.AutoField(primary_key=True, default=1, verbose_name="用户ID")
-    # 资料完善程度
-    investment_limit = models.IntegerField(default=5000, verbose_name=u"投资限额")
-    fund_committed = models.IntegerField(default=0, verbose_name=u"承诺金额")
+
 
     class Meta:
         verbose_name = '投资信息表'

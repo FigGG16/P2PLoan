@@ -47,6 +47,12 @@ def get_bank_type(index):
 
 
 @register.simple_tag()
+def get_user_file_type(index):
+    all_user_file_dict = dict(UserFile.CHOICES)
+    return all_user_file_dict[int(index)]
+
+
+@register.simple_tag()
 def relative_url(value, field_name, urlencode=None):
     url = '?{}={}'.format(field_name, value)
     if urlencode:
@@ -59,16 +65,26 @@ def relative_url(value, field_name, urlencode=None):
 
 @register.simple_tag()
 def get_allAvailableAmountOfinverstorToBidRequest(bidRequest,user):
-    # 获取该投资人投该标的数量
+
+
     bids_temp_query = bidRequest.bids.filter(bidUser=user.get_investor())
 
     #汇总金额
     available_amount_total =  bids_temp_query.aggregate(Sum('availableAmount'))
-
     return available_amount_total['availableAmount__sum']
+
 
 
 @register.simple_tag()
 def get_account_flow_type(index):
     all_account_flow_type_dict = dict(AccountFlow.ACCOUNT_TYPE)
     return all_account_flow_type_dict[int(index)]
+
+
+@register.simple_tag()
+def return_bid_request_history(borrower):
+    return  BidRequest.objects.filter((Q(bidRequestState=BidConst.GET_BIDREQUEST_STATE_UNDO())|
+                                      Q(bidRequestState=BidConst.GET_BIDREQUEST_STATE_BIDDING_OVERDUE())|
+                                      Q(bidRequestState=BidConst.GET_BIDREQUEST_STATE_REJECTED())|
+                                      Q(bidRequestState=BidConst.GET_BIDREQUEST_STATE_COMPLETE_PAY_BACK())) &
+                                         Q(createUser=borrower))

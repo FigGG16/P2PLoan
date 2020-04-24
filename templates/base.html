@@ -23,9 +23,6 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}"/>
         {% block custom_css %} {% endblock %}
 
-
-
-
 		<!--[if lt IE 9]>
 			<script src="js/html5shiv.js"></script>
 		<![endif]-->
@@ -34,130 +31,104 @@
 	<body>
 
 	<div class="container">
-	<nav class="row navbar navbar-expand-sm m-0 fixed-top " >
+	<nav class="row navbar navbar-expand-sm m-0 p-0 pt-0 mt-0 fixed-top border-primary " >
 		<!-- Brand -->
 <!--		<div class="collapse navbar-collapse" id="navbarSupportedContent">-->
-		<a class="navbar-brand"  href="#"><img src="/static/images/logo.png"/></a>
+{#		<a class="navbar-brand"  href="#"><img src="/static/images/logo.png"/></a>#}
 		<!-- Links -->
-		<ul class="navbar-nav mx-auto " >
+		<ul class="navbar-nav nav-active mx-auto m-0 p-0 " >
+                                            <li class="nav-item "><a class=""  href="#"><img src="/static/images/logo.png"/></a>  </li>
 
-											<li class="nav-item py-0"><a class="nav-link"  href="{% url 'index' %}">首页</a>  </li>
+											<li class="nav-item {% if request.resolver_match.url_name == "index" %}active{% endif %}"><a class="nav-link "  href="{% url 'index' %}">首页</a>  </li>
 
 											<!-- Dropdown 我要借出 -->
-											<li href="borrow_home_page.html"  class="nav-item dropdown dropdownPositionStatic py-md-">
-				<a class="nav-link " href="borrow_home_page.html" id="navbardrop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					我要借出
-				</a>
-				<div class="dropdown-menu mega-menu ">
-
-					<div class="d-flex p-0  mx-auto justify-content-center">
-						<div class="p-0 "><a href="borrow_details.html">发布借款</a></div>
-						<div class="p-0 "><a href="borrow_interest.html">利息计算器</a></div>
-						<div class="p-0 "><a href="borrow_credit_rating.html">个人信用借出等级</a></div>
-						<div class="p-0 "><a href="lend_list_details.html">借出列表详情</a></div>
-					</div>
-				</div>
-			</li>
+											<li href="#"  class="nav-item {% if request.resolver_match.url_name == "borrow_type_list" %}active{% endif %}  py-md-">
+                                                <a class="nav-link " href="{% if request.user.is_authenticated %}  {% url 'business:borrow_type_list' %} {% else %} {% url 'login' %} {% endif %}">
+                                                    我要借款
+                                                </a>
+{#                                                <div class="dropdown-menu mega-menu ">#}
+{##}
+{#                                                    <div class="d-flex p-0  mx-auto justify-content-center">#}
+{#                                                        <div class="p-0 "><a href="borrow_details.html">发布借款</a></div>#}
+{#                                                        <div class="p-0 "><a href="borrow_interest.html">利息计算器</a></div>#}
+{#                                                        <div class="p-0 "><a href="borrow_credit_rating.html">个人信用借出等级</a></div>#}
+{#                                                        <div class="p-0 "><a href="lend_list_details.html">借出列表详情</a></div>#}
+{#                                                    </div>#}
+{#                                                </div>#}
+                                            </li>
 
 											<!-- Dropdown 我要借入 -->
-											<li class="nav-item dropdown dropdownPositionStatic py-md-">
-												<a class="nav-link " href="#" id="borrow_in_id" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-													我要借入
+											<li class="nav-item {% if request.resolver_match.url_name == "bidRequestList" %}active{% endif %} dropdown dropdownPositionStatic  py-md-">
+												<a class="nav-link " href="{% url 'business:bidRequestList' %}" id="borrow_in_id" >
+													开始投资
 												</a>
-												<div class="dropdown-menu mega-menu ">
-
-													<div class="d-flex p-0  mx-auto justify-content-center">
-														<div class="p-0 "><a href="borrow_details.html">查找借款</a></div>
-														<div class="p-0 "><a href="borrow_interest.html">利息计算器</a></div>
-														<div class="p-0 "><a href="borrow_credit_rating.html">个人信用借出等级</a></div>
-														<div class="p-0 "><a href="borrow_repayment_treatment.html">还款</a></div>
-														<div class="p-0 "><a href="lend_list_details.html">借入列表详情</a></div>
-														<div class="p-0 "><a href="lend_list.html">查找放款</a></div>
-													</div>
-												</div>
 											</li>
 
 
-											<li class="nav-item py-0 "><a class="nav-link" href="{% url 'UserAccountView' %}">我的账户</a></li>
-											<li class="nav-item py-0"><a class="nav-link" href="help_center.html">帮助</a></li>
-											<li class="nav-item py-0"><a class="nav-link"  href="news.html">社区</a></li>
-											<li class="nav-item py-0"><a class="nav-link"  href="authentication.html">本金保障</a></li>
-<!--												search bar-->
-											<li class="nav-item py-0 nav-link">
-												<div class="navbar navbar-light ml-0 pt-4 p-0">
-												<form class="form-inline  ">
-													<input class=" form-control mr-2 " type="search" style="width: 250px; height: 40px; font-size: 16px;border-radius:8px;" placeholder="Search" aria-label="Search">
-													<button class="btn  myBtn  text-dark"  style="width: 70px; height: 40px; font-size: 16px; color: white;border-color: white; " type="submit">Search</button>
-												</form>
-												</div>
-											</li>
+											<li class="nav-item py-0 {% if request.resolver_match.url_name == "UserAccountView" %}active{% endif %}"><a class="nav-link" href="{% url 'UserAccountView' %}">我的账户</a></li>
+											<li class="nav-item py-0 {% if request.resolver_match.url_name == "news" %}active{% endif %} "><a class="nav-link" href="{% url 'webnews:news' %}">网站公告</a></li>
+
 
 		</ul>
 
 
-                        {% if request.user.is_authenticated %}
-                            <!--								 logined interface-->
-                            <ul class="navbar-nav justify-content-end  pt-4">
+    {% if request.user.is_authenticated %}
+        <!--								 logined interface-->
+        <ul class="navbar-nav justify-content-end  pt-2">
 
-										<div class="row mr-3  align-items-center">
+                    <div class="row mr-3  align-items-center pl-3">
 <!--										message icon-->
-										<div >
-										<i class="fas fa-envelope-square fa-2x text-white"  ></i>
-										</div>
+                    <div >
+                    <i class="fas fa-envelope-square fa-2x text-white"  ></i>
+                    </div>
 <!--										message show-->
-										<div class="align-self-center">
-												<a  class="" style="font-size: 16px; color: white" href="#">消息(0)</a>
-										</div>
+                    <div class="align-self-center">
+                            <a  class="" style="font-size: 16px; color: white" href="#">消息(0)</a>
+                    </div>
 <!--										<img src="#" class="img-thumbnail fas fa-envelope-square  fa-3x">-->
-									</div>
+                </div>
 
-										<img class="mr-2 rounded-circle" src="{{ MEDIA_URL }}{{ request.user.image.url }}" width="40" height="40" alt="avatar">
+                    <img class="mr-2 rounded-circle" src="{{ MEDIA_URL }}{{ request.user.image.url }}" width="40" height="40" alt="avatar">
 
-										<div class="dropdown align-self-center">
-																	<a  href="javascript:void(0);" class="btn-user  dropdown-toggle media align-items-center" style="font-size: 16px" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
-																			<div class="media-body">
-																				{{ request.user.username }}
-																			</div>
-																	</a>
+                    <div class="dropdown align-self-center">
+                                                <a  href="javascript:void(0);" class="btn-user  dropdown-toggle media align-items-center" style="font-size: 16px" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
+                                                        <div class="media-body text-white">
+                                                            {{ request.user.username }}
+                                                        </div>
+                                                </a>
 
-																		<ul class="dropdown-menu dropdown-menu-right" role="menu">
-																			<a class="dropdown-item" href="{% url 'person_centerView' %}">个人中心</a>
-																			<a class="dropdown-item" href="javascript:void(0);">安全中心</a>
-																			<a class="dropdown-item" href="javascript:void(0);">头像设置</a>
-																			<a class="dropdown-item" href="javascript:void(0);">修改密码</a>
-																			<a class="dropdown-item" href="javascript:void(0);">选项名称</a>
+                                                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                                        <a class="dropdown-item" href="{% url 'person_centerView' %}">个人中心</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">安全中心</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">头像设置</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">修改密码</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">选项名称</a>
+                                                    </ul>
+                                                </div>
 
-																			<!--						<li>资料设置</li>-->
-																			<!--						<li>安全中心</li>-->
-																			<!--						<li>头像设置</li>-->
-																			<!--						<li>修改密码</li>-->
-																			<!--						<li>选项名称</li>-->
-																		</ul>
-																	</div>
+                    <!--  icon of login out -->
+                    <div class="row ml-3 mr-3 align-items-center">
 
-										<!--  icon of login out -->
-										<div class="row ml-3 mr-3 align-items-center">
+                        <div >
 
-											<div >
+                            <a href="{% url 'logout' %}"class="text-warning">
 
-												<a href="{% url 'logout' %}">
-
-                                                    登出
+                                登出
 {#													<i class="fas fa-sign-out-alt fa-2x text-dark"  ></i>#}
-												</a>
+                            </a>
 
-											</div>
-										</div>
+                        </div>
+                    </div>
 
-									</ul>
-                            {% else %}
-                               <!--						login interface-->
-						    <ul class="navbar-nav justify-content-end ">
-                            								<li class="nav-item py-0"><a class="nav-link text-dark" href="{% url 'register' %}"  href="index.html">免费注册</a>  </li>
-								<li class="nav-item py-0"><a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt fa-2x text-dark py-4"></i></a></li>
+                </ul>
+        {% else %}
+           <!--						login interface-->
+        <ul class="navbar-nav justify-content-end pt-0 pl-5">
+                                        <li class="nav-item py-0 p-0  "><a class="nav-link text-white text-right pr-0 pl-5" href="{% url 'register' %}"  href="index.html">免费注册</a>  </li>
+            <li class="nav-item py-0 p-0 "><a class="nav-link text-white pl-0" href="{% url 'login' %}">登录</a></li>
 
-						</ul>
-                        {% endif %}
+    </ul>
+    {% endif %}
 
 	</nav>
 

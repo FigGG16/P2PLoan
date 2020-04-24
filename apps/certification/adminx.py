@@ -91,6 +91,7 @@ class UserFileAdmin(object):
     readonly_fields = ['applier', 'applyTime', 'fileType']
     exclude = ['audiTime','auditor']
     ordering = ['applier', 'fileType']
+    list_filter =['applyTime']
     #未审核或者审核失败
     def queryset(self):
         qs = super(UserFileAdmin, self).queryset()
@@ -107,6 +108,11 @@ class UserFileAdmin(object):
             user_file.auditor = self.user.username
             user_file.audiTime = timezone.now()
             user_file.save()
+            user_profile_obj = user_file.applier
+            #如果审核成功
+            if user_file.state == BitStatesUtils.STATE_AUDIT():
+                user_profile_obj.score = user_profile_obj.score + user_file.score
+                user_profile_obj.save()
 
 
 
@@ -114,6 +120,7 @@ class UserFileAudittedAdmin(object):
     list_display = ['state', 'applier', 'applyTime', 'audiTime', 'auditor', 'remark', 'score']
     readonly_fields = ['state', 'applier', 'applyTime', 'audiTime', 'auditor', 'remark', 'score']
     ordering = ['applier','fileType']
+    list_filter =['applyTime']
     def queryset(self):
         qs = super(UserFileAudittedAdmin, self).queryset()
         qs = qs.filter(state=BitStatesUtils.STATE_AUDIT())

@@ -69,10 +69,18 @@ class BorrowInfoView(LoginRequiredMixin,View):
         user_profile = bid_request.createUser.userProfile
         user_files = UserFile.objects.filter(Q(applier=user_profile)&Q(state=BitStatesUtils.STATE_AUDIT()))
         user_real_authes = RealAuth.objects.filter(Q(applier=user_profile)&Q(state=BitStatesUtils.STATE_AUDIT()))
+        bids = bid_request.bids.all()
 
         #投标用户账户
-        loan_user_account = Account.objects.get(userProfile=request.user)
-        return render(request, "borrow_info.html",{'loan_user_account':loan_user_account,'bid_request':bid_request ,'user_profile':user_profile,'user_files':user_files, 'user_real_auths':user_real_authes})
+        loan_user_account = Account.objects.filter(userProfile=request.user)
+
+        #如何账户没有开通账户//转到登录
+
+
+
+        return render(request, "borrow_info.html",{'loan_user_account':loan_user_account.first(),'bid_request':bid_request ,
+                                                   'user_profile':user_profile,'user_files':user_files,
+                                                   'user_real_auths':user_real_authes,'bids':bids})
 
 
 class BidView(View):

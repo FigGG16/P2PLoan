@@ -41,6 +41,71 @@
 
     </style>
 
+        <script  src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function(){
+
+   //添加父类监听事件解决重复上传无效问题
+            $(".el-borrow-apply").on('click', function () {
+
+              console.log("将来");
+                $('#WarnModal').modal('show');
+                var amount = parseFloat($("#amount").val());
+                if(!amount){
+
+                    $("#alert-message").text("请输入投资金额！");
+
+                    return;
+                }
+                if(parseFloat($("#usableAmount").val())<amount){
+                     $("#alert-message").text("投资金额已超过账户余额！");
+                    return;
+                }
+                if(parseFloat($("#minBidAmount").val())>amount){
+                    $("#alert-message").text("投资金额低于最小投标金额");
+                    return;
+                }
+                if(parseFloat($("#maxBidAmount").val())<amount){
+                     $("#alert-message").text("投资金额已超过借款标金额");
+                    return;
+                }
+
+                $.ajax({
+                cache: false,
+                type: 'post',
+                dataType:'json',
+                url:"{% url 'business:bid' %}",
+                data:{'bidRequestId': {{ bid_request.id }}, 'amount': amount },
+                async: true,
+                beforeSend:function(xhr, settings){
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function(data) {
+
+                        if(data.status == "success"){
+                                     {#提交数据成功，进行局部刷新#}
+                            console.log("success");
+                             {#$(".refresh_bid_view").load(location.href + " .refresh_bid_view");#}
+
+                            //删除重复创建div
+                             $(".refresh_bid_view").load(" .refresh_bid_view > *");
+                             $("#alert-message").text(data.message);
+
+
+
+                        }else if(data.status == "failure"){
+                            console.log("failure");
+                            $("#alert-message").text(data.message);
+                        }
+                },
+                complete: function(XMLHttpRequest){
+
+                }
+            });
+            });
+        });
+    </script>
+
 
 
  {% endblock %}
@@ -51,10 +116,12 @@
 
 
 <div class="container el-borrow">
-		<div class="row">
+		<div class="row justify-content-center">
 			<div class="el-borrow-item col-sm-4">
-				<div class="el-borrow-item-title bg-primary" style="background-color: #40d47e;">
+              {% if request.user.is_investor == False %}
+				<div class="el-borrow-item-title bg-warning" style="background-color: #40d47e;">
 					信用贷</div>
+
 				<div class="el-borrow-item-content">
 					<p>
 						认证后可借金额 <i>¥ 2,000.00</i>
@@ -62,17 +129,21 @@
 					<a href="#" class="text-primary">申请条件</a>
 					<p class="help-block">仅限广州地区</p>
 					<ul>
-						<li>填写基本资料</li>
-						<li>身份认证</li>
-						<li>材料认证分数达到30分</li>
-						<li>视频认证</li>
+						<li> <img style="width: 30px;height: 30px" src=" {% if request.user.isCheckInBasicInfo  %} {% static 'images/check2.png' %}  {% else %}   {% static 'images/check4.png' %}   {% endif %}"> <a href=" {% url 'UserAccountView' %}">填写基本资料</a></li>
+						<li><img style="width: 30px;height: 30px" src=" {% if request.user.isRealAuth %} {% static 'images/check2.png' %}  {% else %}   {% static 'images/check4.png' %}   {% endif %}"><a href=" {% url 'UserAccountView' %}">身份认证</a></li>
+						<li><img style="width: 30px;height: 30px" src="{% if request.user.score >= 30 %} {% static 'images/check2.png' %}  {% else %}   {% static 'images/check4.png' %}   {% endif %}"><a href=" {% url 'UserAccountView' %}">材料认证分数达到30分</a></li>
+						<li><img style="width: 30px;height: 30px" src="{% if request.user.isVedioAuth %} {% static 'images/check2.png' %}  {% else %}   {% static 'images/check4.png' %}   {% endif %}">视频认证</li>
 					</ul>
+
+
 				     {% if request.user.is_authenticated %}
 
 
-
-                                     <a href="{% url 'business:check_in_bid' %}" class="el-borrow-apply">我要申请</a>
-
+                        {% if request.user.is_content_borrow_condition %}
+                                    <a href="{% url 'business:check_in_bid' %}" class="el-borrow-apply">我要申请</a>
+                         {% else %}
+                                     <a href="#" class="el-borrow-apply" disabled>条件不足</a>
+                        {% endif %}
 
                     {% else %}
                         <a href="{% url 'login' %}" class="el-borrow-apply">
@@ -80,6 +151,10 @@
 					</a>
                     {% endif %}
 				</div>
+
+                {% else %}
+                  <p class="h2 text-warning">抱歉，您不是借款人<button class="btn btn-primary">转换身份</button></p>
+            {% endif %}
 			</div>
 {#			<div class="el-borrow-item col-sm-4">#}
 {#				<div class="el-borrow-item-title bg-primary">车易贷</div>#}

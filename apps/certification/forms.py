@@ -18,8 +18,9 @@ class ReturnRealAuthImageForm(forms.ModelForm):
         fields = ('file', 'x', 'y', 'width', 'height',)
         widgets = {
             'file': forms.FileInput(attrs={
-                'accept': 'image/*' # this is not an actual validation! don't rely on that!
-            })
+                'accept': 'image/*', # this is not an actual validation! don't rely on that!
+                # 'data-parsley-required-message': "请选择图片",
+        })
         }
 
     # def __init__(self, *args, **kwargs):

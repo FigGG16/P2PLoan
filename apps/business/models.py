@@ -90,6 +90,9 @@ class BidRequest(models.Model):
     def isFullBid(self):
         return self.currentSum == self.bidRequestAmount
 
+    def get_bided_count(self):
+        return self.bids.count()
+
     class Meta:
         verbose_name = u"借款对象表"
         verbose_name_plural = verbose_name
