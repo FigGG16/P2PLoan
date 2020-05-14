@@ -96,7 +96,6 @@ class RegisterView(View):
     def get(self, request):
         register_form = RegisterForm()
         return render(request, "register.html", {'register_form': register_form})
-
     def post(self, request):
         register_form = RegisterForm(request.POST)
         if register_form.is_valid():
@@ -132,11 +131,7 @@ class RegisterView(View):
                     investor.save()
 
             DivideUser(user_borrower, user_profile)
-
-
             send_register_email(user_email, "register")
-
-
             return render(request, "emailVerifyCode.html")
         else:
             return render(request, "register.html", {"register_form":register_form})
@@ -448,13 +443,10 @@ class ChartData(APIView):
         qs_count = User.objects.all().count()
         months_labels = [str(x)+'月' for x in range(1,13)]
         user_items = [User.objects.filter(Q(date_joined__month = str(x))&Q( date_joined__year = '2019')).count() for x in range(1,13)]
-
         business_total_amount = [float(self.getavailable_amount_total(year='2020',month=str(x))) for x in range(1,13)]
         manage_yield_rate = [float(self.getSystemAccountFlow_amount_total(year='2020', month=str(x))) for x in range(1, 13)]
-
         current_investor_nums = [self.get_investor_nums(year='2020', month=str(x)) for x in range(1, 13)]
         current_borrower_nums = [self.get_borrower_nums(year='2020', month=str(x)) for x in range(1, 13)]
-
         data = {
                 "months_labels": months_labels,
                 "user_items": user_items,

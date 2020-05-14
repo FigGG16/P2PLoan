@@ -34,8 +34,6 @@ class PublishBidAauditAdmin(object):
         qs = qs.filter(Q(auditType=BidRequestAuditHistory.PUBLISH_AUDIT)&Q(state=BitStatesUtils.STATE_NORMAL()))
         return qs
 
-
-
     # //审核表，添加审核人
     def save_models(self):
         #获取保持对象
@@ -54,19 +52,18 @@ class PublishBidAauditAdmin(object):
                 bid_request.note = bid_audit.remark
                 #保存模型
                 bid_request.save()
-
                 #给申请用户添加借款标状态
                 user_profile_obj.addState(BitStatesUtils.GET_OP_HAS_BIDREQUEST_PROCESS())
             else:
                 #审核失败，移出用户招标状态
                 user_profile_obj.removeState(BitStatesUtils.GET_OP_HAS_BIDREQUEST_PROCESS())
-
             user_profile_obj.save()
             bid_audit.save()
 
 #满标一审
 class FullAuditOneAdmin(object):
     list_display = ['bidRequestId','auditType','applyTime','remark', 'state']
+    exclude = ['audiTime', 'auditor', 'applier']
     readonly_fields = ['applier', 'applyTime', 'auditType']
 
     def queryset(self):
@@ -146,6 +143,7 @@ class FullAuditOneAdmin(object):
 class FullAuditTwoAdmin(object):
     list_display = ['bidRequestId','auditType','applyTime','remark', 'state']
     readonly_fields = ['applier', 'applyTime', 'auditType']
+    exclude = ['audiTime', 'auditor', 'applier']
     def queryset(self):
         qs = super(FullAuditTwoAdmin, self).queryset()
         qs = qs.filter(Q(auditType=BidRequestAuditHistory.FULL_AUDIT_2)&Q(state=BitStatesUtils.STATE_NORMAL()))
@@ -449,7 +447,7 @@ class AccountFlowAdmin(object):
 
 #在线充值
 class RechargeOfflineAdmin(object):
-    list_display = ['applier','bankInfo', 'tradeCode', 'applyTime','tradeTime', 'note', 'state']
+    list_display = ['applier','bankInfo', 'tradeCode','amount', 'applyTime','tradeTime', 'note', 'state']
     readonly_fields = ['applier','bankInfo', 'tradeCode', 'applyTime','tradeTime','amount', 'note']
     exclude = ['audiTime','auditor','auditor',]
     def queryset(self):

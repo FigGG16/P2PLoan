@@ -39,26 +39,25 @@ class BidRequestView(View):
 
 class ApplyView(View):
     def post(self,request):
+        # if (request.POST.get("bidRequestAmount", "") and request.POST.get("currentRate", "") and request.POST.get("minBidAmount", "")) is True:
         x = int(request.POST.get("bidRequestAmount", ""))
         y =  int(request.POST.get("currentRate", ""))
         z = int(request.POST.get("minBidAmount", ""))
-
         account_query = Account.objects.filter(userProfile=request.user)
-
         if account_query.exists():
             account_obj = account_query.first()
             # 系统最小借款金额 <= 借款金额 <=剩余信用额度, #5<= 利息 <=20,  #最小投标金额>=系统最小投标金额
             if int(account_obj.getRemainBorrowLimit()) >= int(request.POST.get("bidRequestAmount", "")) >= BidConst.SMALLEST_BID_AMOUNT()\
                 and BidConst.MAX_CURRENT_RATE() >= int(request.POST.get("currentRate", "")) >= BidConst.SMALLEST_CURRENT_RATE() \
                 and int(request.POST.get("minBidAmount", "")) >= BidConst.SMALLEST_BID_AMOUNT():
-
                 form = BidRequestForm(request.POST)
                 if form.is_valid():
                     form.save(request.user)
                 return render(request, "succeed_bid.html", {'message': '投标成功'})
         # 判断是否满足条件
-
         return HttpResponse('{"status":"请求失败"}', content_type='application/json')
+        # 判断是否满足条件
+        # return HttpResponse('{"status":"信息填写错误"}', content_type='application/json')
 
 
 class BorrowInfoView(LoginRequiredMixin,View):
@@ -102,22 +101,18 @@ class BidView(View):
                      and bid_request.createUser.userProfile.id != loaner_account.userProfile.id \
                      and loaner_account.usableAmount >= loaner_bid_amount \
                      and bid_request.getRemainAmount() >= loaner_bid_amount:
-
                  # // 执行投标操作
                  # // 1, 创建一个投标对象;
                  # 设置相关属性;
                  bid_form = BidForm()
                  bid_form.save(user=request.user, bid_request=bid_request,loaner_bid_amount=loaner_bid_amount)
-
                  #2, 得到投标人账户, 修改账户信息;
                  loaner_account.usableAmount = loaner_account.usableAmount - loaner_bid_amount
                  loaner_account.freezedAmount = loaner_account.freezedAmount + loaner_bid_amount
                  loaner_account.save()
-
                  #// 3,生成一条投标流水;
                  account_flow = AccountFlowForm()
                  account_flow.save(loaner_account=loaner_account, loaner_bid_amount=loaner_bid_amount)
-
                  # // 4, 修改借款相关信息;
                  bid_request.bidCount = bid_request.bidCount+1
                  bid_request.currentSum = bid_request.currentSum + loaner_bid_amount
@@ -129,10 +124,7 @@ class BidView(View):
                      bid_request.save()
                      #生成满标一审
                      self.createBrAuditHistory(bid_request=bid_request)
-
-                 print(bid_request.bids.all())
                  return HttpResponse('{"status":"success", "message":"投标成功"}', content_type='application/json')
-
          return HttpResponse('{"status":"failure", "message":"投标失败"}', content_type='application/json')
 
     def createBrAuditHistory(self, bid_request):

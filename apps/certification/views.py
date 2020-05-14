@@ -106,6 +106,8 @@ class SendVerifyCodeView(View):
 
             else:
                 code_record = VerifyCode(code=code, mobile=mobile)
+                #进行手机认证
+                request.user.addState(BitStatesUtils.GET_OP_BIND_PHONE())
                 code_record.save()
                 return JsonResponse({
                     "status": "success",
@@ -121,23 +123,17 @@ class SendVerifyCodeView(View):
         :param data:
         :return:
         """
-
         # 手机是否注册
         if User.objects.filter(contact_number=mobile).count():
             return "用户已经存在"
-
         # 验证手机号码是否合法
         if not re.match(REGEX_MOBILE, mobile):
             return "手机号码非法"
-
-
         # 验证码发送频率
         one_mintes_ago = datetime.now() - timedelta(hours=0, minutes=1, seconds=0)
         if VerifyCode.objects.filter(add_time__gt=one_mintes_ago, mobile=mobile).count():
             return "距离上一次发送未超过60s"
-
         return "True"
-
     def generate_code(self):
         """
         生成四位数字的验证码
@@ -147,7 +143,6 @@ class SendVerifyCodeView(View):
         random_str = []
         for i in range(4):
             random_str.append(choice(seeds))
-
         return "".join(random_str)
 
 

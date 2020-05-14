@@ -1064,7 +1064,7 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                            <img class="icon rounded" style="width: 128px; height: 128px" src="{{ MEDIA_URL }}{{ request.user.image.url }}" />
                         </div>
                         <div class="float-left el-head">
-                            <p>用户名：borrow1</p>
+                            <p>用户名：{{ request.user.username }}</p>
                             <p>最后登录时间：2020-02-11 10:35:29 </p>
                         </div>
                         <div class="float-left" style="text-align: center;width: 400px;margin:30px auto 0px auto;">
@@ -1122,8 +1122,15 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                                     <div class="el-accoun-auth-right">
                                         <h6>实名认证</h6>
                                         <p>
-                                            未认证
-                                            <a href="/realAuth.do" id="">立刻绑定</a>
+                                        {% is_real_audited request.user as result %}
+                                            {% if result   %}
+                                                已认证
+                                            {% else %}
+                                                未认证
+                                                 <a href="#" id="">立刻绑定</a>
+                                            {% endif %}
+
+
                                         </p>
                                     </div>
                                     <div class="clearfix"></div>
@@ -1138,8 +1145,15 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                                     <div class="el-accoun-auth-right">
                                         <h6>手机认证</h6>
                                         <p>
-                                            未认证
-                                            <a href="javascript:;"  id="phoneModel">立刻绑定</a>
+
+                                            {% if request.user.isPhoneNumberAuth == True %}
+                                                已认证
+                                            {% else %}
+                                                   未认证
+                                                <a href="javascript:;"  id="phoneModel">立刻绑定</a>
+                                            {% endif %}
+
+
                                         </p>
                                     </div>
                                     <div class="clearfix"></div>
@@ -1154,8 +1168,8 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                                     <div class="el-accoun-auth-right">
                                         <h6>邮箱认证</h6>
                                         <p>
-                                            未绑定
-                                            <a href="javascript:;" id="showBindEmailModal">去绑定</a>
+                                            已绑定
+{#                                            <a href="javascript:;" id="showBindEmailModal">去绑定</a>#}
                                         </p>
                                     </div>
                                     <div class="clearfix"></div>
@@ -1206,7 +1220,7 @@ $('#jsEditUserBasicProfileBtn').on('click', function(){
                                      <div  class="tab-pane active query_payment_schedule" id="focus-lends">
                                            <!--page1-->
 
-                                                       <div class="endless_page_template " >
+                                                       <div class="endless_page_template" >
                                                            {% include 'query_payment_schedule.html' %}
                                                        </div>
 

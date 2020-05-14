@@ -1,5 +1,55 @@
 {% load el_pagination_tags %}
 
+<script>
+
+     $(function () {
+           //提交表单
+        $(".return-money-btn").click(function () {
+
+
+            $.ajax({
+            cache: false,
+            type: 'post',
+            dataType:'json',
+            url:"{% url 'business:DoReturnMoney' %}",
+            data:{'PaymentSchedulesID': $(this).attr("id")},
+            async: true,
+            beforeSend:function(xhr, settings){
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(data) {
+
+                    if(data.status == "success"){
+                                 {#提交数据成功，进行局部刷新#}
+
+
+                        {#$("#bindMobilePhoneModel").modal("hide");#}
+                         $('#WarnModal').modal('show');
+                         $("#alert-message").text(data.message);
+
+                         $(".query_payment_schedule").load(location.href + " .query_payment_schedule");
+
+
+                    }else if(data.status == "failure"){
+
+                          $('#WarnModal').modal('show');
+                         $("#alert-message").text(data.message);
+
+                    }
+            },
+            complete: function(XMLHttpRequest){
+
+
+
+            }
+        });
+        });
+
+})
+
+
+</script>
+
 {% lazy_paginate 6 paymentSchedules using "paymentSchedules-page" %}
 
                    <div class="borrow_list2_table1">
@@ -17,7 +67,7 @@
 									<th>应付本息：<span class="lend_follow_main_right_table_span2">&yen;{{ ps.totalAmount }}</span></th>
 									<th>本期利息：<span class="lend_follow_main_right_table_span2">&yen;{{ ps.interest }}</span></th>
                                     {% if ps.state == 0 %}
-									 <th><input type="button" name="borrow_list_btn" id="{{ ps.id }}" class="btn-sm btn-primary col-lg-10 pt-0 pb-0 return-money-btn" id="" value="还款"></th>
+									 <th><input type="button" name="borrow_list_btn" id="{{ ps.id }}" class="btn-sm btn-primary col-lg-10 pt-0 pb-0 return-money-btn" value="还款"></th>
                                     {% elif ps.state == 1 %}
                                     <th><input type="button" name="borrow_list_btn" class="btn-sm btn-success  col-lg-10 pt-0 pb-0  disabled active" id="" value="已还款"></th>
                                 {% else %}

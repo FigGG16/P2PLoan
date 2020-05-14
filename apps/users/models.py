@@ -63,6 +63,10 @@ class UserProfile(AbstractUser):
     def isMoneyWithoutProcess(self):
         return BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_HAS_MONEYWITHDRAW_PROCESS())
 
+    def isPhoneNumberAuth(self):
+        return BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_OP_BIND_PHONE())
+
+
     def is_content_borrow_condition(self):
         return BitStatesUtils.hasState(self.bitState,BitStatesUtils.GET_OP_REAL_AUTH()) & BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_OP_BASIC_INFO()) \
                & BitStatesUtils.hasState(self.bitState, BitStatesUtils.GET_OP_VEDIO_AUTH()) \

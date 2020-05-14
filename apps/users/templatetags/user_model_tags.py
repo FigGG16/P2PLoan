@@ -16,6 +16,8 @@ def is_real_audited(user_profile):
     return False
 
 
+
+
 #是否未审核？
 @register.simple_tag()
 def is_real_audit_normal(user_profile):
