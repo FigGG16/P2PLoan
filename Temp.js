@@ -24,3 +24,20 @@ export default function OnlyAndroidKeyboardAvoidingView({
   // iOS 平台：完全不渲染 KAV
   return <View style={style}>{children}</View>;
 }
+
+///-------------
+1.对
+2.对
+3. C (想问 奇异值也可以是是AA^T的特征值的平方根吧)
+4.D
+5.C
+6.
+特征向量矩阵是 V 和 V^T , 特征值矩阵是\Sigma, 他与A*v^i = \sigma^i *u^i 的关系是:
+相互推到关系，只是为了验证原始中的V 是一个正交矩阵，V与U 可以相互转换
+7. 
+矩阵A是 4*3 矩阵，秩为2，必定有两列向量张成列空间，而左零空间为 n-r = 1,由剩下的一列张成。
+同样， 必定有两行向量张成行空间，而零空间为 m-r = 2, 由剩下的两列张成。
+其完整的SVD为 A = U\SigmaV^T = \Sigma_1*u_1*v_1^T + \Sigma_2*u_2*v_2^T (理由是矩阵A的秩为2，所以最多只有2个奇异值)
+8. 
+解决的核心问题是，A^T * A 可以构造正交（正定）矩阵，并且证明了 Av_i = \Sigma_i *u_i ，并且向量 v_i 与u_i 两两正交，
+v_i可以通过A 映射到 u_i, u_i 也可以通过A^T映射成 v_i 
