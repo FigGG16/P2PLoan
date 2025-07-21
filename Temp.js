@@ -41,3 +41,21 @@ export default function OnlyAndroidKeyboardAvoidingView({
 8. 
 解决的核心问题是，A^T * A 可以构造正交（正定）矩阵，并且证明了 Av_i = \Sigma_i *u_i ，并且向量 v_i 与u_i 两两正交，
 v_i可以通过A 映射到 u_i, u_i 也可以通过A^T映射成 v_i 
+
+
+25-乙巳。
+26-丙午
+27-丁未
+28-戊申
+29-己酉
+30-庚戌
+31-辛亥
+32-壬子
+33-癸丑
+34-甲寅
+35-乙卯
+36-丙辰
+37-丁巳
+38-戊午
+39-己未
+
