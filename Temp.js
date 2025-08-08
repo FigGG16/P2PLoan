@@ -41,7 +41,21 @@ export default function OnlyAndroidKeyboardAvoidingView({
 8. 
 解决的核心问题是，A^T * A 可以构造正交（正定）矩阵，并且证明了 Av_i = \Sigma_i *u_i ，并且向量 v_i 与u_i 两两正交，
 v_i可以通过A 映射到 u_i, u_i 也可以通过A^T映射成 v_i 
-
+      else if (typeof items === 'object' && items !== null) {
+        const replacedObj: Record<string, string> = {};
+        for (const [subKey, url] of Object.entries(items)) {
+          if (typeof url === 'string') {
+            replacedObj[subKey] = urlReplacements.reduce(
+              (val, { from, to }) => val.replace(from, to),
+              url
+            );
+          } else {
+            replacedObj[subKey] = url;
+          }
+        }
+        acc[key] = replacedObj;
+      }
+    } else
 
 25-乙巳。
 26-丙午
