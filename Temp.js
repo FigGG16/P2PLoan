@@ -41,7 +41,36 @@ export default function OnlyAndroidKeyboardAvoidingView({
 8. 
 解决的核心问题是，A^T * A 可以构造正交（正定）矩阵，并且证明了 Av_i = \Sigma_i *u_i ，并且向量 v_i 与u_i 两两正交，
 v_i可以通过A 映射到 u_i, u_i 也可以通过A^T映射成 
+const fs = require('fs');
+const path = require('path');
 
+const lockFilePath = path.resolve('./package-lock.json');
+if (!fs.existsSync(lockFilePath)) {
+  console.error('❌ 没找到 package-lock.json');
+  process.exit(1);
+}
+
+const lockData = JSON.parse(fs.readFileSync(lockFilePath, 'utf-8'));
+
+function findDeps(obj, parentChain = []) {
+  let results = [];
+  for (const [name, data] of Object.entries(obj.packages || {})) {
+    if (data.version && name.includes('lodash')) {
+      results.push({
+        package: name || '.',
+        version: data.version,
+        path: [...parentChain, name || '.'].join(' > ')
+      });
+    }
+  }
+  return results;
+}
+
+const results = findDeps(lockData);
+console.log(`🔍 找到 ${results.length} 个 lodash 版本：`);
+results.forEach(r => {
+  console.log(`- ${r.version} @ ${r.package}`);
+});
 25-乙巳。
 26-丙午
 27-丁未
