@@ -76,7 +76,7 @@ results.forEach(r => {
 27-丁未
 28-戊申
 29-己酉
-30-庚戌
+3
 31-辛亥
 32-壬子
 33-癸丑
@@ -86,4 +86,26 @@ results.forEach(r => {
 37-丁巳
 38-戊午
 39-己未
+module.exports = {
+  preset: 'react-native',
+  testEnvironment: 'jsdom',
 
+  // 仅用 babel-jest 处理 ts/js；不要再对图片做 transform
+  transform: {
+    '^.+\\.[jt]sx?$': 'babel-jest',
+  },
+
+  // 把 png/jpg/svg 等静态资源映射成占位
+  moduleNameMapper: {
+    '\\.(png|jpe?g|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
+  },
+
+  // RN 常见忽略白名单
+  transformIgnorePatterns: [
+    'node_modules/(?!(react-native|@react-native|react-clone-referenced-element|@react-navigation|react-native-gesture-handler|react-native-reanimated|react-native-safe-area-context|react-native-screens)/)',
+  ],
+
+  setupFiles: [
+    '<rootDir>/jest/setup.js'
+  ],
+};
