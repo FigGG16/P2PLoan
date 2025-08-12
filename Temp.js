@@ -40,29 +40,7 @@ export default function OnlyAndroidKeyboardAvoidingView({
 其完整的SVD为 A = U\SigmaV^T = \Sigma_1*u_1*v_1^T + \Sigma_2*u_2*v_2^T (理由是矩阵A的秩为2，所以最多只有2个奇异值)
 8. 
 解决的核心问题是，A^T * A 可以构造正交（正定）矩阵，并且证明了 Av_i = \Sigma_i *u_i ，并且向量 v_i 与u_i 两两正交，
-v_i可以通过A 映射到 u_i, u_i 也可以通过A^T映射成 
-const fs = require('fs');
-const path = require('path');
-
-const lockFilePath = path.resolve('./package-lock.json');
-if (!fs.existsSync(lockFilePath)) {
-  console.error('❌ 没找到 package-lock.json');
-  process.exit(1);
-}
-
-const lockData = JSON.parse(fs.readFileSync(lockFilePath, 'utf-8'));
-
-function findDeps(obj, parentChain = []) {
-  let results = [];
-  for (const [name, data] of Object.entries(obj.packages || {})) {
-    if (data.version && name.includes('lodash')) {
-      results.push({
-        package: name || '.',
-        version: data.version,
-        path: [...parentChain, name || '.'].join(' > ')
-      });
-    }
-  }
+v_i可以通过A 映射到 u_i, u_i 也可以通过A^T映射成  }
   return results;
 }
 
@@ -89,23 +67,27 @@ results.forEach(r => {
 module.exports = {
   preset: 'react-native',
   testEnvironment: 'jsdom',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
 
-  // 仅用 babel-jest 处理 ts/js；不要再对图片做 transform
+  // 只用 babel-jest 处理源代码
   transform: {
     '^.+\\.[jt]sx?$': 'babel-jest',
   },
 
-  // 把 png/jpg/svg 等静态资源映射成占位
-  moduleNameMapper: {
-    '\\.(png|jpe?g|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
-  },
-
-  // RN 常见忽略白名单
+  // ❗不要编译 node_modules，只有 RN 相关库作为白名单
   transformIgnorePatterns: [
     'node_modules/(?!(react-native|@react-native|react-clone-referenced-element|@react-navigation|react-native-gesture-handler|react-native-reanimated|react-native-safe-area-context|react-native-screens)/)',
   ],
 
-  setupFiles: [
-    '<rootDir>/jest/setup.js'
-  ],
+  // 静态资源映射为占位
+  moduleNameMapper: {
+    '\\.(png|jpe?g|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
+    'react-native$': require.resolve('react-native'),
+  },
+
+  setupFiles: ['<rootDir>/jest/setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/script/jestGlobal.ts'],
+  cacheDirectory: '.jest/cache',
 };
+
+xxxxxxxx
