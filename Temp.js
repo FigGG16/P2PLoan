@@ -29,3 +29,43 @@ afterEach(() => {
   delete global.navigator;
   delete global.fetch;
 });
+
+
+
+
+
+// jest.config.js
+module.exports = {
+  preset: 'react-native',
+  testEnvironment: 'jsdom',
+
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+
+  // 只用 babel-jest；不要引用 node_modules 的绝对路径
+  transform: {
+    '^.+\\.[jt]sx?$': 'babel-jest',
+  },
+
+  // 忽略大多数 node_modules，只对白名单 RN 生态包做转译（避免把 jest 自身编译了）
+  transformIgnorePatterns: [
+    'node_modules/(?!(?:' +
+      'react-native(?:-.+)?' +                 // react-native 与 react-native-*
+      '|@react-native(?:-.+)?' +               // @react-native/*
+      '|@react-native-community(?:-.+)?' +     // @react-native-community/*
+      '|@react-navigation(?:-.+)?' +           // @react-navigation/*
+      ')/)',
+  ],
+
+  // 静态资源直接映射，别用 RN 旧的 assetFileTransformer
+  moduleNameMapper: {
+    '\\.(png|jpe?g|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
+    'react-native$': require.resolve('react-native'),
+  },
+
+  setupFiles: ['<rootDir>/jest/setup.js'],      // 见下
+  cacheDirectory: '.jest/cache',
+};
+
+
+
+
