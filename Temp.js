@@ -1,71 +1,116 @@
-module.exports = {
-  preset: 'react-native',
-  testEnvironment: 'node',                 // 关键：用 Node 环境
-  setupFilesAfterEnv: ['<rootDir>/test/setup-dom.js'],
-  transform: { '^.+\\.[jt]sx?$': 'babel-jest' },
-  // 静态资源映射，避免旧 asset transformer
-  moduleNameMapper: { '\\.(png|jpe?g|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js' },
-};
+/**
+ * jest/setup.rn.js
+ * 适配 RN 0.67.x 在 Jest（Node/jsdom）中的常见原生缺口
+ */
 
-const { JSDOM } = require('jsdom');
+// --- 基础 polyfill（jsdom/Node 常见缺口） ---
+try {
+  const { performance } = require('perf_hooks');
+  if (!global.performance || !global.performance.now) {
+    global.performance = performance;
+  }
+} catch {}
 
-beforeEach(() => {
-  const { window } = new JSDOM('', { url: 'http://localhost' });
-  global.window = window;
-  global.document = window.document;
-  global.navigator = { userAgent: 'node.js' };
+if (!global.requestAnimationFrame) {
+  global.requestAnimationFrame = (cb) => setTimeout(cb, 0);
+}
+if (typeof window !== 'undefined' && !window.matchMedia) {
+  // 极简实现，够大多数库判断用
+  window.matchMedia = () => ({
+    matches: false,
+    addListener() {},
+    removeListener() {},
+    addEventListener() {},
+    removeEventListener() {},
+    dispatchEvent() { return false; },
+  });
+}
 
-  // 常用补丁
-  global.requestAnimationFrame = cb => setTimeout(cb, 0);
-  window.matchMedia = window.matchMedia || (() => ({ matches: false, addListener() {}, removeListener() {} }));
-  // 如需 fetch：
-  if (!global.fetch) global.fetch = (...args) => Promise.reject(new Error('mock me'));
+// --- RN Animated 的噪音、手势库等 ---
+jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper', () => ({}));
+
+// react-native-gesture-handler 官方提供的 jest 初始化
+try {
+  require('react-native-gesture-handler/jestSetup');
+} catch {}
+
+// react-native-reanimated 官方 mock（避免触发原生分支）
+jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
+
+// --- TurboModule & NativeModules 缺口（SettingsManager / I18nManager 等） ---
+jest.mock('react-native/Libraries/TurboModule/TurboModuleRegistry', () => {
+  const actual = jest.requireActual('react-native/Libraries/TurboModule/TurboModuleRegistry');
+  return {
+    ...actual,
+    getEnforcing: (name) => {
+      if (name === 'SettingsManager') {
+        // iOS 常用字段
+        return {
+          settings: { AppleLocale: 'en_US', AppleLanguages: ['en-US'] },
+          localeIdentifier: 'en_US',
+        };
+      }
+      if (name === 'I18nManager') {
+        return { localeIdentifier: 'en_US', isRTL: false, doLeftAndRightSwapInRTL: false };
+      }
+      return actual.getEnforcing ? actual.getEnforcing(name) : {};
+    },
+  };
 });
 
-afterEach(() => {
-  // 清理，防止泄漏
-  delete global.window;
-  delete global.document;
-  delete global.navigator;
-  delete global.fetch;
+// 有些库直接 new NativeEventEmitter()，在 Jest 里需要给个空实现
+jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter', () => {
+  return jest.fn().mockImplementation(() => ({
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    removeAllListeners: jest.fn(),
+    emit: jest.fn(),
+    listenerCount: jest.fn(() => 0),
+  }));
 });
 
+// --- 常见社区库的 mock（按你项目里用到的补充即可） ---
 
+// 1) react-native-device-info
+jest.mock('react-native-device-info', () => {
+  const api = {
+    isTablet: jest.fn(() => false),
+    getUniqueId: jest.fn(() => 'mock-uid'),
+    getSystemName: jest.fn(() => 'iOS'),
+    getSystemVersion: jest.fn(() => '14.4'),
+  };
+  return { __esModule: true, ...api, default: api };
+});
 
+// 2) @react-native-community/netinfo
+jest.mock('@react-native-community/netinfo', () => {
+  const listeners = new Set();
+  const api = {
+    addEventListener: jest.fn((type, cb) => {
+      listeners.add(cb);
+      // 初始派发一次联通状态
+      cb({ type: 'wifi', isConnected: true, isInternetReachable: true, details: {} });
+      return { remove: () => listeners.delete(cb) };
+    }),
+    fetch: jest.fn(async () => ({
+      type: 'wifi',
+      isConnected: true,
+      isInternetReachable: true,
+      details: {},
+    })),
+    useNetInfo: jest.fn(() => ({
+      type: 'wifi',
+      isConnected: true,
+      isInternetReachable: true,
+      details: {},
+    })),
+  };
+  return { __esModule: true, ...api, default: api };
+});
 
-
-// jest.config.js
-module.exports = {
-  preset: 'react-native',
-  testEnvironment: 'jsdom',
-
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-
-  // 只用 babel-jest；不要引用 node_modules 的绝对路径
-  transform: {
-    '^.+\\.[jt]sx?$': 'babel-jest',
-  },
-
-  // 忽略大多数 node_modules，只对白名单 RN 生态包做转译（避免把 jest 自身编译了）
-  transformIgnorePatterns: [
-    'node_modules/(?!(?:' +
-      'react-native(?:-.+)?' +                 // react-native 与 react-native-*
-      '|@react-native(?:-.+)?' +               // @react-native/*
-      '|@react-native-community(?:-.+)?' +     // @react-native-community/*
-      '|@react-navigation(?:-.+)?' +           // @react-navigation/*
-      ')/)',
-  ],
-
-  // 静态资源直接映射，别用 RN 旧的 assetFileTransformer
-  moduleNameMapper: {
-    '\\.(png|jpe?g|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
-    'react-native$': require.resolve('react-native'),
-  },
-
-  setupFiles: ['<rootDir>/jest/setup.js'],      // 见下
-  cacheDirectory: '.jest/cache',
-};
-
-
-
-
+// 3) AsyncStorage（如果用到了）
+try {
+  jest.mock('@react-native-async-storage/async-storage', () =>
+    require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+  );
+} catch {}
