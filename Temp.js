@@ -1,129 +1,107 @@
-/**
- * jest/setup.rn.js
- * 适配 RN 0.67.x 在 Jest（Node/jsdom）中的常见原生缺口
- */
+// 在 jest.setup.js 里追加：对 react-native 做“增量 mock”
+jest.mock('react-native', () => {
+  // 先拿到真实实现
+  const RN = jest.requireActual('react-native');
 
-// --- 基础 polyfill（jsdom/Node 常见缺口） ---
-try {
-  const { performance } = require('perf_hooks');
-  if (!global.performance || !global.performance.now) {
-    global.performance = performance;
-  }
-} catch {}
-
-if (!global.requestAnimationFrame) {
-  global.requestAnimationFrame = (cb) => setTimeout(cb, 0);
-}
-if (typeof window !== 'undefined' && !window.matchMedia) {
-  // 极简实现，够大多数库判断用
-  window.matchMedia = () => ({
-    matches: false,
-    addListener() {},
-    removeListener() {},
-    addEventListener() {},
-    removeEventListener() {},
-    dispatchEvent() { return false; },
-  });
-}
-
-// --- RN Animated 的噪音、手势库等 ---
-jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper', () => ({}));
-
-// react-native-gesture-handler 官方提供的 jest 初始化
-try {
-  require('react-native-gesture-handler/jestSetup');
-} catch {}
-
-// react-native-reanimated 官方 mock（避免触发原生分支）
-jest.mock('react-native-reanimated', () => require('react-native-reanimated/mock'));
-
-// --- TurboModule & NativeModules 缺口（SettingsManager / I18nManager 等） ---
-jest.mock('react-native/Libraries/TurboModule/TurboModuleRegistry', () => {
-  const actual = jest.requireActual('react-native/Libraries/TurboModule/TurboModuleRegistry');
-  return {
-    ...actual,
-    getEnforcing: (name) => {
-      if (name === 'SettingsManager') {
-        // iOS 常用字段
-        return {
-          settings: { AppleLocale: 'en_US', AppleLanguages: ['en-US'] },
-          localeIdentifier: 'en_US',
-        };
-      }
-      if (name === 'I18nManager') {
-        return { localeIdentifier: 'en_US', isRTL: false, doLeftAndRightSwapInRTL: false };
-      }
-      return actual.getEnforcing ? actual.getEnforcing(name) : {};
+  // 一些常见的 NativeModules 兜底
+  const NativeModules = {
+    ...RN.NativeModules,
+    // 有些库会期望 UIManager 里有 measureLayout 等
+    UIManager: {
+      ...RN.NativeModules?.UIManager,
+      // Fabric/非Fabric 项目都兜一层
+      RCTView: RN.NativeModules?.UIManager?.RCTView || {},
+      measure: jest.fn(),
+      measureInWindow: jest.fn(),
+      measureLayout: jest.fn(),
+      createView: jest.fn(),
+      setChildren: jest.fn(),
+      removeSubviewsFromContainer: jest.fn(),
+      manageChildren: jest.fn(),
     },
+    // 有些库读这个开关
+    PlatformConstants: {
+      ...RN.NativeModules?.PlatformConstants,
+      forceTouchAvailable: false,
+      isTesting: true,
+      reactNativeVersion: RN.Platform?.version || { major: 0, minor: 0, patch: 0 },
+    },
+    // 如果项目里用到了 Share/Intent 系列
+    IntentAndroid: RN.NativeModules?.IntentAndroid || {},
+    // 你项目里涉及的其它原生模块也可以在这里补：
+    // MyNativeModule: { foo: jest.fn(), bar: jest.fn() },
   };
-});
 
-// 有些库直接 new NativeEventEmitter()，在 Jest 里需要给个空实现
-jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter', () => {
-  return jest.fn().mockImplementation(() => ({
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    removeAllListeners: jest.fn(),
-    emit: jest.fn(),
-    listenerCount: jest.fn(() => 0),
-  }));
-});
-
-// --- 常见社区库的 mock（按你项目里用到的补充即可） ---
-
-// 1) react-native-device-info
-jest.mock('react-native-device-info', () => {
-  const api = {
-    isTablet: jest.fn(() => false),
-    getUniqueId: jest.fn(() => 'mock-uid'),
-    getSystemName: jest.fn(() => 'iOS'),
-    getSystemVersion: jest.fn(() => '14.4'),
+  // UIManager 也经常被直接读取
+  const UIManager = {
+    ...RN.UIManager,
+    // 避免某些依赖直接访问 getViewManagerConfig 报错
+    getViewManagerConfig: name => ({ Commands: {}, Constants: {}, Manager: name }),
   };
-  return { __esModule: true, ...api, default: api };
-});
 
-// 2) @react-native-community/netinfo
-jest.mock('@react-native-community/netinfo', () => {
-  const listeners = new Set();
-  const api = {
-    addEventListener: jest.fn((type, cb) => {
-      listeners.add(cb);
-      // 初始派发一次联通状态
-      cb({ type: 'wifi', isConnected: true, isInternetReachable: true, details: {} });
-      return { remove: () => listeners.delete(cb) };
+  // 常见 API 的轻量 mock
+  const Linking = {
+    ...RN.Linking,
+    openURL: jest.fn().mockResolvedValue(true),
+    canOpenURL: jest.fn().mockResolvedValue(true),
+    addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+    getInitialURL: jest.fn().mockResolvedValue(null),
+  };
+
+  const Clipboard = {
+    // expo-clipboard 或 RN Clipboard 取其一；没有就兜底
+    ...RN.Clipboard,
+    getString: jest.fn().mockResolvedValue(''),
+    setString: jest.fn(),
+  };
+
+  const Dimensions = {
+    ...RN.Dimensions,
+    get: jest.fn().mockImplementation(key => {
+      // 默认给个 iPhone 常见尺寸
+      if (key === 'window' || key === 'screen') {
+        return { width: 375, height: 667, scale: 2, fontScale: 2 };
+      }
+      return { width: 375, height: 667, scale: 2, fontScale: 2 };
     }),
-    fetch: jest.fn(async () => ({
-      type: 'wifi',
-      isConnected: true,
-      isInternetReachable: true,
-      details: {},
-    })),
-    useNetInfo: jest.fn(() => ({
-      type: 'wifi',
-      isConnected: true,
-      isInternetReachable: true,
-      details: {},
-    })),
+    // 有些库会 subscribe
+    addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+    removeEventListener: jest.fn(),
   };
-  return { __esModule: true, ...api, default: api };
-});
 
-// 3) AsyncStorage（如果用到了）
-try {
-  jest.mock('@react-native-async-storage/async-storage', () =>
-    require('@react-native-async-storage/async-storage/jest/async-storage-mock')
-  );
-} catch {}
-
-
-
-jest.mock('@testing-library/react-native', () => {
-  const original = jest.requireActual('@testing-library/react-native');
-  return {
-    ...original,
-    fireEvent: {
-      ...original.fireEvent,
-      press: jest.fn(), // 覆盖 press 事件，不触发真实逻辑
+  const InteractionManager = {
+    ...RN.InteractionManager,
+    runAfterInteractions: cb => {
+      // 直接同步执行，避免测试里卡住
+      if (typeof cb === 'function') cb();
+      return { then: fn => fn && fn(), done: () => {}, cancel: () => {} };
     },
+  };
+
+  const Appearance = {
+    ...RN.Appearance,
+    getColorScheme: jest.fn(() => 'light'),
+    addChangeListener: jest.fn(() => ({ remove: jest.fn() })),
+  };
+
+  const AppState = {
+    ...RN.AppState,
+    currentState: 'active',
+    addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+    removeEventListener: jest.fn(),
+  };
+
+  return {
+    ...RN,
+    NativeModules,
+    UIManager,
+    Linking,
+    Clipboard,
+    Dimensions,
+    InteractionManager,
+    Appearance,
+    AppState,
+    // Platform 也可按需固定到 'ios' 或 'android'
+    Platform: { ...RN.Platform, OS: RN.Platform?.OS || 'ios', select: RN.Platform.select },
   };
 });
