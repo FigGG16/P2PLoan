@@ -114,3 +114,16 @@ try {
     require('@react-native-async-storage/async-storage/jest/async-storage-mock')
   );
 } catch {}
+
+
+
+jest.mock('@testing-library/react-native', () => {
+  const original = jest.requireActual('@testing-library/react-native');
+  return {
+    ...original,
+    fireEvent: {
+      ...original.fireEvent,
+      press: jest.fn(), // 覆盖 press 事件，不触发真实逻辑
+    },
+  };
+});
