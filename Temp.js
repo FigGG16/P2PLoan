@@ -1,3 +1,22 @@
+Pod::Spec.new do |s|
+  s.name         = 'OpenTelemetrySwiftApi'
+  s.version      = '2.0.2-local'
+  s.summary      = 'Local override of OpenTelemetryApi for Swift 6'
+  s.description  = 'Force CocoaPods to use OpenTelemetry-swift 2.x source code instead of Datadog’s old 1.x binary.'
+  s.license      = { :type => 'Apache-2.0' }
+  s.homepage     = 'https://github.com/open-telemetry/opentelemetry-swift'
+  s.authors      = { 'OpenTelemetry' => 'cncf@opentelemetry.io' }
+
+  # 这里非常关键：指向 OpenTelemetryApi 源码
+  s.source       = { :path => '.' }
+  s.ios.deployment_target = '13.0'
+  s.swift_versions = ['5.9', '6.0']
+
+  # 只暴露 OpenTelemetryApi 的源码
+  s.source_files = 'Sources/OpenTelemetryApi/**/*.{swift,h}'
+  s.module_name  = 'OpenTelemetryApi'
+end
+
 // 在 jest.setup.js 里追加：对 react-native 做“增量 mock”
 jest.mock('react-native', () => {
   // 先拿到真实实现
